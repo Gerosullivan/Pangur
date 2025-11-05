@@ -31,12 +31,14 @@
 
 .incoming-queue {
   position: absolute;
-  top: 100px;
-  right: 40px;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: rgba(20, 24, 32, 0.9);
-  padding: 20px;
+  padding: 12px 20px;
   border-radius: 8px;
   min-width: 200px;
+  text-align: center;
 }
 
 .queue-label {
@@ -48,22 +50,23 @@
 
 .queue-mice {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
+  justify-content: center;
 }
 
 .queue-mouse {
-  font-size: 28px;
+  font-size: 24px;
 }
 
 .cat-info-panel {
   position: absolute;
-  top: 200px;
+  top: 100px;
   right: 40px;
   background-color: rgba(20, 24, 32, 0.95);
   padding: 24px;
   border-radius: 8px;
-  width: 280px;
+  width: 300px;
   border: 3px solid #D97014;
 }
 
@@ -90,7 +93,7 @@
 }
 
 .info-badge {
-  margin-top: 12px;
+  margin-top: 8px;
   padding: 6px 12px;
   background-color: #D97014;
   color: #F2F2F2;
@@ -98,6 +101,7 @@
   font-size: 12px;
   font-weight: bold;
   display: inline-block;
+  margin-right: 8px;
 }
 
 .game-over-overlay {

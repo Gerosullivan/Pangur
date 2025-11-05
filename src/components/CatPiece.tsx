@@ -62,8 +62,6 @@ export const CatPiece: React.FC<CatPieceProps> = ({
           {effectiveMeow}
         </div>
       </div>
-      {cat.hasMoved && <div className="cat-badge-moved">Moved</div>}
-      {availableCatch === 0 && <div className="cat-badge-no-catch">Catch 0</div>}
     </div>
   );
 };

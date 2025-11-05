@@ -1,6 +1,6 @@
 .mouse-piece {
-  width: 256px;
-  height: 256px;
+  width: 160px;
+  height: 160px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -23,38 +23,38 @@
 
 .mouse-hearts {
   position: absolute;
-  top: 10px;
-  font-size: 20px;
+  top: 6px;
+  font-size: 14px;
   display: flex;
-  gap: 4px;
+  gap: 2px;
   z-index: 2;
 }
 
 .mouse-badge {
-  width: 140px;
-  height: 140px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background-color: #666;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid #888;
+  border: 2px solid #888;
 }
 
 .mouse-art {
-  font-size: 60px;
+  font-size: 40px;
 }
 
 .mouse-attack {
   position: absolute;
-  bottom: 30px;
-  font-size: 32px;
+  bottom: 18px;
+  font-size: 20px;
   font-weight: bold;
   color: #D97014;
   text-shadow:
-    -2px -2px 0 #000,
-     2px -2px 0 #000,
-    -2px  2px 0 #000,
-     2px  2px 0 #000;
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
   z-index: 2;
 }

@@ -7,6 +7,9 @@ import {
   createInitialGameState,
   getValidMoves,
   getValidAttackTargets,
+  getEffectiveCatch,
+  getEffectiveMeow,
+  getCellModifiers,
 } from '../gameLogic';
 import {
   placeCat,
@@ -31,8 +34,13 @@ export const Game: React.FC = () => {
     ? getValidMoves(selectedCat, gameState.cats, gameState.residentMice)
     : [];
 
-  const validAttackTargets = selectedCat
-    ? getValidAttackTargets(selectedCat, gameState.residentMice)
+  // Only show attack targets if cat has available catch points
+  const validAttackTargets = selectedCat && selectedCat.position
+    ? (() => {
+        const effectiveCatch = getEffectiveCatch(selectedCat, selectedCat.position);
+        const availableCatch = effectiveCatch - selectedCat.spentCatch;
+        return availableCatch > 0 ? getValidAttackTargets(selectedCat, gameState.residentMice) : [];
+      })()
     : [];
 
   const handleCatClick = (catId: string) => {
@@ -149,11 +157,41 @@ export const Game: React.FC = () => {
           <h3>{selectedCat.name}</h3>
           <div className="info-role">{selectedCat.role}</div>
           <div className="info-stats">
-            <div>Catch: {selectedCat.baseCatch - selectedCat.spentCatch} / {selectedCat.baseCatch}</div>
-            <div>Meow: {selectedCat.baseMeow}</div>
-            <div>Hearts: {selectedCat.hearts} / {selectedCat.maxHearts}</div>
+            {selectedCat.position ? (() => {
+              const effectiveCatch = getEffectiveCatch(selectedCat, selectedCat.position);
+              const effectiveMeow = getEffectiveMeow(selectedCat, selectedCat.position);
+              const availableCatch = effectiveCatch - selectedCat.spentCatch;
+              const mods = getCellModifiers(selectedCat.position);
+              const catchBonus = mods.isShadowBonus ? 1 : 0;
+              const meowMult = mods.meowMultiplier;
+
+              return (
+                <>
+                  <div>
+                    <strong>Catch:</strong> {availableCatch} / {effectiveCatch}
+                    {catchBonus > 0 && <span style={{color: '#D97014'}}> ({selectedCat.baseCatch} base +{catchBonus} shadow)</span>}
+                  </div>
+                  <div>
+                    <strong>Meow:</strong> {effectiveMeow}
+                    {meowMult !== 1 && <span style={{color: '#0396A6'}}> ({selectedCat.baseMeow} base ×{meowMult})</span>}
+                  </div>
+                  <div><strong>Hearts:</strong> {selectedCat.hearts} / {selectedCat.maxHearts}</div>
+                </>
+              );
+            })() : (
+              <>
+                <div><strong>Catch:</strong> {selectedCat.baseCatch}</div>
+                <div><strong>Meow:</strong> {selectedCat.baseMeow}</div>
+                <div><strong>Hearts:</strong> {selectedCat.hearts} / {selectedCat.maxHearts}</div>
+              </>
+            )}
           </div>
-          {selectedCat.hasMoved && <div className="info-badge">Moved</div>}
+          <div>
+            {selectedCat.hasMoved && <div className="info-badge">Moved</div>}
+            {selectedCat.position && getEffectiveCatch(selectedCat, selectedCat.position) - selectedCat.spentCatch === 0 && (
+              <div className="info-badge" style={{marginLeft: '8px'}}>Attacked</div>
+            )}
+          </div>
         </div>
       )}
 
