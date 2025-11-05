@@ -10,6 +10,7 @@ import {
   getEffectiveCatch,
   getEffectiveMeow,
   getCellModifiers,
+  calculateDeterrence,
 } from '../gameLogic';
 import {
   placeCat,
@@ -146,10 +147,30 @@ export const Game: React.FC = () => {
       <div className="incoming-queue">
         <div className="queue-label">Incoming: {gameState.incomingQueue} mice</div>
         <div className="queue-mice">
-          {Array.from({ length: Math.min(gameState.incomingQueue, 12) }).map((_, i) => (
-            <span key={i} className="queue-mouse">🐭</span>
-          ))}
+          {(() => {
+            const deterrence = gameState.phase === 'cat'
+              ? calculateDeterrence(gameState.cats)
+              : 0;
+            const scared = Math.min(deterrence, gameState.incomingQueue);
+            const entering = gameState.incomingQueue - scared;
+
+            return (
+              <>
+                {Array.from({ length: scared }).map((_, i) => (
+                  <span key={`scared-${i}`} className="queue-mouse scared">😱</span>
+                ))}
+                {Array.from({ length: entering }).map((_, i) => (
+                  <span key={`entering-${i}`} className="queue-mouse">🐭</span>
+                ))}
+              </>
+            );
+          })()}
         </div>
+        {gameState.phase === 'cat' && (
+          <div className="deterrence-info">
+            Deterring: {calculateDeterrence(gameState.cats)} mice
+          </div>
+        )}
       </div>
 
       {selectedCat && gameState.phase === 'cat' && (

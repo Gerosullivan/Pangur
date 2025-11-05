@@ -37,7 +37,7 @@
   background-color: rgba(20, 24, 32, 0.9);
   padding: 12px 20px;
   border-radius: 8px;
-  min-width: 200px;
+  min-width: 240px;
   text-align: center;
 }
 
@@ -53,10 +53,23 @@
   flex-wrap: nowrap;
   gap: 8px;
   justify-content: center;
+  min-height: 32px;
+}
+
+.deterrence-info {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #0396A6;
+  font-weight: bold;
 }
 
 .queue-mouse {
   font-size: 24px;
+  transition: all 0.3s ease;
+}
+
+.queue-mouse.scared {
+  transform: translateY(-4px);
 }
 
 .cat-info-panel {

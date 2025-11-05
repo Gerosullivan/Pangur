@@ -82,9 +82,17 @@ After the one-time setup placement, each round repeats these phases in order:
 - **Deterrence Calculation**
   - Sum current meow after special cell modifiers.
   - Remove that many mice from the front of the incoming queue (show "scared" state on mouse piece art).
+- **Live Predictive Meow Impact**
+  - During the cat phase, the incoming queue displays a real-time preview of deterrence effects.
+  - Scared mice (those that will be deterred) appear as 😱 emoji, positioned slightly higher than regular mice.
+  - Regular mice (those that will enter) appear as 🐭 emoji.
+  - The display updates dynamically as cats move around the board and meow modifiers change.
+  - Shows "Deterring: X mice" to indicate current total meow effect.
+  - Calculation: scared = min(total meow, incoming queue); entering = incoming queue - scared.
 - **Placement**
   - Remaining mice enter starting at row `4`, columns `A->D`, then row `3` etc., filling empty cells top-down.
   - Stop when either the queue is empty or the board has no free cells.
+  - If not all entering mice can be placed (board overwhelmed), trigger loss condition immediately.
   - Refill the queue to 12 for preview of the next wave; update the outside art instantly (no entry animation needed). Waves consistently supply 12 incoming mice in this prototype.
 
 ## 8. Special Cells & Modifiers
@@ -112,7 +120,7 @@ After the one-time setup placement, each round repeats these phases in order:
 - **Loss**
   - Grain reaches 0 at any time.
   - All cats defeated.
-  - Board grid completely filled by mice at end of incoming phase.
+  - Incoming mice cannot be placed due to lack of free cells (board overwhelmed).
 
 ## 11. Outstanding Questions / Next Sync
 

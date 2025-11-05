@@ -1,6 +1,6 @@
 .board {
   position: absolute;
-  top: 160px;
+  top: 190px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;

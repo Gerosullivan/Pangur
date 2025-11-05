@@ -304,6 +304,16 @@ export function executeIncomingWave(state: GameState): GameState {
     }
   }
 
+  // Check if mice couldn't be placed (board overwhelmed)
+  if (placed < entering) {
+    // Not all mice could be placed - game over
+    return {
+      ...state,
+      phase: 'gameOver',
+      gameResult: 'loss',
+    };
+  }
+
   // Reset cats for next turn
   const newCats = state.cats.map(cat => ({
     ...cat,
@@ -329,7 +339,7 @@ export function executeIncomingWave(state: GameState): GameState {
     selectedCatId: null,
   };
 
-  // Check win/loss conditions
+  // Check win condition
   if (checkWinCondition(newState)) {
     return {
       ...newState,
@@ -338,8 +348,9 @@ export function executeIncomingWave(state: GameState): GameState {
     };
   }
 
+  // Check other loss conditions (grain/cats defeated)
   const lossCondition = checkLossCondition(newState);
-  if (lossCondition) {
+  if (lossCondition === 'grain' || lossCondition === 'cats') {
     return {
       ...newState,
       phase: 'gameOver',
