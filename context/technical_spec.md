@@ -2,16 +2,13 @@
 
 ## Goals
 
-- Rebuild the wave-defense prototype with a clean architecture that can later be ported to Godot without rewriting core rules.
+- code with a clean architecture that can later be ported to Godot without rewriting core rules.
 - Keep feature scope tight while supporting future API integrations (telemetry, remote opponents, content services).
 
 ## Project Structure
 
 - `context/`: Living design docs (game rules, lore tables, UI spec).
-- `components/`: Presentational UI elements and lightweight wrappers (framework-agnostic where possible).
-- `game/`: Pure game-logic modules (entities, turn loop, rules engine, state snapshots).
 - `assets/`: Shared art referenced by both prototypes and future Godot scenes.
-- `utils/`: Helper functions (e.g., sprite maps) that do not depend on a framework.
 
 ## Architectural Principles
 

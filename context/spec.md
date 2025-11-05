@@ -12,7 +12,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 ## 2. Starting State
 
 - Board: 4x4 grid representing the building interior. Perimeter cells (row 4, row 1, column A, column D) begin occupied by resident `1/1` mice pieces, filling all edge squares (12 total); interior cells start empty. Shadow bonus cells should render dark, while open gate cells appear light (B4, C4).
-- Cat pieces: Three residents off-board at the bottom center, displayed side-by-side (same cat component as will be on board - see UI spec). Base stats use `catch/meow`: `1/3`, Pangur `3/1`, `2/2`. Each cat begins with five hearts (health).
+- Cat pieces: Three residents off-board at the bottom center, displayed side-by-side (same cat component as will be on board - see UI spec). Base stats use `catch/meow`: `1/3`, Pangur (aka Cruibne) `3/1`, `2/2`. Each cat begins with five hearts (health).
 - Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat piece from the off board onto any free interior cell. This occurs once per game; cats cannot be placed on occupied perimeter cells until cleared.
 - Grain: 16 units stored inside the building.
 - Incoming Wave: 12 mouse pieces waiting outside (queue for next entry phase) above board.
