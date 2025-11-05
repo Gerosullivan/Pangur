@@ -360,3 +360,54 @@ export function executeIncomingWave(state: GameState): GameState {
 
   return newState;
 }
+
+// Finalize incoming wave after mice have been placed by animation
+export function finalizeIncomingWave(state: GameState): GameState {
+  if (state.phase !== 'incoming') return state;
+
+  // Reset cats for next turn
+  const newCats = state.cats.map(cat => ({
+    ...cat,
+    spentCatch: 0,
+    hasMoved: false,
+    isActive: false,
+  }));
+
+  // Reset mice stun flags
+  const resetMice = state.residentMice.map(mouse => ({
+    ...mouse,
+    isStunned: false,
+    hasEaten: false,
+  }));
+
+  const newState: GameState = {
+    ...state,
+    cats: newCats,
+    residentMice: resetMice,
+    incomingQueue: 12, // Refill queue
+    turn: state.turn + 1,
+    phase: 'cat',
+    selectedCatId: null,
+  };
+
+  // Check win condition
+  if (checkWinCondition(newState)) {
+    return {
+      ...newState,
+      phase: 'gameOver',
+      gameResult: 'win',
+    };
+  }
+
+  // Check other loss conditions (grain/cats defeated)
+  const lossCondition = checkLossCondition(newState);
+  if (lossCondition === 'grain' || lossCondition === 'cats') {
+    return {
+      ...newState,
+      phase: 'gameOver',
+      gameResult: 'loss',
+    };
+  }
+
+  return newState;
+}

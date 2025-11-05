@@ -21,6 +21,7 @@ import {
   passTurnToMice,
   executeMousePhase,
   executeIncomingWave,
+  finalizeIncomingWave,
 } from '../gameActions';
 import './Game.css';
 
@@ -116,8 +117,8 @@ export const Game: React.FC = () => {
 
   const placeMiceSequentially = (state: GameState, totalEntering: number, currentIndex: number) => {
     if (currentIndex >= totalEntering) {
-      // All mice placed, finalize the wave
-      const newState = executeIncomingWave(state);
+      // All mice placed, finalize the wave without placing mice again
+      const newState = finalizeIncomingWave(state);
       setGameState(newState);
       return;
     }
@@ -223,12 +224,25 @@ export const Game: React.FC = () => {
         <div className="queue-label">Incoming: {gameState.incomingQueue} mice</div>
         <div className="queue-mice">
           {(() => {
-            const deterrence = gameState.phase === 'cat'
+            // Calculate deterrence during cat phase and incoming phase
+            const deterrence = (gameState.phase === 'cat' || gameState.phase === 'incoming')
               ? calculateDeterrence(gameState.cats)
               : 0;
             const scared = Math.min(deterrence, gameState.incomingQueue);
             const entering = gameState.incomingQueue - scared;
 
+            // During incoming phase, only show entering mice (scared ones are gone)
+            if (gameState.phase === 'incoming') {
+              return (
+                <>
+                  {Array.from({ length: entering }).map((_, i) => (
+                    <span key={`entering-${i}`} className="queue-mouse">🐭</span>
+                  ))}
+                </>
+              );
+            }
+
+            // During cat phase, show both scared and entering
             return (
               <>
                 {Array.from({ length: scared }).map((_, i) => (
