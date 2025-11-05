@@ -1,0 +1,62 @@
+.top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background-color: rgba(20, 24, 32, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  z-index: 100;
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #0396A6;
+  margin: 0;
+}
+
+.wave-counter {
+  font-size: 20px;
+  color: #F2F2F2;
+}
+
+.grain-counter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.grain-icon {
+  font-size: 28px;
+}
+
+.grain-value {
+  color: #F2F2F2;
+}
+
+.pass-turn-button {
+  height: 48px;
+  padding: 0 32px;
+  background-color: #D97014;
+  color: #F2F2F2;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: opacity 0.2s;
+}
+
+.pass-turn-button:hover:not(:disabled) {
+  background-color: #c06312;
+}
