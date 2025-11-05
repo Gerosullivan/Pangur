@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GameState, Position, Cat } from '../types';
+import { GameState, Position, Cat, Mouse, Column, Row } from '../types';
 import { TopBar } from './TopBar';
 import { Board } from './Board';
 import { CatPiece } from './CatPiece';
@@ -11,6 +11,7 @@ import {
   getEffectiveMeow,
   getCellModifiers,
   calculateDeterrence,
+  isCellOccupied,
 } from '../gameLogic';
 import {
   placeCat,
@@ -93,10 +94,84 @@ export const Game: React.FC = () => {
 
       // Execute incoming wave phase after another delay
       setTimeout(() => {
-        newState = executeIncomingWave(newState);
-        setGameState(newState);
+        animateIncomingWave(newState);
       }, 1000);
     }, 1000);
+  };
+
+  const animateIncomingWave = (state: GameState) => {
+    if (state.phase !== 'incoming') return;
+
+    // Calculate deterrence and which mice are entering
+    const deterrence = calculateDeterrence(state.cats);
+    const scared = Math.min(deterrence, state.incomingQueue);
+    const entering = state.incomingQueue - scared;
+
+    // First, update to show deterred mice are gone (wait a moment to show the scared mice)
+    setTimeout(() => {
+      // Start placing mice one at a time
+      placeMiceSequentially(state, entering, 0);
+    }, 500);
+  };
+
+  const placeMiceSequentially = (state: GameState, totalEntering: number, currentIndex: number) => {
+    if (currentIndex >= totalEntering) {
+      // All mice placed, finalize the wave
+      const newState = executeIncomingWave(state);
+      setGameState(newState);
+      return;
+    }
+
+    // Place one mouse
+    const newMice = [...state.residentMice];
+    const rows = [4, 3, 2, 1] as const;
+    const cols = ['A', 'B', 'C', 'D'] as const;
+
+    let placed = false;
+    for (const row of rows) {
+      if (placed) break;
+      for (const col of cols) {
+        if (placed) break;
+
+        const pos = { col, row };
+        if (!isCellOccupied(pos, state.cats, newMice)) {
+          newMice.push({
+            id: `mouse-t${state.turn}-${currentIndex}`,
+            position: pos,
+            attack: 1,
+            hearts: 1,
+            hasEaten: false,
+            isStunned: false,
+          });
+          placed = true;
+        }
+      }
+    }
+
+    if (!placed) {
+      // No space - game over
+      setGameState({
+        ...state,
+        phase: 'gameOver',
+        gameResult: 'loss',
+      });
+      return;
+    }
+
+    // Update state with new mouse
+    setGameState({
+      ...state,
+      residentMice: newMice,
+    });
+
+    // Place next mouse after delay
+    setTimeout(() => {
+      placeMiceSequentially(
+        { ...state, residentMice: newMice },
+        totalEntering,
+        currentIndex + 1
+      );
+    }, 200);
   };
 
   const catsInHand = gameState.cats.filter(cat => cat.position === null);

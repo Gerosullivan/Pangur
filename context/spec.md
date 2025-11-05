@@ -90,10 +90,12 @@ After the one-time setup placement, each round repeats these phases in order:
   - Shows "Deterring: X mice" to indicate current total meow effect.
   - Calculation: scared = min(total meow, incoming queue); entering = incoming queue - scared.
 - **Placement**
-  - Remaining mice enter starting at row `4`, columns `A->D`, then row `3` etc., filling empty cells top-down.
-  - Stop when either the queue is empty or the board has no free cells.
+  - Step 1: Delete all deterred (scared 😱) mice from the incoming queue display (500ms pause to show deterrence effect).
+  - Step 2: Place each remaining mouse one at a time onto the board with a 200ms delay between placements.
+  - Placement order: Fill from row `4` columns `A->D`, then row `3`, etc., filling empty cells top-down, left-to-right.
+  - Stop when either all entering mice are placed or the board has no free cells.
   - If not all entering mice can be placed (board overwhelmed), trigger loss condition immediately.
-  - Refill the queue to 12 for preview of the next wave; update the outside art instantly (no entry animation needed). Waves consistently supply 12 incoming mice in this prototype.
+  - After all mice are placed, refill the queue to 12 for preview of the next wave. Waves consistently supply 12 incoming mice in this prototype.
 
 ## 8. Special Cells & Modifiers
 

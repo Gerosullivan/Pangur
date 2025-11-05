@@ -26,7 +26,7 @@ export const CatPiece: React.FC<CatPieceProps> = ({
 }) => {
   const position = previewPosition || cat.position;
   const effectiveCatch = position ? getEffectiveCatch(cat, position) : cat.baseCatch;
-  const effectiveMeow = position ? getEffectiveMeow(cat, position) : 0;
+  const effectiveMeow = position ? getEffectiveMeow(cat, position) : cat.baseMeow;
   const availableCatch = effectiveCatch - cat.spentCatch;
 
   const mods = position ? getCellModifiers(position) : null;
