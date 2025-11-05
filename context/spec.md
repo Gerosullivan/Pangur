@@ -1,21 +1,21 @@
-# Pangur 4x4 Grid Pivot Spec
+# Pangur - turn based strategy game Spec
 
-This document captures the pared-down design for the new Pangur prototype so a fresh engineer can rebuild the experience without depending on legacy code. Keep this spec current as features land in the new repo.
+This document captures the design for the new Pangur prototype. Keep this spec current as features land in the new repo.
 
 ## 1. Core Concept
 
-- Setting: Cats defend a 4x4 building grid from waves of mice. Each cell may hold exactly one resident (cat or mouse) or remain empty.
+- Setting: Cats defend a 4x4 building grid from waves of mice. Each cell may hold exactly one resident (cat or mouse piece) or remain empty.
 - Coordinates: Columns `A-D` (left->right) and rows `1-4` (bottom->top), chess style.
 - Orientation: Row `4` (top) is the building entrance; row `1` (bottom) is the back wall.
 - Goal: Survive by eliminating resident mice and deterring the incoming queue before grain or cats are lost.
 
 ## 2. Starting State
 
-- Board: 4x4 grid representing the building interior. Perimeter cells (row 4, row 1, column A, column D) begin occupied by resident `1/1` mice, filling all edge squares (12 total); interior cells start empty. Shadow bonus cells should render dark, while open gate cells appear light (B4, C4).
-- Cats: Three residents off-board in the player's hand at the bottom center, displayed side-by-side using the same card art as on the board. Base stats use `catch/meow`: `1/3`, Pangur `3/1`, `2/2`. Each cat begins with five hearts (health).
-- Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat from the hand onto any free interior cell. This occurs once per game; cats cannot be placed on occupied perimeter cells until cleared.
+- Board: 4x4 grid representing the building interior. Perimeter cells (row 4, row 1, column A, column D) begin occupied by resident `1/1` mice pieces, filling all edge squares (12 total); interior cells start empty. Shadow bonus cells should render dark, while open gate cells appear light (B4, C4).
+- Cat pieces: Three residents off-board at the bottom center, displayed side-by-side (same cat component as will be on board - see UI spec). Base stats use `catch/meow`: `1/3`, Pangur `3/1`, `2/2`. Each cat begins with five hearts (health).
+- Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat piece from the off board onto any free interior cell. This occurs once per game; cats cannot be placed on occupied perimeter cells until cleared.
 - Grain: 16 units stored inside the building.
-- Incoming Wave: 12 mouse tokens waiting outside (queue for next entry phase).
+- Incoming Wave: 12 mouse pieces waiting outside (queue for next entry phase) above board.
 
 ## 3. Attributes & Terminology
 
@@ -41,7 +41,7 @@ After the one-time setup placement, each round repeats these phases in order:
 ## 5. Cat Phase Details
 
 - **Activation**
-  - Player selects a cat (hand or board) to make it active (highlight border). Only the active cat can spend catch points or move.
+  - Player selects a cat to make it active (highlight border). Only the active cat can spend catch points or move.
 - **Ordering Rules**
   - Each cat takes at most one move and one attack sequence per turn. The player may either move first (then start attacking) or attack first (then take the single move), but cannot move both before and after attacking.
   - Once a cat begins attacking, it must finish spending catch before moving. If it moves first, it may attack afterwards; if it moves after attacking, that move ends its turn.
@@ -81,7 +81,7 @@ After the one-time setup placement, each round repeats these phases in order:
 
 - **Deterrence Calculation**
   - Sum current meow after special cell modifiers.
-  - Remove that many mice from the front of the incoming queue (show "scared" state on UI tokens).
+  - Remove that many mice from the front of the incoming queue (show "scared" state on mouse piece art).
 - **Placement**
   - Remaining mice enter starting at row `4`, columns `A->D`, then row `3` etc., filling empty cells top-down.
   - Stop when either the queue is empty or the board has no free cells.
@@ -117,13 +117,3 @@ After the one-time setup placement, each round repeats these phases in order:
 ## 11. Outstanding Questions / Next Sync
 
 - None currently. Update this section as new decisions arise.
-
-## new repo instructions
-
-Okay let's get ready for a new repo set up using this repo (../Pangur) as a basis for files to be transferred. Obviously this spec will be brought over to the new folder. Also include the image assets. Also include the mouse and cat components. Also include the table of cat specs and names from the Brehon Cats lore.
-Also include the agents.md and claude.md files. Generate a technical spec which mentions that the architecture of the code should be keeping keeping code modular (seperate files, avoid one large file) with a Godot port in mind and also ready for an API integration for headless testing in later versions - see below. You will need to produce a UI spec whereby I want to have you are metrics at the top of the screen like grain total wave number et cetera and permanent permanent action buttons like ending wave continue et cetera at the bottom of the screen. As this is a prototype we don't have to worry about accessibility or responsive layouts so absolute pixel positioning is fine.
-
-## Headless testing (future version)
-
-Build a reusable simulation harness. Introduce a strategy abstraction.
-Aggregate results across runs into a structured report
