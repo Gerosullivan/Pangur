@@ -1,0 +1,27 @@
+{
+  "kittens": {
+    "random": {
+      "catchMax": 1,
+      "meow": 1,
+      "health": 3
+    }
+  },
+  "evolutions": {
+    "cruibne": {
+      "catch": 3,
+      "meow": 1
+    },
+    "breoinne": {
+      "catch": 1,
+      "meow": 3
+    },
+    "baircne": {
+      "catch": 2,
+      "meow": 2
+    },
+    "meoinne": {
+      "catch": 0,
+      "meow": 4
+    }
+  }
+}

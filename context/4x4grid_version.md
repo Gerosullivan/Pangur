@@ -1,0 +1,129 @@
+# Pangur 4x4 Grid Pivot Spec
+
+This document captures the pared-down design for the new Pangur prototype so a fresh engineer can rebuild the experience without depending on legacy code. Keep this spec current as features land in the new repo.
+
+## 1. Core Concept
+
+- Setting: Cats defend a 4x4 building grid from waves of mice. Each cell may hold exactly one resident (cat or mouse) or remain empty.
+- Coordinates: Columns `A-D` (left->right) and rows `1-4` (bottom->top), chess style.
+- Orientation: Row `4` (top) is the building entrance; row `1` (bottom) is the back wall.
+- Goal: Survive by eliminating resident mice and deterring the incoming queue before grain or cats are lost.
+
+## 2. Starting State
+
+- Board: 4x4 grid representing the building interior. Perimeter cells (row 4, row 1, column A, column D) begin occupied by resident `1/1` mice, filling all edge squares (12 total); interior cells start empty. Shadow bonus cells should render dark, while open gate cells appear light (B4, C4).
+- Cats: Three residents off-board in the player's hand at the bottom center, displayed side-by-side using the same card art as on the board. Base stats use `catch/meow`: `1/3`, Pangur `3/1`, `2/2`. Each cat begins with five hearts (health).
+- Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat from the hand onto any free interior cell. This occurs once per game; cats cannot be placed on occupied perimeter cells until cleared.
+- Grain: 16 units stored inside the building.
+- Incoming Wave: 12 mouse tokens waiting outside (queue for next entry phase).
+
+## 3. Attributes & Terminology
+
+- `Catch (Paw)`: Attack points. One point spends to deal 1 damage to a target mouse.
+- `Meow`: Deter value. Sum of all active meow determines how many mice from the incoming wave flee each end of turn.
+- `Hearts`: Cat / mouse health. When a cat or mouse reaches 0 hearts it is removed.
+- `Stunned (mouse only)`: Mouse skips its attack/eat actions for the rest of the current turn cycle.
+- Mouse stat formats: `1/1` (attack/health base) or `2/2` (attack/health after grain).
+
+## 4. Turn Loop Overview
+
+After the one-time setup placement, each round repeats these phases in order:
+
+1. **Cat Phase**
+   - For each cat (any order), player resolves optional movement and attacks, adhering to the locking rules below.
+   - Player ends phase by triggering `Pass turn to mice`.
+2. **Resident Mouse Phase**
+   - Mice on the board attack based on priority rules and remaining attack points.
+   - Surviving mice eat grain, potentially evolving.
+3. **Incoming Wave Phase**
+   - Calculate meow deterrence, remove scared mice from the queue, and place the remaining mice onto the grid.
+
+## 5. Cat Phase Details
+
+- **Activation**
+  - Player selects a cat (hand or board) to make it active (highlight border). Only the active cat can spend catch points or move.
+- **Ordering Rules**
+  - Each cat takes at most one move and one attack sequence per turn. The player may either move first (then start attacking) or attack first (then take the single move), but cannot move both before and after attacking.
+  - Once a cat begins attacking, it must finish spending catch before moving. If it moves first, it may attack afterwards; if it moves after attacking, that move ends its turn.
+  - Players may swap between cats freely; switching to another cat does not reset the ordering restriction on the original cat.
+  - Example: Pangur attacks to clear a path, the `2/2` cat moves into the new space and attacks, then Pangur spends remaining catch before choosing to move at the end of its own sequence.
+- **Attacking**
+  - Valid targets: Adjacent and diagonal resident mice (max 8 surrounding cells).
+  - Spending 1 catch reduces the target mouse health by 1.
+  - When a `2/2` mouse is hit but survives, downgrade it to `1/1` and mark it stunned; the mouse loses its bonus attack and health and cannot act again this turn.
+  - On killing a mouse, the cat heals +1 heart (cannot exceed 5 hearts).
+  - Paw points do not refresh mid-turn; once spent, they are gone until next round.
+- **Movement**
+  - Pangur (`3/1`) moves like a chess queen: any number of cells vertically, horizontally, or diagonally until blocked by a resident or board edge; cannot pass through mice.
+  - Other cats move like a chess king: one cell in any direction per move, provided the destination is free; they cannot move through or over mice.
+  - Drag preview must update live bonuses (see Special Cells) and the incoming deterrence forecast.
+  - Drop commits the move and updates any derived attributes immediately.
+- **Turn End**
+  - `Pass turn to mice` finalizes cat actions, triggers meow calculation, and hands off to the mouse phase.
+
+## 6. Resident Mouse Phase
+
+- **Attack Sub-phase**
+  - Each mouse spends all attack points before moving to the next mouse; skip any mouse flagged as stunned.
+  - Targeting priority (re-evaluate after each hit):
+    1. Cat with base stat `1/3` (if alive).
+    2. Any cat in row `4` (closest to the building entrance). Break ties left->right then lowest column letter.
+    3. Remaining cats sorted by lowest current hearts, then left->right.
+  - Each point of mouse attack deals 1 heart damage. Cats reaching 0 hearts are removed immediately.
+  - Cats cannot be stunned.
+- **Eat Sub-phase**
+  - Resolve only for mice not stunned and still alive.
+  - Base `1/1` mice consume 1 grain; immediately transform into `2/2`.
+  - Grain-fed `2/2` mice consume 2 grain (stay `2/2`).
+  - If grain is reduced to 0 during this phase, trigger the loss condition immediately.
+
+## 7. Incoming Wave Phase
+
+- **Deterrence Calculation**
+  - Sum current meow after special cell modifiers.
+  - Remove that many mice from the front of the incoming queue (show "scared" state on UI tokens).
+- **Placement**
+  - Remaining mice enter starting at row `4`, columns `A->D`, then row `3` etc., filling empty cells top-down.
+  - Stop when either the queue is empty or the board has no free cells.
+  - Refill the queue to 12 for preview of the next wave; update the outside art instantly (no entry animation needed). Waves consistently supply 12 incoming mice in this prototype.
+
+## 8. Special Cells & Modifiers
+
+- **Meow Lanes**
+  - Row `4`: Meow x2 (UI: cat meow number bold with blue glow).
+  - Row `3`: Meow x1 (no change).
+  - Row `2`: Meow x0.5, rounded down (UI: cat meow number outlined in purple).
+  - Row `1`: Meow = 0 (UI: cat meow number greyed or crossed out).
+- **Shadow Bonus (Catch)**
+  - Cells on outer walls (columns `A` or `D`, row `1`) grant +1 catch.
+  - Exceptions: `B4` and `C4` are "open gate" and provide no bonus.
+  - UI: cat catch number bold with red glow while occupying/hovering; render these shadow bonus cells darker.
+
+## 9. Resource & State Tracking
+
+- Track per-cat: position (or hand slot), hearts, base catch/meow, temporary modifiers, spent catch, move-used flag.
+- Track per-mouse: position, current stats (`1/1` or `2/2`), stun flag.
+- Track global: grain total, incoming queue count (0-12), turn counter, deterrence preview.
+- Expose hooks for upcoming Godot port (e.g., serializable game state snapshot).
+
+## 10. Win & Loss Conditions
+
+- **Win**: No resident mice on board and the incoming queue is empty when the wave would spawn.
+- **Loss**
+  - Grain reaches 0 at any time.
+  - All cats defeated.
+  - Board grid completely filled by mice at end of incoming phase.
+
+## 11. Outstanding Questions / Next Sync
+
+- None currently. Update this section as new decisions arise.
+
+## new repo instructions
+
+Okay let's get ready for a new repo set up using this repo (../Pangur) as a basis for files to be transferred. Obviously this spec will be brought over to the new folder. Also include the image assets. Also include the mouse and cat components. Also include the table of cat specs and names from the Brehon Cats lore.
+Also include the agents.md and claude.md files. Generate a technical spec which mentions that the architecture of the code should be keeping keeping code modular (seperate files, avoid one large file) with a Godot port in mind and also ready for an API integration for headless testing in later versions - see below. You will need to produce a UI spec whereby I want to have you are metrics at the top of the screen like grain total wave number et cetera and permanent permanent action buttons like ending wave continue et cetera at the bottom of the screen. As this is a prototype we don't have to worry about accessibility or responsive layouts so absolute pixel positioning is fine.
+
+## Headless testing (future version)
+
+Build a reusable simulation harness. Introduce a strategy abstraction.
+Aggregate results across runs into a structured report
