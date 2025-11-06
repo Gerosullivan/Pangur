@@ -16,6 +16,7 @@ function Board() {
   const placeCat = useGameStore((state) => state.placeCat);
   const moveCat = useGameStore((state) => state.moveCat);
   const attackMouse = useGameStore((state) => state.attackMouse);
+  const stepper = useGameStore((state) => state.stepper);
 
   const catStats = useMemo(() => {
     const result = new Map<CatId, { effectiveCatch: number; effectiveMeow: number; remainingCatch: number }>();
@@ -61,6 +62,22 @@ function Board() {
       neighborIds.filter((cellId) => cells[cellId]?.occupant?.type === 'mouse')
     );
   }, [phase, selectedCatId, cats, cells]);
+
+  const attackHighlight = useMemo(() => {
+    if (phase !== 'stepper' || !stepper) return null;
+    if (stepper.index >= stepper.frames.length) return null;
+    const frame = stepper.frames[stepper.index];
+    if (!frame || frame.phase !== 'mouse-attack') {
+      return null;
+    }
+    const { mouseId, targetId } = frame.payload as { mouseId: string; targetId: CatId };
+    return {
+      mouseId,
+      mouseCell: mice[mouseId]?.position,
+      catId: targetId,
+      catCell: cats[targetId]?.position,
+    };
+  }, [phase, stepper, mice, cats]);
 
   const handleCellClick = (cell: CellState) => {
     const occupant = cell.occupant;
@@ -109,7 +126,13 @@ function Board() {
             const isSelected = occupant?.type === 'cat' && occupant.id === selectedCatId;
             const isValidMove = !occupant && validMoves.has(id);
             const isValidAttack = occupant?.type === 'mouse' && attackTargets.has(id);
-            const cellClasses = ['board-cell', cell.terrain, isSelected ? 'selected' : undefined, isValidMove ? 'valid-move' : undefined, isValidAttack ? 'valid-attack' : undefined]
+            const cellClasses = [
+              'board-cell',
+              cell.terrain,
+              isSelected ? 'selected' : undefined,
+              isValidMove ? 'valid-move' : undefined,
+              isValidAttack ? 'valid-attack' : undefined,
+            ]
               .filter(Boolean)
               .join(' ');
 
@@ -140,9 +163,15 @@ function Board() {
                     isSelected={isSelected}
                     onSelect={selectCat}
                     cellId={id}
+                    highlighted={attackHighlight?.catCell === id && attackHighlight.catId === occupant.id}
                   />
                 )}
-                {occupant?.type === 'mouse' && <MousePiece mouse={mice[occupant.id]} />}
+                {occupant?.type === 'mouse' && (
+                  <MousePiece
+                    mouse={mice[occupant.id]}
+                    highlighted={attackHighlight?.mouseCell === id && attackHighlight.mouseId === occupant.id}
+                  />
+                )}
                 {!occupant && <span style={{ position: 'absolute', bottom: 6, right: 8, fontSize: '0.65rem', opacity: 0.4 }}>{id}</span>}
               </div>
             );

@@ -2,12 +2,15 @@ import type { MouseState } from '../types';
 
 interface MousePieceProps {
   mouse: MouseState;
+  highlighted?: boolean;
 }
 
-function MousePiece({ mouse }: MousePieceProps) {
+function MousePiece({ mouse, highlighted }: MousePieceProps) {
   const heartIcon = mouse.hearts > 1 ? '❤️❤️' : mouse.hearts === 1 ? '❤️' : '';
   const attackIcon = `⚔️ ${mouse.attack}`;
-  const className = ['piece', 'mouse', mouse.stunned ? 'stunned' : undefined].filter(Boolean).join(' ');
+  const className = ['piece', 'mouse', mouse.stunned ? 'stunned' : undefined, highlighted ? 'highlighted' : undefined]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div className={className} aria-label={`Mouse ${mouse.grainFed ? '2/2' : '1/1'}`}>

@@ -10,12 +10,23 @@ interface CatPieceProps {
   isSelected: boolean;
   onSelect?: (catId: CatId) => void;
   cellId: CellId;
+  highlighted?: boolean;
 }
 
 const catchColor = '#d96d55';
 const meowColor = '#0396a6';
 
-function CatPiece({ cat, catId, effectiveCatch, effectiveMeow, remainingCatch, isSelected, onSelect, cellId }: CatPieceProps) {
+function CatPiece({
+  cat,
+  catId,
+  effectiveCatch,
+  effectiveMeow,
+  remainingCatch,
+  isSelected,
+  onSelect,
+  cellId,
+  highlighted,
+}: CatPieceProps) {
   const definition = catDefinitions[catId];
   const currentHearts = Math.max(cat.hearts, 0);
   const emptyHearts = Math.max(CAT_STARTING_HEARTS - currentHearts, 0);
@@ -24,7 +35,9 @@ function CatPiece({ cat, catId, effectiveCatch, effectiveMeow, remainingCatch, i
     onSelect?.(catId);
   };
 
-  const className = ['piece', 'cat', isSelected ? 'selected-piece' : undefined].filter(Boolean).join(' ');
+  const className = ['piece', 'cat', isSelected ? 'selected-piece' : undefined, highlighted ? 'highlighted' : undefined]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <button

@@ -103,6 +103,11 @@
   box-shadow: 0 0 12px rgba(217, 112, 20, 0.45);
 }
 
+.piece.highlighted {
+  border-color: #d96d55;
+  box-shadow: 0 0 14px rgba(217, 109, 85, 0.6);
+}
+
 .piece.cat {
   background: linear-gradient(145deg, rgba(3, 150, 166, 0.4), rgba(3, 150, 166, 0.15));
 }
