@@ -7,7 +7,7 @@ interface CatPieceProps {
   isDragging?: boolean;
   isSelected?: boolean;
   onClick?: (e?: React.MouseEvent) => void;
-  onDragStart?: () => void;
+  onDragStart?: (e: React.DragEvent) => void;
   onDragEnd?: () => void;
 }
 
@@ -19,7 +19,7 @@ function CatPiece({ cat, isDragging, isSelected, onClick, onDragStart, onDragEnd
     <div
       className={`cat-piece ${isSelected ? 'selected' : ''} ${isDragging ? 'dragging' : ''}`}
       onClick={onClick}
-      draggable
+      draggable={!!onDragStart}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
     >

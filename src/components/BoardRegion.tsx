@@ -53,8 +53,10 @@ function BoardRegion({ gameState, setGameState }: BoardRegionProps) {
   };
 
   // Drag handlers
-  const handleDragStart = (catId: string) => {
+  const handleDragStart = (e: React.DragEvent, catId: string) => {
     setDraggedCatId(catId);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('catId', catId);
   };
 
   const handleDragEnd = () => {
@@ -74,7 +76,9 @@ function BoardRegion({ gameState, setGameState }: BoardRegionProps) {
   const handleDrop = (e: React.DragEvent, position: Position) => {
     e.preventDefault();
 
-    if (!draggedCatId) return;
+    // Get catId from either local state or dataTransfer
+    const catId = draggedCatId || e.dataTransfer.getData('catId');
+    if (!catId) return;
 
     // Check if cell is valid for placement
     const isOccupied = isCellOccupied(gameState.cats, gameState.mice, position);
@@ -85,7 +89,7 @@ function BoardRegion({ gameState, setGameState }: BoardRegionProps) {
         setGameState(prev => ({
           ...prev,
           cats: prev.cats.map(cat =>
-            cat.id === draggedCatId ? { ...cat, position } : cat
+            cat.id === catId ? { ...cat, position } : cat
           ),
         }));
       }
@@ -141,7 +145,7 @@ function BoardRegion({ gameState, setGameState }: BoardRegionProps) {
                         e?.stopPropagation();
                         handleCatSelect(cat.id);
                       }}
-                      onDragStart={() => handleDragStart(cat.id)}
+                      onDragStart={(e) => handleDragStart(e, cat.id)}
                       onDragEnd={handleDragEnd}
                     />
                   )}

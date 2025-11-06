@@ -19,6 +19,11 @@ function ActionArea({ gameState, setGameState }: ActionAreaProps) {
     }));
   };
 
+  const handleDragStart = (e: React.DragEvent, catId: string) => {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('catId', catId);
+  };
+
   const handleRestart = () => {
     setGameState(createInitialGameState());
   };
@@ -71,7 +76,10 @@ function ActionArea({ gameState, setGameState }: ActionAreaProps) {
         <div className="cat-hand">
           {catsInHand.map(cat => (
             <div key={cat.id} className="cat-piece-hand">
-              <CatPiece cat={cat} />
+              <CatPiece
+                cat={cat}
+                onDragStart={(e) => handleDragStart(e, cat.id)}
+              />
             </div>
           ))}
         </div>
