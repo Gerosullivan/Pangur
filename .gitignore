@@ -1,5 +1,26 @@
 # Dependencies
 node_modules/
+
+# Build output
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
 package-lock.json
 
 # Build outputs
@@ -31,6 +52,7 @@ lerna-debug.log*
 
 # Testing
 coverage/
+.playwright-mcp/
 
 # Temporary files
 *.tmp

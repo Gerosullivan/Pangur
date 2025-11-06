@@ -11,23 +11,37 @@ main colour pallet:
 
 ## 1. Screen Layout
 
-- **Resolution Target**: 1440 × 900. Prototype may rely on absolute positioning; responsive behavior is out of scope.
+Use responsive layout:
+
+- outer grid, 4 flex rows:
+
+  - row 1: top-bar div, fixed height (80px)
+  - row 2: incoming-mice-row div, fixed height (80px)
+  - row 3: Central Board Region, fills the leftover height
+  - row 4: action-area div, fixed height (140px)
+
 - **Top Metrics Bar**
 
-  - Height: 80px, full width, positioned at `top: 0`.
+  - Height: 80px, full width.
   - Background: Semi-opaque charcoal (`rgba(20, 24, 32, 0.9)`).
   - Content order (left → right):
     1. Title block `Pangur` with current wave (`Wave 3`).
     2. Grain counter (icon 🌾 + numeric total, e.g., `Grain 16`).
-    3. - `Pass Turn to Mice` button (primary CTA; ends cat phase and starts mouse phase).
+
+- **Incoming Mice Row**
+
+  - Height: 80px, full width.
+  - Background: Semi-opaque charcoal (`rgba(20, 24, 32, 0.9)`).
+  - Contains horizontal row of mouse pieces showing incoming wave
+  - Shows deterrence visual (scared mice positioned slightly above)
+  - No text label
 
 - **Central Board Region**
 
-  - Grid: 4×4 cells, each 256px × 256px, with 12px gutters.
-  - Position: Centered horizontally; `top` offset ~120px from screen edge.
+  - Grid: 4×4 cells with responsive/flexible sizing to fill available space
   - Cell Styling:
     - Interior cells: grey.
-    - Shadow bonus cells (row 1, columns A/D): dark grey.
+    - Shadow bonus cells (row 1, columns A and D): dark grey.
     - Open gate cells (B4, C4): light grey.
   - Perimeter occupancy: edge cells prefilled with mouse pieces during setup.
 
@@ -44,41 +58,44 @@ main colour pallet:
         - `Catch 0` grey badge if out of attacks this turn.
       - full meow and attack base points and modifiers. e.g. "Attack 4 (3 base +1 shadow bonus")"
 
+- **Bottom Action Area**
+
+  - Height: 140px, full width
+  - Contains cat-hand div at beginning of game (centered)
+  - Cat pieces in hand: 98px × 98px
+  - Setup message appears to the right of cat pieces with left arrow: "← Drag cats onto the board to start (avoid perimeter cells)"
+  - After setup, replaced with action button(s), center middle
+    - `End Turn` button (primary CTA; ends cat phase and starts mouse phase).
+    - other buttons like `Restart game` and `Undo move` (TBC)
+
 ## 2. Key Visual Components
 
 - **Cat Piece**
-  - Dimensions: 256px × 256px:
-    - top row (~15% height): Hearts Panel: floating above badge. One-line display of heart emojis (`❤️` current up to 5, `💚` pending gain, `🖤` pending loss, `🤍` empty slots). Clamp maximum hearts to five per spec
-    - bottom row (~15% height):
-      - Attack attribute: floating bottom left in red text with any background prevention text shadow
-      - Meow attribute: floating bottom right in blue text with any background prevention text shadow
-      - Numbers use bold type when modified; apply red outline when catch bonus active, blue outline when meow multiplier active, purple when meow halved.
-    - middle row: height remainder in middle: smaller circular badge inset with cat art.
-  - Drag State:
-    - Card lifts with drop shadow
-    - highlight valid cells the cat can move to in green cell colour.
-  - Selected state (attacking):
-    - red border on circular badge
-    - highlight valid mouse targets in surrounding cells with orange cell colour
-  - Attack resolved: the cats attack attribute goes down by -1.
-  - Deselected
-    - when player selects another cat or anything else.
+  - Square footprint, same size as board cell.
+  - Hearts panel floats above the badge (max five hearts using emoji).
+  - Bottom band shows catch on left (red text) and meow on right (blue text).
+  - Central circular badge holds the cat art.
 - **Mouse Pieces**
   - Base Pieces Size: same as cat, with these changes:
   - `1/1` Mouse: normal mouse art in badge insert. no heart pips, no floating attack number
   - `2/2` Grain-Fed Mouse:
     - top row: two heart pips floating above badge
     - bottom row: Attack attribute: floating bottom middle in red text
-  - State changes: change mouse art in badge insert depending on state: dizzy, dead, eating, scared.
-  - Attack Intent: During mouse phase highlight the target mouse and intended cat target with thin red line briefly (200ms) then resolve: both pieces go back to normal.
   - Incoming Queue: Row of mouse pieces above board; scared mice are position slightly above other mice on same row.
 - **Buttons**
   - Default: Rounded rectangle, 48px height, .
-  - Confirmation: `Pass Turn to Mice` uses orange accent to emphasize irreversible action.
+  - Confirmation: `End Turn` uses orange accent to emphasize irreversible action.
 
 ## 3. Interaction Notes
 
 - Hovering a dragged cat over a grid cell:
   - updates the deterrence readout in the top bar in real time.
   - updates the cats attributes according to cell modifiers.
-- After pressing `Pass Turn to Mice`, freeze cat controls until mouse phase completes.
+- After pressing `End Turn`, freeze cat controls until mouse phase completes.
+
+## 4. Polish Ideas
+
+- Highlight valid move destinations and attack targets while a cat is selected.
+- Use outline colour shifts on stat numbers to show bonuses (red for catch, blue for meow, purple when halved).
+- Show a thin red line during mouse attacks to telegraph the target.
+- Raise scared mice in the incoming queue slightly to distinguish them from entering mice.
