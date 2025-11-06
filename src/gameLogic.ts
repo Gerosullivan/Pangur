@@ -1,5 +1,5 @@
-import { GameState, Cat, Mouse, Position, Column, Row } from './types';
-import { parsePosition, getCatAtPosition, getMouseAtPosition, isCellOccupied } from './gameState';
+import { GameState, Cat, Mouse, Position } from './types';
+import { parsePosition, getMouseAtPosition, isCellOccupied } from './gameState';
 
 // Helper to get adjacent positions (including diagonals)
 export function getAdjacentPositions(position: Position): Position[] {
@@ -171,7 +171,7 @@ export function moveCat(
 }
 
 // Get mouse attack target based on priority rules
-export function getMouseAttackTarget(mice: Mouse[], cats: Cat[]): Cat | null {
+export function getMouseAttackTarget(cats: Cat[]): Cat | null {
   const aliveCats = cats.filter(c => c.position !== 'hand' && c.hearts > 0);
   if (aliveCats.length === 0) return null;
 
@@ -212,7 +212,7 @@ export function executeMouseAttack(gameState: GameState, mouseId: string): GameS
   const mouse = gameState.mice.find(m => m.id === mouseId);
   if (!mouse || mouse.isStunned) return gameState;
 
-  const target = getMouseAttackTarget(gameState.mice, gameState.cats);
+  const target = getMouseAttackTarget(gameState.cats);
   if (!target) return gameState;
 
   // Deal 1 damage

@@ -209,9 +209,7 @@ function BoardRegion({ gameState, setGameState }: BoardRegionProps) {
             <div className="stat-detail">
               Meow: {getCurrentCatStats(selectedCat).meow}
               ({selectedCat.baseStats.meow} base × {
-                selectedCat.position !== 'hand'
-                  ? ['0', '0.5', '1', '2'][parsePosition(selectedCat.position as Position).row - 1]
-                  : '1'
+                ['0', '0.5', '1', '2'][parsePosition(selectedCat.position as Position).row - 1]
               })
             </div>
           )}
