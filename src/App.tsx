@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import './App.css';
-import { GameState, Position, Column, Row, Cat, calculateEffectiveMeow, calculateEffectiveCatch, getCatchBonus, getMeowMultiplier } from './types/game';
+import { GameState, Position, Column, Row, calculateEffectiveMeow, calculateEffectiveCatch, getCatchBonus, getMeowMultiplier } from './types/game';
 import { createInitialState, getCatById, isCellOccupied, getCatAtPosition, getMouseAtPosition } from './utils/gameState';
 import { CatPiece } from './components/CatPiece';
 import { MousePiece } from './components/MousePiece';
