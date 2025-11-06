@@ -74,6 +74,7 @@ export interface GameState {
   turn: number;
   grain: number;
   wave: number;
+  nextMouseId: number;
   cells: Record<CellId, CellState>;
   cats: Record<CatId, CatState>;
   mice: Record<string, MouseState>;

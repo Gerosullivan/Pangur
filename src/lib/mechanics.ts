@@ -82,6 +82,7 @@ export function createInitialGameState(): GameState {
     turn: 1,
     wave: 1,
     grain: 16,
+    nextMouseId: mouseIdCounter + 1,
     cells,
     cats,
     mice,

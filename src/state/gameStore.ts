@@ -442,7 +442,7 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
       return produce(state, (draft) => {
         if (draft.incomingQueue.length === 0) return;
         const enteringMouse = draft.incomingQueue.shift()!;
-        const newId = `mouse-${Object.keys(draft.mice).length + 1}`;
+        const newId = `mouse-${draft.nextMouseId++}`;
         draft.mice[newId] = {
           id: newId,
           attack: enteringMouse.attack,
