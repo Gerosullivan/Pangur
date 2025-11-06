@@ -418,7 +418,10 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
     case 'incoming-scare': {
       return produce(state, (draft) => {
         draft.incomingQueue.shift();
-        applyDeterrence(draft);
+        if (draft.deterPreview.scared > 0) {
+          draft.deterPreview.scared = Math.max(draft.deterPreview.scared - 1, 0);
+        }
+        draft.deterPreview.entering = Math.max(draft.incomingQueue.length - draft.deterPreview.scared, 0);
       });
     }
     case 'incoming-overrun': {
@@ -442,7 +445,7 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
           position: cellId,
         };
         draft.cells[cellId].occupant = { type: 'mouse', id: newId };
-        applyDeterrence(draft);
+        draft.deterPreview.entering = Math.max(draft.deterPreview.entering - 1, 0);
       });
     }
     case 'incoming-finish': {

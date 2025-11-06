@@ -26,7 +26,7 @@ export function isPerimeter(id: CellId): boolean {
 
 export function isShadowBonus(id: CellId): boolean {
   const { column, row } = parseCell(id);
-  return row === 1 && (column === 'A' || column === 'D');
+  return row === 1 || column === 'A' || column === 'D';
 }
 
 export function isGate(id: CellId): boolean {

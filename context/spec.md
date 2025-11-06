@@ -77,7 +77,7 @@ After the one-time setup placement, each round repeats these phases in order:
   - Cats cannot be stunned.
 - **Attack Presentation Stepper**
   - When this phase begins, freeze the board state and show a stepper UI with `Next` control.
-  - Initial frame highlights the active mouse and its target cat before damage is applied.
+  - Initial frame highlights the active mouse and its target cat before damage is applied (both pieces gain a red border/glow while the frame is active).
   - Pressing `Next` resolves one attack point, updates hearts, and logs the damage; subsequent presses cycle to the next remaining attack point or next mouse.
   - Continue stepping until all resident mouse attacks are resolved; this sequencing doubles as deterministic playback for automated test harnesses.
 - **Eat Sub-phase**
@@ -124,7 +124,7 @@ After the one-time setup placement, each round repeats these phases in order:
   - Row `2`: Meow x0.5, rounded down (UI: cat meow number outlined in purple).
   - Row `1`: Meow = 0 (UI: cat meow number greyed or crossed out).
 - **Shadow Bonus (Catch)**
-  - Cells on outer walls (columns `A` or `D`, row `1`) grant +1 catch.
+  - Perimeter cells — entire row `1` plus columns `A` and `D` across all rows — grant +1 catch.
   - Exceptions: `B4` and `C4` are "open gate" and provide no bonus.
   - UI: cat catch number bold with red glow while occupying/hovering; render these shadow bonus cells darker.
 
