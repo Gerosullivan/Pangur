@@ -33,11 +33,14 @@ After the one-time setup placement, each round repeats these phases in order:
    - Begins only after the player confirms the initial cat placement.
    - For each cat (any order), player resolves optional movement and attacks, adhering to the locking rules below.
    - Player ends phase by triggering `End Turn`.
+   - Ending this phase hands control to the stepper UI that reveals subsequent phases frame-by-frame.
 2. **Resident Mouse Phase**
    - Mice on the board attack based on priority rules and remaining attack points.
    - Surviving mice eat grain, potentially evolving.
+   - Every meaningful state update (target selection, damage, eating, stat changes) pauses until the player advances with the stepper control.
 3. **Incoming Wave Phase**
    - Calculate meow deterrence, remove scared mice from the queue, and place the remaining mice onto the grid.
+   - Apply the same stepper control so each placement or deterrence change requires explicit user progression.
 
 ## 5. Cat Phase Details
 
@@ -71,11 +74,20 @@ After the one-time setup placement, each round repeats these phases in order:
     3. Remaining cats sorted by lowest current hearts, then left->right.
   - Each point of mouse attack deals 1 heart damage. Cats reaching 0 hearts are removed immediately.
   - Cats cannot be stunned.
+- **Attack Presentation Stepper**
+  - When this phase begins, freeze the board state and show a stepper UI with `Next` control.
+  - Initial frame highlights the active mouse and its target cat before damage is applied.
+  - Pressing `Next` resolves one attack point, updates hearts, and logs the damage; subsequent presses cycle to the next remaining attack point or next mouse.
+  - Continue stepping until all resident mouse attacks are resolved; this sequencing doubles as deterministic playback for automated test harnesses.
 - **Eat Sub-phase**
   - Resolve only for mice not stunned and still alive.
   - Base `1/1` mice consume 1 grain; immediately transform into `2/2`.
   - Grain-fed `2/2` mice consume 2 grain (stay `2/2`).
   - If grain is reduced to 0 during this phase, trigger the loss condition immediately.
+- **Eat Presentation Stepper**
+  - After the attack sub-phase concludes, present a summary frame showing all surviving mice preparing to eat.
+  - Each `Next` press resolves one batch of eating actions: decrease grain, show consumption FX, then update upgraded mice stats (e.g., reveal `2/2`).
+  - Final frame confirms the updated board state before moving on.
 
 ## 7. Incoming Wave Phase
 
@@ -97,6 +109,11 @@ After the one-time setup placement, each round repeats these phases in order:
   - Stop when either all entering mice are placed or the board has no free cells.
   - If not all entering mice can be placed (board overwhelmed), trigger loss condition immediately.
   - After all mice are placed, refill the queue to 12 for preview of the next wave. Waves consistently supply 12 incoming mice in this prototype.
+- **Incoming Wave Presentation Stepper**
+  - Upon entering this phase, retain the stepper UI so each deterrence outcome and mouse placement requires an explicit `Next` input.
+  - Frame order: show deterrence total, then each scared mouse popping off the queue, followed by individual placements onto the grid.
+  - Provide clear textual callouts for automated testers (e.g., "Queue reduced to 7", "Placed mouse at B4").
+  - Final frame previews the refreshed queue and hands control back to the cat phase setup for the next round.
 
 ## 8. Special Cells & Modifiers
 

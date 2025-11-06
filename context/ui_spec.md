@@ -69,6 +69,8 @@ Use responsive layout:
   - After confirmation, replace the setup UI with action button(s), center middle
     - `End Turn` button (primary CTA; ends cat phase and starts mouse phase).
     - other buttons like `Restart game` and `Undo move` (TBC)
+  - When `End Turn` is pressed, swap the action button group for a `Phase Stepper` control rail: `Next` primary button, disabled `Previous` stub (future-proofed), and textual label describing the current frame (e.g., `Resident Mouse Attack 1/5`).
+  - Phase Stepper persists through all sub-phases until the incoming wave phase concludes, then hand control back to the action buttons for the next cat phase.
 
 ## 2. Key Visual Components
 
@@ -94,6 +96,7 @@ Use responsive layout:
   - updates the deterrence readout in the top bar in real time.
   - updates the cats attributes according to cell modifiers.
 - After pressing `End Turn`, freeze cat controls until mouse phase completes.
+- During resident mouse and incoming wave phases, dim non-active UI and focus on the Phase Stepper; each `Next` press should trigger one discrete state change so automated tests can assert the intermediate board states.
 
 ## 4. Polish Ideas
 
