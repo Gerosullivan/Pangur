@@ -39,6 +39,7 @@ Use responsive layout:
 - **Central Board Region**
 
   - Grid: 4×4 cells with responsive/flexible sizing to fill available space
+  - Layout must use CSS Grid so each square maps cleanly to board coordinates (avoid flexbox positioning).
   - Cell Styling:
     - Interior cells: grey.
     - Shadow bonus cells (row 1, columns A and D): dark grey.
@@ -64,7 +65,8 @@ Use responsive layout:
   - Contains cat-hand div at beginning of game (centered)
   - Cat pieces in hand: 98px × 98px
   - Setup message appears to the right of cat pieces with left arrow: "← Drag cats onto the board to start (avoid perimeter cells)"
-  - After setup, replaced with action button(s), center middle
+  - Once all cats are placed, show a primary `Confirm Formation` button; the main turn loop only begins after the player clicks it.
+  - After confirmation, replace the setup UI with action button(s), center middle
     - `End Turn` button (primary CTA; ends cat phase and starts mouse phase).
     - other buttons like `Restart game` and `Undo move` (TBC)
 
