@@ -115,6 +115,26 @@
   outline: 2px solid #0396A6;
 }
 
+.board-cell.valid-move {
+  outline: 3px solid #0396A6;
+  cursor: pointer;
+}
+
+.board-cell.valid-attack {
+  outline: 3px solid #D96D55;
+  cursor: crosshair;
+  animation: pulse-attack 1s infinite;
+}
+
+@keyframes pulse-attack {
+  0%, 100% {
+    outline-color: #D96D55;
+  }
+  50% {
+    outline-color: #D97014;
+  }
+}
+
 /* Side panel */
 .side-panel {
   width: 300px;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { GameState, Position, Column, Row } from '../types';
 import { getCatAtPosition, getMouseAtPosition, isShadowBonusCell, isOpenGateCell, getCurrentCatStats, parsePosition, isCellOccupied } from '../gameState';
+import { getValidMoves, canAttackPosition, attackMouse, moveCat } from '../gameLogic';
 import CatPiece from './CatPiece';
 import MousePiece from './MousePiece';
 import './BoardRegion.css';
@@ -23,12 +24,20 @@ function BoardRegion({ gameState, setGameState }: BoardRegionProps) {
       // Handle cat movement or attack
       if (selectedCat && selectedCat.position !== 'hand') {
         const targetMouse = getMouseAtPosition(gameState.mice, position);
+
         if (targetMouse) {
-          // Attack logic (will implement later)
-          console.log('Attack mouse at', position);
+          // Attack the mouse
+          if (canAttackPosition(selectedCat, position, gameState.mice)) {
+            const newState = attackMouse(gameState, selectedCat.id, position);
+            setGameState(newState);
+          }
         } else {
-          // Movement logic (will implement later)
-          console.log('Move to', position);
+          // Move the cat
+          const validMoves = getValidMoves(selectedCat, gameState.cats, gameState.mice);
+          if (validMoves.includes(position)) {
+            const newState = moveCat(gameState, selectedCat.id, position);
+            setGameState(newState);
+          }
         }
       }
     }
@@ -86,6 +95,16 @@ function BoardRegion({ gameState, setGameState }: BoardRegionProps) {
     setDragOverCell(null);
   };
 
+  // Calculate valid moves and attack targets for selected cat
+  const validMoves = selectedCat && gameState.phase === 'cat'
+    ? getValidMoves(selectedCat, gameState.cats, gameState.mice)
+    : [];
+  const validAttacks = selectedCat && gameState.phase === 'cat'
+    ? gameState.mice
+        .filter(m => canAttackPosition(selectedCat, m.position, gameState.mice))
+        .map(m => m.position)
+    : [];
+
   return (
     <div className="board-region">
       <div className="board-container">
@@ -101,6 +120,8 @@ function BoardRegion({ gameState, setGameState }: BoardRegionProps) {
               if (isOpenGateCell(position)) cellClass += ' open-gate';
               if (dragOverCell === position) cellClass += ' drag-over';
               if (gameState.phase === 'setup' && !cat && !mouse) cellClass += ' valid-drop';
+              if (validMoves.includes(position)) cellClass += ' valid-move';
+              if (validAttacks.includes(position)) cellClass += ' valid-attack';
 
               return (
                 <div

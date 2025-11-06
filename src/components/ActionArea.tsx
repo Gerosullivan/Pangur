@@ -1,4 +1,6 @@
 import { GameState } from '../types';
+import { executeMouseAttack, executeMouseEat } from '../gameLogic';
+import { calculateTotalMeow, createInitialGameState } from '../gameState';
 import CatPiece from './CatPiece';
 
 interface ActionAreaProps {
@@ -15,6 +17,10 @@ function ActionArea({ gameState, setGameState }: ActionAreaProps) {
       ...prev,
       phase: 'cat',
     }));
+  };
+
+  const handleRestart = () => {
+    setGameState(createInitialGameState());
   };
 
   const handleEndTurn = () => {
@@ -93,7 +99,7 @@ function ActionArea({ gameState, setGameState }: ActionAreaProps) {
           <button className="btn btn-primary" onClick={handleEndTurn}>
             End Turn
           </button>
-          <button className="btn btn-secondary">
+          <button className="btn btn-secondary" onClick={handleRestart}>
             Restart Game
           </button>
         </div>
@@ -168,33 +174,32 @@ function generateResidentMouseFrames(gameState: GameState) {
 // Helper: Apply frame effects to game state
 function applyFrameEffects(frame: any, setGameState: React.Dispatch<React.SetStateAction<GameState>>) {
   if (frame.type === 'mouse-attack') {
-    // Attack logic will be implemented
-    console.log('Mouse attack:', frame.data);
+    setGameState(prev => executeMouseAttack(prev, frame.data.mouseId));
   } else if (frame.type === 'mouse-eat') {
-    // Eat logic
+    setGameState(prev => executeMouseEat(prev, frame.data.mouseId));
+  } else if (frame.type === 'mouse-place') {
+    // Place a mouse on the board
     setGameState(prev => {
-      const mouse = prev.mice.find(m => m.id === frame.data.mouseId);
-      if (!mouse) return prev;
-
-      const grainCost = mouse.isGrainFed ? 2 : 1;
-      const updatedMice = prev.mice.map(m => {
-        if (m.id === frame.data.mouseId && !m.isGrainFed) {
-          return {
-            ...m,
-            isGrainFed: true,
-            attack: 2,
-            health: 2,
-          };
-        }
-        return m;
-      });
-
+      const newMice = [...prev.mice, {
+        id: frame.data.mouseId,
+        position: frame.data.position,
+        attack: 1,
+        health: 1,
+        isStunned: false,
+        isGrainFed: false,
+      }];
       return {
         ...prev,
-        grain: prev.grain - grainCost,
-        mice: updatedMice,
+        mice: newMice,
+        incomingQueue: prev.incomingQueue - 1,
       };
     });
+  } else if (frame.type === 'mouse-deter') {
+    // Remove a deterred mouse from queue
+    setGameState(prev => ({
+      ...prev,
+      incomingQueue: prev.incomingQueue - 1,
+    }));
   }
 }
 
@@ -212,32 +217,120 @@ function advancePhase(gameState: GameState, setGameState: React.Dispatch<React.S
     }));
   } else if (gameState.phase === 'incoming-wave') {
     // Move back to cat phase
-    setGameState(prev => ({
-      ...prev,
-      phase: 'cat',
-      subPhase: null,
-      phaseFrames: [],
-      currentFrameIndex: 0,
-      wave: prev.wave + 1,
-    }));
+    setGameState(prev => {
+      // Check win condition: no mice on board and queue empty
+      if (prev.mice.length === 0 && prev.incomingQueue === 0) {
+        return {
+          ...prev,
+          gameOver: true,
+          victory: true,
+        };
+      }
+
+      // Reset cat turn flags and refill queue
+      return {
+        ...prev,
+        phase: 'cat',
+        subPhase: null,
+        phaseFrames: [],
+        currentFrameIndex: 0,
+        wave: prev.wave + 1,
+        incomingQueue: 12,
+        cats: prev.cats.map(c => ({
+          ...c,
+          spentCatch: 0,
+          hasMoved: false,
+          hasAttacked: false,
+        })),
+        mice: prev.mice.map(m => ({
+          ...m,
+          isStunned: false, // Reset stun at start of new turn
+        })),
+      };
+    });
   }
 }
 
 // Helper: Generate frames for incoming wave phase
 function generateIncomingWaveFrames(gameState: GameState) {
-  // Simplified for now
-  return [
-    {
-      type: 'deter-calculate',
-      description: 'Calculating deterrence...',
+  const frames = [];
+  const totalMeow = calculateTotalMeow(gameState.cats);
+  const deterredCount = Math.min(totalMeow, gameState.incomingQueue);
+  const enteringCount = gameState.incomingQueue - deterredCount;
+
+  // Deterrence frames
+  frames.push({
+    type: 'deter-calculate',
+    description: `Total meow: ${totalMeow} - Deterring ${deterredCount} mice`,
+    data: { totalMeow, deterredCount },
+  });
+
+  // Remove deterred mice from queue
+  for (let i = 0; i < deterredCount; i++) {
+    frames.push({
+      type: 'mouse-deter',
+      description: `Mouse ${i + 1} flees in fear!`,
       data: {},
-    },
-    {
-      type: 'wave-complete',
-      description: 'Wave phase complete',
-      data: {},
-    },
-  ];
+    });
+  }
+
+  // Place entering mice
+  if (enteringCount > 0) {
+    const positions = getAllEmptyPositions(gameState);
+    const topDownLeftRight = positions.sort((a, b) => {
+      const rowA = parseInt(a[1]);
+      const rowB = parseInt(b[1]);
+      if (rowB !== rowA) return rowB - rowA; // Higher row first (4 -> 1)
+      return a[0].localeCompare(b[0]); // Left to right
+    });
+
+    for (let i = 0; i < Math.min(enteringCount, topDownLeftRight.length); i++) {
+      const position = topDownLeftRight[i];
+      frames.push({
+        type: 'mouse-place',
+        description: `Mouse enters at ${position}`,
+        data: {
+          mouseId: `mouse-wave-${gameState.wave}-${i}`,
+          position,
+        },
+      });
+    }
+
+    // Check for overwhelm
+    if (enteringCount > topDownLeftRight.length) {
+      frames.push({
+        type: 'game-over',
+        description: 'Board overwhelmed! Game Over.',
+        data: { reason: 'overwhelmed' },
+      });
+    }
+  }
+
+  // Refill queue for next wave
+  frames.push({
+    type: 'wave-complete',
+    description: 'Wave complete - Queue refilled to 12',
+    data: {},
+  });
+
+  return frames;
+}
+
+// Helper: Get all empty positions on the board
+function getAllEmptyPositions(gameState: GameState) {
+  const allPositions = [];
+  const cols = ['A', 'B', 'C', 'D'];
+  for (let row = 1; row <= 4; row++) {
+    for (const col of cols) {
+      const pos = `${col}${row}` as any;
+      const hasCat = gameState.cats.some(c => c.position === pos);
+      const hasMouse = gameState.mice.some(m => m.position === pos);
+      if (!hasCat && !hasMouse) {
+        allPositions.push(pos);
+      }
+    }
+  }
+  return allPositions;
 }
 
 export default ActionArea;

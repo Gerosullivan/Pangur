@@ -5,6 +5,7 @@ import TopBar from './components/TopBar';
 import IncomingMiceRow from './components/IncomingMiceRow';
 import BoardRegion from './components/BoardRegion';
 import ActionArea from './components/ActionArea';
+import GameOverScreen from './components/GameOverScreen';
 import './App.css';
 
 function App() {
@@ -12,6 +13,10 @@ function App() {
 
   // Calculate total meow for deterrence preview
   const totalMeow = calculateTotalMeow(gameState.cats);
+
+  const handleRestart = () => {
+    setGameState(createInitialGameState());
+  };
 
   return (
     <div className="app-container">
@@ -28,6 +33,14 @@ function App() {
         gameState={gameState}
         setGameState={setGameState}
       />
+
+      {gameState.gameOver && (
+        <GameOverScreen
+          victory={gameState.victory}
+          wave={gameState.wave}
+          onRestart={handleRestart}
+        />
+      )}
     </div>
   );
 }
