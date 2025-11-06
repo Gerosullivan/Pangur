@@ -1,0 +1,290 @@
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #303031;
+}
+
+/* Top bar - fixed 80px */
+.top-bar {
+  height: 80px;
+  background: rgba(20, 24, 32, 0.9);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 30px;
+  border-bottom: 2px solid #0396A6;
+}
+
+.title-block {
+  font-size: 24px;
+  font-weight: bold;
+  color: #0396A6;
+}
+
+.grain-counter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+}
+
+/* Incoming mice row - fixed 80px */
+.incoming-mice-row {
+  height: 80px;
+  background: rgba(20, 24, 32, 0.9);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 10px;
+  border-bottom: 2px solid #0396A6;
+  overflow-x: auto;
+}
+
+.mouse-queue-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.incoming-mouse {
+  font-size: 32px;
+  transition: transform 0.2s;
+}
+
+.incoming-mouse.scared {
+  transform: translateY(-10px);
+}
+
+.deterrence-label {
+  margin-left: 20px;
+  color: #0396A6;
+  font-size: 14px;
+}
+
+/* Central board region - fills remaining space */
+.board-region {
+  flex: 1;
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.board-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 100px);
+  grid-template-rows: repeat(4, 100px);
+  gap: 4px;
+  background-color: #73513D;
+  padding: 4px;
+  border: 3px solid #0396A6;
+}
+
+.board-cell {
+  width: 100px;
+  height: 100px;
+  background-color: #808080;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.board-cell.shadow-bonus {
+  background-color: #404040;
+}
+
+.board-cell.open-gate {
+  background-color: #C0C0C0;
+}
+
+.board-cell.drag-over {
+  background-color: #0396A6;
+  opacity: 0.7;
+}
+
+.board-cell.valid-drop {
+  outline: 2px solid #0396A6;
+}
+
+/* Side panel */
+.side-panel {
+  width: 300px;
+  background: rgba(20, 24, 32, 0.9);
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #0396A6;
+}
+
+.cat-portrait {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #73513D;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+  position: relative;
+}
+
+.role-ribbon {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 5px;
+  text-align: center;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
+  font-size: 18px;
+}
+
+.stat-catch {
+  color: #D96D55;
+  font-weight: bold;
+}
+
+.stat-meow {
+  color: #0396A6;
+  font-weight: bold;
+}
+
+.hearts-panel {
+  margin: 15px 0;
+  font-size: 24px;
+  line-height: 1.5;
+}
+
+.status-badges {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  background: #73513D;
+}
+
+.stat-detail {
+  font-size: 14px;
+  color: #F2F2F2;
+  margin-top: 10px;
+}
+
+/* Bottom action area - fixed 140px */
+.action-area {
+  height: 140px;
+  background: rgba(20, 24, 32, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 0 20px;
+  border-top: 2px solid #0396A6;
+}
+
+.cat-hand {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.cat-piece-hand {
+  width: 98px;
+  height: 98px;
+  cursor: grab;
+}
+
+.cat-piece-hand:active {
+  cursor: grabbing;
+}
+
+.setup-message {
+  color: #F2F2F2;
+  font-size: 16px;
+  max-width: 300px;
+}
+
+.setup-message::before {
+  content: '← ';
+  font-size: 24px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  height: 48px;
+  padding: 0 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #D97014;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #B85C0F;
+}
+
+.btn-secondary {
+  background-color: #73513D;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5C4130;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.phase-stepper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.stepper-controls {
+  display: flex;
+  gap: 15px;
+}
+
+.frame-label {
+  color: #0396A6;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}

@@ -1,0 +1,7 @@
+/* BoardRegion specific styles (extends App.css) */
+
+.board-region h3 {
+  margin: 10px 0;
+  color: #F2F2F2;
+  font-size: 18px;
+}
