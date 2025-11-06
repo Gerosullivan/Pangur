@@ -3,7 +3,7 @@ import { useGameStore } from '../state/gameStore';
 import CatPiece from './CatPiece';
 import MousePiece from './MousePiece';
 import { catDefinitions } from '../lib/cats';
-import { columns, rows, parseCell, isShadowBonus, getNeighborCells } from '../lib/board';
+import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter } from '../lib/board';
 import type { CatId, CellId, CellState } from '../types';
 
 function Board() {
@@ -59,9 +59,12 @@ function Board() {
     if (!stats || stats.remainingCatch <= 0) return new Set<CellId>();
     const neighborIds = getNeighborCells(cat.position);
     return new Set<CellId>(
-      neighborIds.filter((cellId) => cells[cellId]?.occupant?.type === 'mouse')
+      neighborIds.filter((cellId) => {
+        const occupant = cells[cellId]?.occupant;
+        return occupant?.type === 'mouse' && mice[occupant.id];
+      })
     );
-  }, [phase, selectedCatId, cats, cells]);
+  }, [phase, selectedCatId, cats, cells, catStats, mice]);
 
   const attackHighlight = useMemo(() => {
     if (phase !== 'stepper' || !stepper) return null;
@@ -85,13 +88,20 @@ function Board() {
       selectCat(occupant.id);
       return;
     }
+    if (phase === 'setup' && selectedCatId) {
+      if (!occupant && !isPerimeter(cell.id)) {
+        placeCat(selectedCatId, cell.id);
+      }
+      return;
+    }
+
     if (phase === 'cat' && selectedCatId) {
       if (!cats[selectedCatId].position || cats[selectedCatId].turnEnded) return;
       if (!occupant && validMoves.has(cell.id)) {
         moveCat(selectedCatId, cell.id);
         return;
       }
-      if (occupant?.type === 'mouse' && attackTargets.has(cell.id)) {
+      if (occupant?.type === 'mouse' && attackTargets.has(cell.id) && mice[occupant.id]) {
         attackMouse(selectedCatId, occupant.id);
       }
     }
@@ -153,7 +163,7 @@ function Board() {
                 }}
                 aria-label={`Cell ${id}`}
               >
-                {occupant?.type === 'cat' && (
+                {occupant?.type === 'cat' && cats[occupant.id] && (
                   <CatPiece
                     cat={cats[occupant.id]}
                     catId={occupant.id}
@@ -162,11 +172,11 @@ function Board() {
                     remainingCatch={catStats.get(occupant.id)?.remainingCatch ?? 0}
                     isSelected={isSelected}
                     onSelect={selectCat}
-                    cellId={id}
+                    cellRef={id}
                     highlighted={attackHighlight?.catCell === id && attackHighlight.catId === occupant.id}
                   />
                 )}
-                {occupant?.type === 'mouse' && (
+                {occupant?.type === 'mouse' && mice[occupant.id] && (
                   <MousePiece
                     mouse={mice[occupant.id]}
                     highlighted={attackHighlight?.mouseCell === id && attackHighlight.mouseId === occupant.id}

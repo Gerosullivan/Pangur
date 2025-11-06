@@ -1,7 +1,7 @@
-import type { DragEvent } from 'react';
 import { useMemo } from 'react';
 import { useGameStore } from '../state/gameStore';
 import { catDefinitions } from '../lib/cats';
+import CatPiece from './CatPiece';
 
 function ActionArea() {
   const phase = useGameStore((state) => state.phase);
@@ -14,6 +14,7 @@ function ActionArea() {
   const focusNextCat = useGameStore((state) => state.focusNextCat);
   const selectedCatId = useGameStore((state) => state.selectedCatId);
   const status = useGameStore((state) => state.status);
+  const cats = useGameStore((state) => state.cats);
 
   const progressLabel = useMemo(() => {
     if (!stepper) return '';
@@ -28,19 +29,22 @@ function ActionArea() {
         <div className="cat-hand" aria-label="Cat hand">
           {handCats.map((catId) => {
             const definition = catDefinitions[catId];
+            const cat = cats[catId];
             return (
-              <div
-                key={catId}
-                className="cat-hand-piece"
-                draggable
-                onDragStart={(event: DragEvent<HTMLDivElement>) => {
-                  event.dataTransfer.setData('text/plain', catId);
-                }}
-                aria-label={`Drag ${definition.name}`}
-              >
-                <div className="piece-portrait" aria-hidden>
-                  {definition.portrait}
-                </div>
+              <div key={catId} className="cat-hand-piece">
+                <CatPiece
+                  cat={cat}
+                  catId={catId}
+                  effectiveCatch={definition.baseCatch}
+                  effectiveMeow={definition.baseMeow}
+                  remainingCatch={definition.baseCatch}
+                  isSelected={false}
+                  cellRef={`hand-${catId}`}
+                  draggable
+                  onDragStart={(event) => {
+                    event.dataTransfer.setData('text/plain', catId);
+                  }}
+                />
               </div>
             );
           })}

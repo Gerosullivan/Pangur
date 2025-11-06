@@ -13,7 +13,7 @@ import {
   upgradeMouse,
   getDeterrenceSnapshot,
 } from '../lib/mechanics';
-import { getNeighborCells, pathCellsBetween } from '../lib/board';
+import { getNeighborCells, pathCellsBetween, isPerimeter } from '../lib/board';
 
 interface GameActions {
   resetGame: () => void;
@@ -50,16 +50,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
   placeCat: (catId, destination) => {
     const state = get();
     if (state.phase !== 'setup') return;
-    if (!state.handCats.includes(catId)) return;
     const cell = state.cells[destination];
-    if (!cell || cell.occupant) return;
-    if (destination[1] === '1' || destination[1] === '4' || destination[0] === 'A' || destination[0] === 'D') {
+    if (!cell) return;
+    const currentCatPosition = state.cats[catId].position;
+    if (cell.occupant && !(cell.occupant.type === 'cat' && cell.occupant.id === catId)) return;
+    if (currentCatPosition === destination) return;
+    if (isPerimeter(destination)) {
       return; // perimeter occupied by mice during setup
     }
 
     set(
       produce<GameStore>((draft) => {
-        draft.handCats = draft.handCats.filter((id) => id !== catId);
+        const wasInHand = draft.handCats.includes(catId);
+        if (wasInHand) {
+          draft.handCats = draft.handCats.filter((id) => id !== catId);
+        } else if (draft.cats[catId].position) {
+          draft.cells[draft.cats[catId].position!].occupant = undefined;
+        }
         draft.cats[catId].position = destination;
         draft.cells[destination].occupant = { type: 'cat', id: catId };
         draft.selectedCatId = catId;

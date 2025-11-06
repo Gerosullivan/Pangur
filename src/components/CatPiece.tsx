@@ -1,4 +1,5 @@
-import type { CatId, CatState, CellId } from '../types';
+import type { DragEvent } from 'react';
+import type { CatId, CatState } from '../types';
 import { catDefinitions, CAT_STARTING_HEARTS } from '../lib/cats';
 
 interface CatPieceProps {
@@ -9,8 +10,10 @@ interface CatPieceProps {
   remainingCatch: number;
   isSelected: boolean;
   onSelect?: (catId: CatId) => void;
-  cellId: CellId;
+  cellRef: string;
   highlighted?: boolean;
+  draggable?: boolean;
+  onDragStart?: (event: DragEvent<HTMLButtonElement>) => void;
 }
 
 const catchColor = '#d96d55';
@@ -24,8 +27,10 @@ function CatPiece({
   remainingCatch,
   isSelected,
   onSelect,
-  cellId,
+  cellRef,
   highlighted,
+  draggable,
+  onDragStart,
 }: CatPieceProps) {
   const definition = catDefinitions[catId];
   const currentHearts = Math.max(cat.hearts, 0);
@@ -44,9 +49,11 @@ function CatPiece({
       type="button"
       className={className}
       onClick={handleClick}
-      data-cell={cellId}
+      data-cell={cellRef}
       aria-pressed={isSelected}
-      aria-label={`${definition.name} at ${cellId}`}
+      aria-label={`${definition.name}${cellRef ? ` at ${cellRef}` : ''}`}
+      draggable={draggable}
+      onDragStart={onDragStart}
     >
       <div className="piece-hearts" aria-hidden>
         {hearts}
