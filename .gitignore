@@ -57,3 +57,9 @@ coverage/
 # Temporary files
 *.tmp
 .cache/
+
+# TypeScript build artifacts
+tsconfig.tsbuildinfo
+tsconfig.node.tsbuildinfo
+vite.config.js
+vite.config.d.ts

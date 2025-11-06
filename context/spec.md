@@ -68,6 +68,7 @@ After the one-time setup placement, each round repeats these phases in order:
 
 - **Attack Sub-phase**
   - Each mouse spends all attack points before moving to the next mouse; skip any mouse flagged as stunned.
+  - Attack range: mice may only strike cats occupying one of the eight adjacent cells (orthogonal or diagonal). If no adjacent cat is available when their turn arrives, that mouse skips its attacks.
   - Targeting priority (re-evaluate after each hit):
     1. Cat with base stat `1/3` (if alive).
     2. Any cat in row `4` (closest to the building entrance). Break ties left->right then lowest column letter.
