@@ -1,0 +1,75 @@
+.game-over-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fade-in 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.game-over-modal {
+  background: rgba(20, 24, 32, 0.95);
+  border: 3px solid #0396A6;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  min-width: 400px;
+  animation: slide-up 0.4s ease-out;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.game-over-modal h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.game-over-modal h1.victory {
+  color: #0396A6;
+}
+
+.game-over-modal h1.defeat {
+  color: #D96D55;
+}
+
+.game-over-stats {
+  margin: 30px 0;
+  font-size: 18px;
+  color: #F2F2F2;
+}
+
+.wave-count {
+  margin-top: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #D97014;
+}
+
+.game-over-modal .btn {
+  margin-top: 20px;
+  font-size: 18px;
+  padding: 0 40px;
+}
