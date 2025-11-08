@@ -27,6 +27,8 @@ export function createInitialGameState(): GameState {
       attackCommitted: false,
       turnEnded: false,
       stunned: false,
+      sequenceMoveCount: 0,
+      sequenceAttackStarted: false,
     },
     guardian: {
       id: 'guardian',
@@ -36,6 +38,8 @@ export function createInitialGameState(): GameState {
       attackCommitted: false,
       turnEnded: false,
       stunned: false,
+      sequenceMoveCount: 0,
+      sequenceAttackStarted: false,
     },
     baircne: {
       id: 'baircne',
@@ -45,6 +49,8 @@ export function createInitialGameState(): GameState {
       attackCommitted: false,
       turnEnded: false,
       stunned: false,
+      sequenceMoveCount: 0,
+      sequenceAttackStarted: false,
     },
   };
 
@@ -147,6 +153,9 @@ export function resetCatTurnState(state: GameState): void {
     cat.moveUsed = false;
     cat.attackCommitted = false;
     cat.turnEnded = false;
+    cat.specialSequence = undefined;
+    cat.sequenceMoveCount = 0;
+    cat.sequenceAttackStarted = false;
   }
 }
 

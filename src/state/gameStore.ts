@@ -96,12 +96,24 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const cat = state.cats[catId];
     if (!cat.position) return;
     if (cat.turnEnded) return;
-    if (cat.moveUsed) return;
-    const originCell = state.cells[cat.position];
+
+    const isPangur = catId === 'pangur';
+
+    // Movement validation for Pangur vs other cats
+    if (isPangur) {
+      // Pangur can move up to 2 times in special sequences
+      if (cat.sequenceMoveCount >= 2) return;
+
+      // If attack already started in AMA sequence, only 1 move allowed
+      if (cat.specialSequence === 'attack-move-attack' && cat.sequenceMoveCount >= 1) return;
+    } else {
+      // Regular cats: only one move
+      if (cat.moveUsed) return;
+    }
+
     const destCell = state.cells[destination];
     if (!destCell || destCell.occupant) return;
 
-    const isPangur = catId === 'pangur';
     const validMove = isPangur
       ? validateQueenMove(cat.position, destination, state)
       : validateKingMove(cat.position, destination);
@@ -109,13 +121,35 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     set(
       produce<GameStore>((draft) => {
+        const draftCat = draft.cats[catId];
         draft.cells[cat.position!].occupant = undefined;
-        draft.cats[catId].position = destination;
-        draft.cats[catId].moveUsed = true;
-        if (draft.cats[catId].attackCommitted) {
-          draft.cats[catId].turnEnded = true;
-        }
+        draftCat.position = destination;
+        draftCat.sequenceMoveCount += 1;
         draft.cells[destination].occupant = { type: 'cat', id: catId };
+
+        if (isPangur) {
+          // Start sequence if not yet started
+          if (!draftCat.specialSequence) {
+            draftCat.specialSequence = 'move-attack-move';
+          }
+
+          // End turn based on sequence completion
+          if (draftCat.specialSequence === 'move-attack-move' && draftCat.sequenceAttackStarted && draftCat.sequenceMoveCount >= 2) {
+            // MAM: moved twice and attacked, turn done
+            draftCat.turnEnded = true;
+            draftCat.moveUsed = true;
+          } else if (draftCat.specialSequence === 'attack-move-attack' && draftCat.sequenceMoveCount >= 1) {
+            // AMA: attacked and moved, can still attack more
+            draftCat.moveUsed = true;
+          }
+        } else {
+          // Regular cats: mark move as used
+          draftCat.moveUsed = true;
+          if (draftCat.attackCommitted) {
+            draftCat.turnEnded = true;
+          }
+        }
+
         applyDeterrence(draft);
       })
     );
@@ -135,11 +169,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const neighbors = getNeighborCells(cat.position);
     if (!neighbors.includes(mouse.position)) return;
 
+    const isPangur = catId === 'pangur';
+
     set(
       produce<GameStore>((draft) => {
         const draftCat = draft.cats[catId];
         draftCat.catchSpent += 1;
         draftCat.attackCommitted = true;
+        draftCat.sequenceAttackStarted = true;
+
+        // Start Pangur's sequence if not yet started
+        if (isPangur && !draftCat.specialSequence) {
+          draftCat.specialSequence = 'attack-move-attack';
+        }
 
         const draftMouse = draft.mice[mouseId];
         damageMouse(draftMouse, 1);
