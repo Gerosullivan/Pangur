@@ -37,35 +37,66 @@ This document captures near-term improvements queued up for the Pangur prototype
 - ✅ No hardcoded column/row checks remain for terrain modifiers
 - ✅ Validation ensures all 16 cells are defined exactly once
 
-## 2. Pangur Special Sequencing (Move-Attack-Move / Attack-Move-Attack)
+## 2. Pangur Special Sequencing (Move-Attack-Move / Attack-Move-Attack) ✅ COMPLETED
 
 **Goal:** upgrade Pangur (`3/1` Strongpaw) to support two advanced action sequences per turn while respecting the existing single-move/single-attack limits for other cats.
 
-**Behavioural Rules:**
-- Pangur may execute **one** of the following each turn:
-  1. `Move → Attack (multi-point) → Move` — second move occurs after finishing all desired attacks from the first position.
-  2. `Attack (partial) → Move → Attack (remaining points)` — he can spend a portion of his catch, relocate, and spend any leftover points.
-- Constraints:
-  - Total catch spent per turn remains capped at his effective catch (including shadow bonus).
-  - Total move distance per leg follows his queen-like movement rules; cannot pass through occupied cells.
-  - Sequence choice is locked once started (e.g., if he attacks first, he must follow the Attack-Move-Attack flow; no extra moves).
-  - Second move cannot occur if the destination is blocked (standard validation).
-- UI / UX updates:
-  - Visual indicator (badge or tooltip in the side panel) showing which sequence is currently in progress (`MA` vs `AMA`).
-  - Disable End Turn until Pangur completes the allowed legs (or the player explicitly ends early).
-  - Provide inline helper text in the side panel explaining remaining moves/attacks for Pangur during his turn.
+**Implementation Status:** ✅ Complete
 
-**Implementation Steps:**
-- Extend `CatState` with Pangur-specific turn flags, e.g. `specialSequence?: 'move-attack-move' | 'attack-move-attack'` and `specialLeg: 'firstMove' | 'midAttack' | ...`.
-- Update action handlers in `src/state/gameStore.ts`:
-  - When the player issues the first action for Pangur, set the sequence type based on whether they moved or attacked first.
-  - Allow a second move or attack only if Pangur’s current sequence permits it and the required leg hasn’t been consumed.
-  - Reset sequence flags at the start of each cat phase (`resetCatTurnState`).
-- Adjust UI components (`Board`, `SidePanel`, `ActionArea`) to reflect available actions (e.g., highlight valid move cells even after an attack if Pangur still owes a move).
-- Add tests or manual checklist verifying both sequences under various scenarios (killing a mouse mid-sequence, being blocked by new spawns, etc.).
+**What Was Implemented:**
 
-**Acceptance Criteria:**
-- Pangur can legally perform both special sequences; other cats remain limited to one move + one attack batch.
-- Sequence state is visible to players and resets correctly between turns.
-- No regression in existing attack/move validation for other cats.
+1. **Type Extensions** (`src/types.ts`):
+   - Added `PangurSequence` type: `'move-attack-move' | 'attack-move-attack'`
+   - Extended `CatState` with three new fields:
+     - `specialSequence?: PangurSequence` - Tracks which sequence Pangur is executing
+     - `sequenceMoveCount: number` - Counts moves in the sequence (0-2)
+     - `sequenceAttackStarted: boolean` - Tracks if attacks have begun
+
+2. **Mechanics Updates** (`src/lib/mechanics.ts`):
+   - Updated `createInitialGameState()` to initialize new sequence fields (all cats get these fields, only Pangur uses them)
+   - Updated `resetCatTurnState()` to clear sequence state at turn start
+
+3. **Game Logic** (`src/state/gameStore.ts`):
+   - **`moveCat()` handler:**
+     - Pangur can move up to 2 times (vs 1 for other cats)
+     - First move without prior action → starts `'move-attack-move'` sequence
+     - After attack in MAM → allows second move
+     - In AMA sequence → allows 1 move after attacks
+     - Regular cats unchanged (1 move only)
+   - **`attackMouse()` handler:**
+     - First attack without prior action → starts `'attack-move-attack'` sequence
+     - Marks `sequenceAttackStarted` to enable subsequent moves
+     - Pangur can continue attacking until catch is exhausted
+
+4. **UI Updates** (`src/components/SidePanel.tsx`):
+   - Added badge showing active sequence: `MAM` or `AMA`
+   - Added sequence status text showing current step:
+     - MAM: "Ready to move (1st)" → "Moved - Attack next" → "Attacked - Can move again" → "Completed"
+     - AMA: "Attacked - Can move" → "Moved - Can attack (X catch left)"
+   - Shows remaining catch points during sequences
+
+**How Pangur's Sequences Work:**
+
+1. **Move-Attack-Move (MAM):**
+   - Move → Attack (all desired points) → Move again
+   - Example: Move from B2 to C2, attack mice, then move to D2
+   - Turn ends after second move or when player clicks End Turn
+
+2. **Attack-Move-Attack (AMA):**
+   - Attack → Move → Attack (remaining points)
+   - Example: Attack from B2, move to C2, continue attacking with leftover catch
+   - Can spend catch partially before and after moving
+
+**Testing Notes:**
+- TypeScript build passes with no errors
+- Sequence state properly initialized and reset
+- Regular cats (guardian, baircne) maintain original 1-move + 1-attack behavior
+- UI clearly displays sequence progress
+
+**Acceptance Criteria:** ✅
+- ✅ Pangur can legally perform both special sequences (MAM and AMA)
+- ✅ Other cats remain limited to one move + one attack batch (no regression)
+- ✅ Sequence state is visible to players via badges and status text
+- ✅ Sequence state resets correctly between turns via `resetCatTurnState()`
+- ✅ Catch limits respected (total catch spent ≤ effective catch including shadow bonus)
 

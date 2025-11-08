@@ -107,7 +107,31 @@ function SidePanel() {
         {detail.cat.moveUsed && <span className="badge secondary">Moved</span>}
         {detail.cat.turnEnded && <span className="badge">Turn Locked</span>}
         {detail.remainingCatch === 0 && <span className="badge">Catch 0</span>}
+        {selectedCatId === 'pangur' && detail.cat.specialSequence && (
+          <span className="badge" title={detail.cat.specialSequence === 'move-attack-move' ? 'Move-Attack-Move sequence' : 'Attack-Move-Attack sequence'}>
+            {detail.cat.specialSequence === 'move-attack-move' ? 'MAM' : 'AMA'}
+          </span>
+        )}
       </div>
+      {selectedCatId === 'pangur' && detail.cat.specialSequence && (
+        <div className="sequence-status">
+          <strong>Pangur Sequence:</strong>{' '}
+          {detail.cat.specialSequence === 'move-attack-move' && (
+            <>
+              {detail.cat.sequenceMoveCount === 0 && 'Ready to move (1st)'}
+              {detail.cat.sequenceMoveCount === 1 && !detail.cat.sequenceAttackStarted && 'Moved (1st) - Attack next'}
+              {detail.cat.sequenceMoveCount === 1 && detail.cat.sequenceAttackStarted && `Attacked - Can move again (${detail.remainingCatch} catch left)`}
+              {detail.cat.sequenceMoveCount === 2 && 'Completed'}
+            </>
+          )}
+          {detail.cat.specialSequence === 'attack-move-attack' && (
+            <>
+              {detail.cat.sequenceMoveCount === 0 && detail.cat.sequenceAttackStarted && `Attacked - Can move (${detail.remainingCatch} catch left)`}
+              {detail.cat.sequenceMoveCount === 1 && `Moved - Can attack (${detail.remainingCatch} catch left)`}
+            </>
+          )}
+        </div>
+      )}
     </aside>
   );
 }
