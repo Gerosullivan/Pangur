@@ -2,17 +2,25 @@
   min-height: 100vh;
   display: grid;
   grid-template-rows: 80px 80px 1fr 140px;
-  background: radial-gradient(circle at top, #303031 0%, #141820 60%, #0b0c11 100%);
+  background: radial-gradient(
+    circle at top,
+    #303031 0%,
+    #141820 60%,
+    #0b0c11 100%
+  );
   color: #f2f2f2;
 }
 
 .top-bar,
 .incoming-row {
-  background: rgba(20, 24, 32, 0.9);
   display: flex;
   align-items: center;
   padding: 0 32px;
   gap: 32px;
+}
+
+.top-bar {
+  background: rgba(20, 24, 32, 0.9);
 }
 
 .top-bar-title {
@@ -109,11 +117,19 @@
 }
 
 .piece.cat {
-  background: linear-gradient(145deg, rgba(3, 150, 166, 0.4), rgba(3, 150, 166, 0.15));
+  background: linear-gradient(
+    145deg,
+    rgba(3, 150, 166, 0.4),
+    rgba(3, 150, 166, 0.15)
+  );
 }
 
 .piece.mouse {
-  background: linear-gradient(145deg, rgba(217, 112, 85, 0.45), rgba(217, 112, 85, 0.2));
+  background: linear-gradient(
+    145deg,
+    rgba(217, 112, 85, 0.45),
+    rgba(217, 112, 85, 0.2)
+  );
 }
 
 .piece.mouse.stunned {
@@ -130,6 +146,13 @@
   justify-content: space-between;
   width: 100%;
   font-size: 0.85rem;
+}
+
+.piece-stat-row .mouse-attack {
+  margin: 0 auto;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #d96d55;
 }
 
 .piece-hearts {
