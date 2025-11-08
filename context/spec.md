@@ -118,6 +118,10 @@ After the one-time setup placement, each round repeats these phases in order:
 
 ## 8. Special Cells & Modifiers
 
+- **Board Layout Configuration**
+  - Terrain modifiers are defined in `src/data/boardLayout.ts` for easy customization.
+  - Each cell (A1-D4) has a terrain type: `'shadow'`, `'gate'`, or `'interior'`.
+  - Modifying the layout file updates terrain behavior without changing component code.
 - **Meow Lanes**
   - Row `4`: Meow x2 (UI: cat meow number bold with blue glow).
   - Row `3`: Meow x1 (no change).

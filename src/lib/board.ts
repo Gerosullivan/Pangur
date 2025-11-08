@@ -1,4 +1,9 @@
 import type { CellId, CellState, Column, Row } from '../types';
+import {
+  getTerrainForCell,
+  hasShadowBonus,
+  isGateCell,
+} from '../data/boardLayout';
 
 export const columns: Column[] = ['A', 'B', 'C', 'D'];
 export const rows: Row[] = [1, 2, 3, 4];
@@ -24,20 +29,10 @@ export function isPerimeter(id: CellId): boolean {
   return row === 1 || row === 4 || column === 'A' || column === 'D';
 }
 
-export function isShadowBonus(id: CellId): boolean {
-  const { column, row } = parseCell(id);
-  return row === 1 || column === 'A' || column === 'D';
-}
-
-export function isGate(id: CellId): boolean {
-  return id === 'B4' || id === 'C4';
-}
-
-export function terrainForCell(id: CellId): CellState['terrain'] {
-  if (isShadowBonus(id)) return 'shadow';
-  if (isGate(id)) return 'gate';
-  return 'interior';
-}
+// Re-export terrain functions from boardLayout for backward compatibility
+export const isShadowBonus = hasShadowBonus;
+export const isGate = isGateCell;
+export const terrainForCell = getTerrainForCell;
 
 export function buildInitialCells(): Record<CellId, CellState> {
   const result: Record<CellId, CellState> = {} as Record<CellId, CellState>;
