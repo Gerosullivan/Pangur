@@ -4,11 +4,11 @@ This document captures near-term improvements queued up for the Pangur prototype
 
 ## 1. Configurable Board Layout (Shadow / Meow / Gate Map)
 
-**Goal:** enable developers to tweak board terrain modifiers without editing component code.
+**Goal:** enable developers to tweak board terrain modifiers (shadow bonus, entrance meow boost, etc.) without editing component code.
 
 **Implementation Plan:**
-- Introduce a JSON (or TS) map file (e.g. `src/data/boardLayout.json`) that enumerates each `CellId` (`A1`..`D4`) with its `terrain` tag: one of `shadow`, `gate`, `entrance`, `normal`, or future values.
-- Replace hardcoded logic in `src/lib/board.ts` (`isShadowBonus`, `isGate`, `terrainForCell`) so that terrain metadata is read from this external file at build time.
+- Introduce a JSON (or TS) map file (e.g. `src/data/boardLayout.json`) that enumerates each `CellId` (`A1`..`D4`) with its `terrain` tag. For the current prototype only three terrain values exist: `shadow` (+1 catch), `entrance` (meow ×2), and `normal`.
+- Replace hardcoded logic in `src/lib/board.ts` (`isShadowBonus`, `terrainForCell`, meow lane calculations) so that terrain metadata is read from this external file at build time. Row-based meow multipliers should still apply (row 4 & 3 = ×1 unless marked `entrance`, row 2 = ×0.5 floored, row 1 = 0).
   - Provide sensible defaults (shadow for row 1 + columns A/D, entrance on row 4, etc.) in the file so the current behaviour remains unchanged until edits.
   - Ensure the store / selectors stay fast by caching the parsed layout in memory rather than re-reading the file on every call.
 - Update tooling/documentation:
@@ -51,4 +51,3 @@ This document captures near-term improvements queued up for the Pangur prototype
 - Pangur can legally perform both special sequences; other cats remain limited to one move + one attack batch.
 - Sequence state is visible to players and resets correctly between turns.
 - No regression in existing attack/move validation for other cats.
-
