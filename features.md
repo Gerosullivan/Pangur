@@ -22,39 +22,35 @@ This document captures near-term improvements queued up for the Pangur prototype
 - Changing the external layout file should immediately update which cells render as shadow/gate/meow lanes without touching TS files.
 - No hardcoded column/row checks remain for terrain modifiers other than fallback defaults if the map is missing.
 
-## 2. Pangur Special Sequencing (Move-Attack-Move / Attack-Move-Attack) — ✅ Implemented
+> Note: completed features live in `features_archive.md`. See that file for the Pangur special sequencing notes that were just accepted.
 
-> ✅ Current build: Pangur can now choose either sequence each turn, gains a side-panel badge showing `MAM` or `AMA`, and the End Turn button remains disabled until his sequence completes or the player finishes it early via the dedicated control.
+## 2. Guardian Synergy Aura (2/2 Cat Stat Borrowing)
 
-**Goal:** upgrade Pangur (`3/1` Strongpaw) to support two advanced action sequences per turn while respecting the existing single-move/single-attack limits for other cats.
+**Goal:** Give the `2/2` Guardian a tactical support role by letting him temporarily copy the stronger stat (catch or meow) from any adjacent/diagonal friendly cat, on top of existing terrain buffs.
 
 **Behavioural Rules:**
 
-- Pangur may execute **one** of the following each turn:
-  1. `Move → Attack (multi-point) → Move` — second move occurs after finishing all desired attacks from the first position.
-  2. `Attack (partial) → Move → Attack (remaining points)` — he can spend a portion of his catch, relocate, and spend any leftover points.
-- Constraints:
-  - Total catch spent per turn remains capped at his effective catch (including shadow bonus).
-  - Total move distance per leg follows his queen-like movement rules; cannot pass through occupied cells.
-  - Sequence choice is locked once started (e.g., if he attacks first, he must follow the Attack-Move-Attack flow; no extra moves).
-  - Second move cannot occur if the destination is blocked (standard validation).
-- UI / UX updates:
-- Visual indicator (badge or tooltip in the side panel) showing which sequence is currently in progress (`MAM` vs `AMA`).
-  - Disable End Turn until Pangur completes the allowed legs (or the player explicitly ends early).
-  - Provide inline helper text in the side panel explaining remaining moves/attacks for Pangur during his turn.
+- Aura radius: any of the eight neighboring cells (same footprint we use for attack adjacency). Multiple neighbors can exist, but only the single highest stat value among them is copied each turn.
+- Copied stat logic:
+  - Compare each nearby cat’s effective catch and effective meow (after their own terrain modifiers).
+  - Identify the largest single attribute value among those neighbors; grant that to Guardian as a flat +1 bonus applied to the matching stat (catch or meow).
+  - Shadow (+1 catch) or gate (×2 meow) bonuses apply *after* the aura. Example: Guardian next to Pangur in a shadow cell becomes base 2 catch +1 aura +1 shadow = 4.
+  - If multiple neighbors tie for best value but on different stats, prefer catch (offense priority) unless we explicitly decide otherwise later.
+- Bonus refreshes dynamically as formations change; leaving adjacency removes it immediately.
 
-**Implementation Steps:**
+**Implementation Outline:**
 
-- Extend `CatState` with Pangur-specific turn flags, e.g. `specialSequence?: 'move-attack-move' | 'attack-move-attack'` and `specialLeg: 'firstMove' | 'midAttack' | ...`.
-- Update action handlers in `src/state/gameStore.ts`:
-  - When the player issues the first action for Pangur, set the sequence type based on whether they moved or attacked first.
-  - Allow a second move or attack only if Pangur’s current sequence permits it and the required leg hasn’t been consumed.
-  - Reset sequence flags at the start of each cat phase (`resetCatTurnState`).
-- Adjust UI components (`Board`, `SidePanel`, `ActionArea`) to reflect available actions (e.g., highlight valid move cells even after an attack if Pangur still owes a move).
-- Add tests or manual checklist verifying both sequences under various scenarios (killing a mouse mid-sequence, being blocked by new spawns, etc.).
+- Extend `getCatEffectiveCatch` / `getCatEffectiveMeow` to accept an optional `includeGuardianAura` flag or compute Guardian separately to avoid circular lookups.
+- Board/UI:
+  - Show a new badge (“Aura +1 Catch/Meow”) on Guardian when active.
+  - Include helper text in the side panel breakdown (e.g., “+1 aura from Pangur”).
+  - Consider a subtle glow on neighbor cells when Guardian is selected to teach the mechanic.
+- Mechanics:
+  - Re-run deterrence and remaining catch calculations whenever adjacency changes so previews stay accurate.
+  - Ensure stacking works with existing modifiers (shadow, gate, Pangur sequencing) and cannot exceed caps like heart limits.
 
 **Acceptance Criteria:**
 
-- Pangur can legally perform both special sequences; other cats remain limited to one move + one attack batch.
-- Sequence state is visible to players and resets correctly between turns.
-- No regression in existing attack/move validation for other cats.
+- Guardian gains +1 to either catch or meow whenever at least one neighboring friendly cat has a strictly higher value in that stat; stacks with terrain bonuses.
+- Removing adjacency or knocking out the source cat immediately removes the aura.
+- Side panel and badges make it obvious which stat is currently buffed and why.
