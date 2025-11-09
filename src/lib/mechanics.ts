@@ -166,30 +166,29 @@ export function getBaircneAuraSummary(state: CatStatContext): BaircneAuraSummary
     return { catchBonus: 0, meowBonus: 0 };
   }
   const neighborCells = new Set(getNeighborCells(guardian.position));
-  let catchSource: CatId | undefined;
-  let meowSource: CatId | undefined;
+  let hasMeowSource = false;
+  let hasPangur = false;
   (Object.keys(state.cats) as CatId[])
     .filter((id) => id !== 'baircne')
     .forEach((catId) => {
       const candidate = state.cats[catId];
       if (!candidate?.position) return;
       if (!neighborCells.has(candidate.position)) return;
-      const candidateCatch = getCatEffectiveCatch(state, catId);
-      const candidateMeow = getCatEffectiveMeow(state, catId);
-      if (candidateMeow > candidateCatch && !meowSource) {
-        meowSource = catId;
-        return;
+      const definition = catDefinitions[catId];
+      if (definition.baseMeow > definition.baseCatch) {
+        hasMeowSource = true;
       }
-      if (!catchSource && candidateCatch > candidateMeow) {
-        catchSource = catId;
+      if (catId === 'pangur') {
+        hasPangur = true;
       }
     });
-  return {
-    catchBonus: catchSource && !meowSource ? 1 : 0,
-    meowBonus: meowSource ? 1 : 0,
-    catchSource,
-    meowSource,
-  };
+  if (hasMeowSource) {
+    return { catchBonus: 0, meowBonus: 1 };
+  }
+  if (hasPangur) {
+    return { catchBonus: 1, meowBonus: 0, catchSource: 'pangur' };
+  }
+  return { catchBonus: 0, meowBonus: 0 };
 }
 
 export function resetCatTurnState(state: GameState): void {
