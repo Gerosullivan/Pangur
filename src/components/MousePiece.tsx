@@ -7,7 +7,13 @@ interface MousePieceProps {
 
 function MousePiece({ mouse, highlighted }: MousePieceProps) {
   const showStats = mouse.hearts > 1 || mouse.attack > 1;
-  const heartIcon = mouse.hearts > 1 ? '❤️'.repeat(mouse.hearts) : '';
+
+  const imageSrc = (() => {
+    if (mouse.stunned) return '/assets/mice/mouse_dizzy.png';
+    if (mouse.grainFed) return '/assets/mice/mouse_grain_fed.png';
+    return '/assets/mice/mouse_normal.png';
+  })();
+
   const className = ['piece', 'mouse', mouse.stunned ? 'stunned' : undefined, highlighted ? 'highlighted' : undefined]
     .filter(Boolean)
     .join(' ');
@@ -16,11 +22,13 @@ function MousePiece({ mouse, highlighted }: MousePieceProps) {
     <div className={className} aria-label={`Mouse ${mouse.grainFed ? '2/2' : '1/1'}`}>
       {showStats && (
         <div className="piece-hearts" aria-hidden>
-          {heartIcon}
+          {Array.from({ length: mouse.hearts }).map((_, idx) => (
+            <span key={idx}>❤️</span>
+          ))}
         </div>
       )}
-      <div className="piece-portrait" aria-hidden>
-        🐭
+      <div className="piece-badge mouse" aria-hidden>
+        <img src={imageSrc} alt="mouse" />
       </div>
       {showStats && (
         <div className="piece-stat-row" aria-hidden>

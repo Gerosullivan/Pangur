@@ -101,9 +101,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 8px;
-  background: rgba(5, 10, 18, 0.65);
-  border: 2px solid rgba(255, 255, 255, 0.08);
+  padding: 6px;
+  background: transparent;
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .piece.selected-piece {
@@ -117,46 +118,105 @@
 }
 
 .piece.cat {
-  background: linear-gradient(
-    145deg,
-    rgba(3, 150, 166, 0.4),
-    rgba(3, 150, 166, 0.15)
-  );
+  cursor: pointer;
+}
+
+.piece.in-hand {
+  cursor: grab;
 }
 
 .piece.mouse {
-  background: linear-gradient(
-    145deg,
-    rgba(217, 112, 85, 0.45),
-    rgba(217, 112, 85, 0.2)
-  );
+  pointer-events: none;
 }
 
 .piece.mouse.stunned {
   filter: grayscale(0.7);
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
-.piece-portrait {
-  font-size: 2.4rem;
+.piece-badge {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  background: rgba(5, 10, 18, 0.65);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.piece-badge img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+
+.piece-badge.mouse {
+  padding: 6px;
+  background: rgba(217, 112, 85, 0.25);
+}
+
+.piece-stats {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.piece-catch,
+.piece-meow {
+  width: 48%;
+  text-align: center;
+  padding: 4px 0;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.piece-catch {
+  color: #f2f2f2;
+}
+
+.piece-meow {
+  color: #0396a6;
+}
+
+.glow-red {
+  color: #f05f5f;
+  box-shadow: 0 0 6px rgba(240, 95, 95, 0.6);
+}
+
+.glow-blue {
+  color: #4ec3ff;
+  box-shadow: 0 0 6px rgba(78, 195, 255, 0.4);
+}
+
+.halved {
+  color: #c9a7ff;
+}
+
+.disabled {
+  color: rgba(242, 242, 242, 0.4);
 }
 
 .piece-stat-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   font-size: 0.85rem;
 }
 
 .piece-stat-row .mouse-attack {
-  margin: 0 auto;
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 1.1rem;
   color: #d96d55;
 }
 
 .piece-hearts {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  display: flex;
+  gap: 2px;
 }
 
 .side-panel {

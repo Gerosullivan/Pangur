@@ -1,6 +1,7 @@
-import type { DragEvent } from 'react';
+import type { DragEvent, KeyboardEvent } from 'react';
 import type { CatId, CatState } from '../types';
 import { catDefinitions, CAT_STARTING_HEARTS } from '../lib/cats';
+import { isShadowBonus, parseCell } from '../lib/board';
 
 interface CatPieceProps {
   cat: CatState;
@@ -10,14 +11,13 @@ interface CatPieceProps {
   remainingCatch: number;
   isSelected: boolean;
   onSelect?: (catId: CatId) => void;
-  cellRef: string;
+  cellRef?: string;
   highlighted?: boolean;
+  inHand?: boolean;
   draggable?: boolean;
-  onDragStart?: (event: DragEvent<HTMLButtonElement>) => void;
+  onDragStart?: (event: DragEvent<HTMLDivElement>) => void;
+  onDragEnd?: (event: DragEvent<HTMLDivElement>) => void;
 }
-
-const catchColor = '#d96d55';
-const meowColor = '#0396a6';
 
 function CatPiece({
   cat,
@@ -29,43 +29,90 @@ function CatPiece({
   onSelect,
   cellRef,
   highlighted,
+  inHand,
   draggable,
   onDragStart,
+  onDragEnd,
 }: CatPieceProps) {
   const definition = catDefinitions[catId];
   const currentHearts = Math.max(cat.hearts, 0);
   const emptyHearts = Math.max(CAT_STARTING_HEARTS - currentHearts, 0);
-  const hearts = `${'❤️'.repeat(currentHearts)}${'🤍'.repeat(emptyHearts)}`;
+  const catchBonus = cat.position && isShadowBonus(cat.position) ? 1 : 0;
+  const positionRow = cat.position ? parseCell(cat.position).row : undefined;
+
+  const meowClass =
+    positionRow === 4 ? 'glow-blue' :
+    positionRow === 2 ? 'halved' :
+    positionRow === 1 ? 'disabled' :
+    '';
+
+  const hearts = (
+    <div className="piece-hearts" aria-hidden>
+      {Array.from({ length: CAT_STARTING_HEARTS }).map((_, idx) => (
+        <span key={idx}>{idx < currentHearts ? '❤️' : '🤍'}</span>
+      ))}
+    </div>
+  );
+
   const handleClick = () => {
     onSelect?.(catId);
   };
 
-  const className = ['piece', 'cat', isSelected ? 'selected-piece' : undefined, highlighted ? 'highlighted' : undefined]
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onSelect?.(catId);
+    }
+  };
+
+  const getPortrait = () => {
+    switch (catId) {
+      case 'pangur':
+        return '/assets/Cruibne.png';
+      case 'baircne':
+        return '/assets/Baircne.png';
+      case 'guardian':
+        return '/assets/Breonne.png';
+      default:
+        return '/assets/Cruibne.png';
+    }
+  };
+
+  const className = [
+    'piece',
+    'cat',
+    inHand ? 'in-hand' : undefined,
+    isSelected ? 'selected-piece' : undefined,
+    highlighted ? 'highlighted' : undefined,
+  ]
     .filter(Boolean)
     .join(' ');
 
   return (
-    <button
-      type="button"
+    <div
       className={className}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
       data-cell={cellRef}
       aria-pressed={isSelected}
       aria-label={`${definition.name}${cellRef ? ` at ${cellRef}` : ''}`}
       draggable={draggable}
       onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
     >
-      <div className="piece-hearts" aria-hidden>
-        {hearts}
+      {hearts}
+      <div className="piece-badge" aria-hidden>
+        <img src={getPortrait()} alt={definition.name} />
       </div>
-      <div className="piece-portrait" aria-hidden>
-        {definition.portrait}
+      <div className="piece-stats">
+        <span className={`piece-catch ${catchBonus > 0 ? 'glow-red' : ''}`}>
+          {remainingCatch}
+        </span>
+        <span className={`piece-meow ${meowClass}`}>{effectiveMeow}</span>
       </div>
-      <div className="piece-stat-row">
-        <span style={{ color: catchColor }}>Catch {remainingCatch}/{effectiveCatch}</span>
-        <span style={{ color: meowColor }}>Meow {effectiveMeow}</span>
-      </div>
-    </button>
+    </div>
   );
 }
 

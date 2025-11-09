@@ -40,6 +40,7 @@ function ActionArea() {
                   remainingCatch={definition.baseCatch}
                   isSelected={false}
                   cellRef={`hand-${catId}`}
+                  inHand
                   draggable
                   onDragStart={(event) => {
                     event.dataTransfer.setData('text/plain', catId);

@@ -1,6 +1,7 @@
 - this is not a production app
   - dont overplan features like accessibility and testing
   - dont add overly complecated features like CSS animations, keep it simple
+- backwards compatibility is not required; prioritize rapid iteration over legacy support
 - this app will be used as a basis for a game engine "port", most likely in Godot.
 - keep the specs (root spec and battle spec etc) up to date when a feature has been completed.
 - characters (cats, mice etc) have attack/deter attributes or catch/meow in the case of cats. shorthand: 3/1 is 3 catch (attack) and 1 meow (defend)
