@@ -22,7 +22,9 @@ This document captures near-term improvements queued up for the Pangur prototype
 - Changing the external layout file should immediately update which cells render as shadow/gate/meow lanes without touching TS files.
 - No hardcoded column/row checks remain for terrain modifiers other than fallback defaults if the map is missing.
 
-## 2. Pangur Special Sequencing (Move-Attack-Move / Attack-Move-Attack)
+## 2. Pangur Special Sequencing (Move-Attack-Move / Attack-Move-Attack) — ✅ Implemented
+
+> ✅ Current build: Pangur can now choose either sequence each turn, gains a side-panel badge showing `MAM` or `AMA`, and the End Turn button remains disabled until his sequence completes or the player finishes it early via the dedicated control.
 
 **Goal:** upgrade Pangur (`3/1` Strongpaw) to support two advanced action sequences per turn while respecting the existing single-move/single-attack limits for other cats.
 
@@ -37,7 +39,7 @@ This document captures near-term improvements queued up for the Pangur prototype
   - Sequence choice is locked once started (e.g., if he attacks first, he must follow the Attack-Move-Attack flow; no extra moves).
   - Second move cannot occur if the destination is blocked (standard validation).
 - UI / UX updates:
-  - Visual indicator (badge or tooltip in the side panel) showing which sequence is currently in progress (`MA` vs `AMA`).
+- Visual indicator (badge or tooltip in the side panel) showing which sequence is currently in progress (`MAM` vs `AMA`).
   - Disable End Turn until Pangur completes the allowed legs (or the player explicitly ends early).
   - Provide inline helper text in the side panel explaining remaining moves/attacks for Pangur during his turn.
 

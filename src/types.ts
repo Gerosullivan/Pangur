@@ -15,6 +15,9 @@ export interface CatDefinition {
 
 export type CatId = 'pangur' | 'guardian' | 'baircne';
 
+export type PangurSpecialSequence = 'move-attack-move' | 'attack-move-attack';
+export type PangurSequenceLeg = 'idle' | 'attack-after-move' | 'second-move' | 'move-after-attack' | 'final-attack' | 'complete';
+
 export interface CatState {
   id: CatId;
   hearts: number;
@@ -24,6 +27,8 @@ export interface CatState {
   attackCommitted: boolean;
   stunned: false;
   turnEnded: boolean;
+  specialSequence?: PangurSpecialSequence;
+  specialLeg: PangurSequenceLeg;
 }
 
 export interface MouseState {

@@ -58,6 +58,7 @@ Use responsive layout:
         - `Moved` badge appears once move consumed.
         - `Catch 0` grey badge if out of attacks this turn.
       - full meow and attack base points and modifiers. e.g. "Attack 4 (3 base +1 shadow bonus")"
+      - Pangur-specific callout: when his special sequence is in progress, show a small `MAM` or `AMA` badge plus helper text describing the remaining leg, along with a “Finish Pangur Sequence” pill button that forfeits the outstanding action.
 
 - **Bottom Action Area**
 
@@ -70,6 +71,7 @@ Use responsive layout:
     - `End Turn` button (primary CTA; ends cat phase and starts mouse phase).
     - other buttons like `Restart game` and `Undo move` (TBC)
   - When `End Turn` is pressed, swap the action button group for a `Phase Stepper` control rail: `Next` primary button, disabled `Previous` stub (future-proofed), and textual label describing the current frame (e.g., `Resident Mouse Attack 1/5`).
+  - Disable `End Turn` while Pangur still owes a leg of his `MAM`/`AMA` sequence; surface a short helper string under the button cluster to explain why it is disabled.
   - Phase Stepper persists through all sub-phases until the incoming wave phase concludes, then hand control back to the action buttons for the next cat phase.
 
 ## 2. Key Visual Components

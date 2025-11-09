@@ -112,10 +112,19 @@ function ActionArea() {
     );
   }
 
+  const pangur = cats.pangur;
+  const pangurSequenceBlocked =
+    !!pangur.specialSequence && pangur.specialLeg !== 'idle' && pangur.specialLeg !== 'complete' && !pangur.turnEnded;
+
   return (
     <div className="action-area">
       <div className="action-controls">
-        <button type="button" className="button-primary" onClick={endCatPhase}>
+        <button
+          type="button"
+          className={`button-primary ${pangurSequenceBlocked ? 'button-disabled' : ''}`}
+          onClick={endCatPhase}
+          disabled={pangurSequenceBlocked}
+        >
           End Turn
         </button>
         <button type="button" className="button-secondary" onClick={focusNextCat}>
@@ -125,7 +134,10 @@ function ActionArea() {
           Restart Game
         </button>
       </div>
-      {selectedCatId && <div className="deterrence-info">Active: {catDefinitions[selectedCatId].name}</div>}
+      <div className="action-messages">
+        {selectedCatId && <div className="deterrence-info">Active: {catDefinitions[selectedCatId].name}</div>}
+        {pangurSequenceBlocked && <div className="deterrence-info">Finish Pangur’s sequence before ending the turn.</div>}
+      </div>
     </div>
   );
 }

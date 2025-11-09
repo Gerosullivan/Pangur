@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { produce } from 'immer';
-import type { CatId, CellId, GameState, MouseState, StepFrame, StepPhase } from '../types';
+import type { CatId, CellId, GameState, MouseState, StepFrame, StepPhase, CatState } from '../types';
 import {
   createInitialGameState,
   applyDeterrence,
@@ -25,6 +25,7 @@ interface GameActions {
   endCatPhase: () => void;
   advanceStepper: () => void;
   focusNextCat: () => void;
+  finishPangurSequenceEarly: () => void;
 }
 
 export type GameStore = GameState & GameActions;
@@ -96,12 +97,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const cat = state.cats[catId];
     if (!cat.position) return;
     if (cat.turnEnded) return;
-    if (cat.moveUsed) return;
+    const isPangur = catId === 'pangur';
+    const canUseSpecialMove = isPangur && canPangurUseBonusMove(cat);
+    if (cat.moveUsed && !canUseSpecialMove) return;
     const originCell = state.cells[cat.position];
     const destCell = state.cells[destination];
     if (!destCell || destCell.occupant) return;
 
-    const isPangur = catId === 'pangur';
     const validMove = isPangur
       ? validateQueenMove(cat.position, destination, state)
       : validateKingMove(cat.position, destination);
@@ -109,13 +111,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     set(
       produce<GameStore>((draft) => {
+        const usingBonusMove = cat.moveUsed && canUseSpecialMove;
         draft.cells[cat.position!].occupant = undefined;
         draft.cats[catId].position = destination;
         draft.cats[catId].moveUsed = true;
-        if (draft.cats[catId].attackCommitted) {
+        draft.cells[destination].occupant = { type: 'cat', id: catId };
+        if (isPangur) {
+          updatePangurAfterMove(draft.cats[catId], usingBonusMove);
+        } else if (draft.cats[catId].attackCommitted) {
           draft.cats[catId].turnEnded = true;
         }
-        draft.cells[destination].occupant = { type: 'cat', id: catId };
         applyDeterrence(draft);
       })
     );
@@ -140,6 +145,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const draftCat = draft.cats[catId];
         draftCat.catchSpent += 1;
         draftCat.attackCommitted = true;
+        if (catId === 'pangur') {
+          updatePangurAfterAttack(draft, catId);
+        }
 
         const draftMouse = draft.mice[mouseId];
         damageMouse(draftMouse, 1);
@@ -208,6 +216,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set(transitioned);
   },
 
+  finishPangurSequenceEarly: () => {
+    set(
+      produce<GameStore>((draft) => {
+        if (draft.phase !== 'cat') return;
+        const pangur = draft.cats.pangur;
+        if (!pangur.specialSequence) return;
+        if (pangur.specialLeg === 'complete') return;
+        pangur.specialLeg = 'complete';
+        pangur.turnEnded = true;
+      })
+    );
+  },
+
   focusNextCat: () => {
     set(
       produce<GameStore>((draft) => {
@@ -224,6 +245,54 @@ export const useGameStore = create<GameStore>((set, get) => ({
     );
   },
 }));
+
+function canPangurUseBonusMove(cat: CatState): boolean {
+  if (cat.id !== 'pangur') return false;
+  if (cat.specialSequence !== 'move-attack-move') return false;
+  return cat.specialLeg === 'attack-after-move' || cat.specialLeg === 'second-move';
+}
+
+function updatePangurAfterMove(cat: CatState, usedBonusMove: boolean): void {
+  if (cat.id !== 'pangur') return;
+  if (!cat.specialSequence) {
+    cat.specialSequence = 'move-attack-move';
+    cat.specialLeg = 'attack-after-move';
+    return;
+  }
+  if (cat.specialSequence === 'move-attack-move') {
+    if (usedBonusMove) {
+      cat.specialLeg = 'complete';
+      cat.turnEnded = true;
+    } else if (cat.specialLeg !== 'second-move') {
+      cat.specialLeg = 'attack-after-move';
+    }
+    return;
+  }
+  if (cat.specialSequence === 'attack-move-attack' && cat.specialLeg === 'move-after-attack') {
+    cat.specialLeg = 'final-attack';
+  }
+}
+
+function updatePangurAfterAttack(state: GameState, catId: CatId): void {
+  const cat = state.cats[catId];
+  if (cat.id !== 'pangur') return;
+  if (!cat.specialSequence) {
+    cat.specialSequence = 'attack-move-attack';
+    cat.specialLeg = 'move-after-attack';
+    return;
+  }
+  if (cat.specialSequence === 'move-attack-move' && cat.specialLeg === 'attack-after-move') {
+    cat.specialLeg = 'second-move';
+    return;
+  }
+  if (cat.specialSequence === 'attack-move-attack' && cat.specialLeg === 'final-attack') {
+    const remaining = getCatRemainingCatch(state, catId);
+    if (remaining === 0) {
+      cat.specialLeg = 'complete';
+      cat.turnEnded = true;
+    }
+  }
+}
 
 function validateKingMove(origin: CellId, destination: CellId): boolean {
   const neighbors = getNeighborCells(origin);

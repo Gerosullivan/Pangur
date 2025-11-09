@@ -4,7 +4,7 @@ import CatPiece from './CatPiece';
 import MousePiece from './MousePiece';
 import { catDefinitions } from '../lib/cats';
 import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter } from '../lib/board';
-import type { CatId, CellId, CellState } from '../types';
+import type { CatId, CatState, CellId, CellState } from '../types';
 
 function Board() {
   const cells = useGameStore((state) => state.cells);
@@ -44,7 +44,9 @@ function Board() {
   const validMoves = useMemo(() => {
     if (phase !== 'cat' || !selectedCatId) return new Set<CellId>();
     const cat = cats[selectedCatId];
-    if (!cat.position || cat.moveUsed || cat.turnEnded) return new Set<CellId>();
+    if (!cat.position || cat.turnEnded) return new Set<CellId>();
+    const secondMoveWindow = selectedCatId === 'pangur' && canPangurTakeSecondMove(cat);
+    if (cat.moveUsed && !secondMoveWindow) return new Set<CellId>();
     if (selectedCatId === 'pangur') {
       return getQueenMoves(cat.position, cells);
     }
@@ -189,6 +191,14 @@ function Board() {
         )}
     </div>
   );
+}
+
+function canPangurTakeSecondMove(cat?: CatState): boolean {
+  if (!cat) return false;
+  if (cat.id !== 'pangur') return false;
+  if (cat.turnEnded) return false;
+  if (cat.specialSequence !== 'move-attack-move') return false;
+  return cat.specialLeg === 'attack-after-move' || cat.specialLeg === 'second-move';
 }
 
 function getQueenMoves(origin: CellId, cells: Record<CellId, CellState>): Set<CellId> {

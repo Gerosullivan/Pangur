@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useGameStore } from '../state/gameStore';
 import { catDefinitions, CAT_STARTING_HEARTS } from '../lib/cats';
 import { isShadowBonus, parseCell } from '../lib/board';
+import type { CatState } from '../types';
 const laneLabels: Record<number, string> = {
   4: 'Meow x2 (Entrance)',
   3: 'Meow x1',
@@ -12,6 +13,7 @@ const laneLabels: Record<number, string> = {
 function SidePanel() {
   const selectedCatId = useGameStore((state) => state.selectedCatId);
   const cats = useGameStore((state) => state.cats);
+  const finishPangurSequenceEarly = useGameStore((state) => state.finishPangurSequenceEarly);
 
   const detail = useMemo(() => {
     if (!selectedCatId) return undefined;
@@ -58,6 +60,8 @@ function SidePanel() {
       Math.max(CAT_STARTING_HEARTS - Math.max(cat.hearts, 0), 0)
     )}`;
 
+    const sequenceInfo = selectedCatId === 'pangur' ? getPangurSequenceInfo(cat) : undefined;
+
     return {
       definition,
       cat,
@@ -69,6 +73,7 @@ function SidePanel() {
       lane,
       remainingCatch,
       hearts,
+      sequenceInfo,
     };
   }, [selectedCatId, cats]);
 
@@ -108,8 +113,44 @@ function SidePanel() {
         {detail.cat.turnEnded && <span className="badge">Turn Locked</span>}
         {detail.remainingCatch === 0 && <span className="badge">Catch 0</span>}
       </div>
+      {detail.sequenceInfo && (
+        <div className="pangur-sequence">
+          <div className="pangur-sequence-header">
+            <span className="badge secondary">{detail.sequenceInfo.badge}</span>
+            <span>{detail.sequenceInfo.helper}</span>
+          </div>
+          <button type="button" className="button-quiet" onClick={finishPangurSequenceEarly}>
+            Finish Pangur Sequence
+          </button>
+        </div>
+      )}
     </aside>
   );
 }
 
 export default SidePanel;
+
+function getPangurSequenceInfo(cat: CatState): { badge: string; helper: string } | undefined {
+  if (cat.id !== 'pangur') return undefined;
+  if (!cat.specialSequence) return undefined;
+  if (cat.specialLeg === 'idle' || cat.specialLeg === 'complete') return undefined;
+  const badge = cat.specialSequence === 'move-attack-move' ? 'MAM' : 'AMA';
+  let helper = '';
+  switch (cat.specialLeg) {
+    case 'attack-after-move':
+      helper = 'Attack from this cell, then take Pangur’s final move.';
+      break;
+    case 'second-move':
+      helper = 'Final move unlocked. Relocate once more or finish early.';
+      break;
+    case 'move-after-attack':
+      helper = 'You can relocate once before spending the remaining catch.';
+      break;
+    case 'final-attack':
+      helper = 'Finish attacking from the new cell or end the sequence early.';
+      break;
+    default:
+      helper = '';
+  }
+  return { badge, helper };
+}

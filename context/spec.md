@@ -51,6 +51,7 @@ After the one-time setup placement, each round repeats these phases in order:
   - Once a cat begins attacking, it must finish spending catch before moving. If it moves first, it may attack afterwards; if it moves after attacking, that move ends its turn.
   - Players may swap between cats freely; switching to another cat does not reset the ordering restriction on the original cat.
   - Example: Pangur attacks to clear a path, the `2/2` cat moves into the new space and attacks, then Pangur spends remaining catch before choosing to move at the end of its own sequence.
+  - **Pangur exception:** Pangur may execute exactly one of two special sequences each turn: Move→Attack→Move (`MAM`) or Attack→Move→Attack (`AMA`). The first action picked locks in the sequence. `MAM` grants a second queen-style move after his attack leg; `AMA` lets him split his catch spends around a single move. He may finish early at any point, but forfeits any remaining legs for that turn.
 - **Attacking**
   - Valid targets: Adjacent and diagonal resident mice (max 8 surrounding cells).
   - Spending 1 catch reduces the target mouse health by 1.
@@ -63,6 +64,7 @@ After the one-time setup placement, each round repeats these phases in order:
   - Drop commits the move and updates any derived attributes immediately.
 - **Turn End**
   - `End Turn` finalizes cat actions, triggers meow calculation, and hands off to the mouse phase.
+  - While Pangur has an incomplete `MAM`/`AMA` sequence, `End Turn` stays disabled until he executes the remaining leg or the player taps the side-panel control to finish the sequence early.
 
 ## 6. Resident Mouse Phase
 

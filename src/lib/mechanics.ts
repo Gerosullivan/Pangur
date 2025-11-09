@@ -20,6 +20,7 @@ export function createInitialGameState(): GameState {
       attackCommitted: false,
       turnEnded: false,
       stunned: false,
+      specialLeg: 'idle',
     },
     guardian: {
       id: 'guardian',
@@ -29,6 +30,7 @@ export function createInitialGameState(): GameState {
       attackCommitted: false,
       turnEnded: false,
       stunned: false,
+      specialLeg: 'idle',
     },
     baircne: {
       id: 'baircne',
@@ -38,6 +40,7 @@ export function createInitialGameState(): GameState {
       attackCommitted: false,
       turnEnded: false,
       stunned: false,
+      specialLeg: 'idle',
     },
   };
 
@@ -139,6 +142,8 @@ export function resetCatTurnState(state: GameState): void {
     cat.moveUsed = false;
     cat.attackCommitted = false;
     cat.turnEnded = false;
+    cat.specialSequence = undefined;
+    cat.specialLeg = 'idle';
   }
 }
 

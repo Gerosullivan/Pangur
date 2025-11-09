@@ -260,6 +260,22 @@
   background: rgba(255, 255, 255, 0.16);
 }
 
+.pangur-sequence {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pangur-sequence-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: rgba(242, 242, 242, 0.8);
+}
+
 .action-area {
   background: rgba(20, 24, 32, 0.92);
   display: flex;
@@ -267,6 +283,13 @@
   justify-content: space-between;
   padding: 0 48px;
   gap: 28px;
+}
+
+.action-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
 }
 
 .cat-hand {
@@ -319,6 +342,23 @@
 .button-disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.button-quiet {
+  background: transparent;
+  border: 1px dashed rgba(217, 112, 20, 0.6);
+  color: #d97014;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  align-self: flex-start;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.button-quiet:hover {
+  border-color: rgba(217, 112, 20, 0.85);
 }
 
 .stepper-rail {
