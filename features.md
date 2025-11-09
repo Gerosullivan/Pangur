@@ -7,7 +7,8 @@ This document captures near-term improvements queued up for the Pangur prototype
 **Goal:** enable developers to tweak board terrain modifiers (shadow bonus, entrance meow boost, etc.) without editing component code.
 
 **Implementation Plan:**
-- Introduce a JSON (or TS) map file (e.g. `src/data/boardLayout.json`) that enumerates each `CellId` (`A1`..`D4`) with its `terrain` tag. For the current prototype only three terrain values exist: `shadow` (+1 catch), `entrance` (meow ×2), and `normal`.
+
+- Introduce a JSON (or TS) map file (e.g. `src/data/boardLayout.json`) that enumerates each `CellId` (`A1`..`D4`) with its `terrain` tag. For the current prototype only three terrain values exist: `shadow` (+1 catch), `entrance` (was 'gate' - meow ×2), and `normal`.
 - Replace hardcoded logic in `src/lib/board.ts` (`isShadowBonus`, `terrainForCell`, meow lane calculations) so that terrain metadata is read from this external file at build time. Row-based meow multipliers should still apply (row 4 & 3 = ×1 unless marked `entrance`, row 2 = ×0.5 floored, row 1 = 0).
   - Provide sensible defaults (shadow for row 1 + columns A/D, entrance on row 4, etc.) in the file so the current behaviour remains unchanged until edits.
   - Ensure the store / selectors stay fast by caching the parsed layout in memory rather than re-reading the file on every call.
@@ -17,6 +18,7 @@ This document captures near-term improvements queued up for the Pangur prototype
 - Allow future extensions (e.g. alternate board sizes) by keeping the loader generic: it should not assume 4×4 beyond validation.
 
 **Acceptance Criteria:**
+
 - Changing the external layout file should immediately update which cells render as shadow/gate/meow lanes without touching TS files.
 - No hardcoded column/row checks remain for terrain modifiers other than fallback defaults if the map is missing.
 
@@ -25,6 +27,7 @@ This document captures near-term improvements queued up for the Pangur prototype
 **Goal:** upgrade Pangur (`3/1` Strongpaw) to support two advanced action sequences per turn while respecting the existing single-move/single-attack limits for other cats.
 
 **Behavioural Rules:**
+
 - Pangur may execute **one** of the following each turn:
   1. `Move → Attack (multi-point) → Move` — second move occurs after finishing all desired attacks from the first position.
   2. `Attack (partial) → Move → Attack (remaining points)` — he can spend a portion of his catch, relocate, and spend any leftover points.
@@ -39,6 +42,7 @@ This document captures near-term improvements queued up for the Pangur prototype
   - Provide inline helper text in the side panel explaining remaining moves/attacks for Pangur during his turn.
 
 **Implementation Steps:**
+
 - Extend `CatState` with Pangur-specific turn flags, e.g. `specialSequence?: 'move-attack-move' | 'attack-move-attack'` and `specialLeg: 'firstMove' | 'midAttack' | ...`.
 - Update action handlers in `src/state/gameStore.ts`:
   - When the player issues the first action for Pangur, set the sequence type based on whether they moved or attacked first.
@@ -48,6 +52,7 @@ This document captures near-term improvements queued up for the Pangur prototype
 - Add tests or manual checklist verifying both sequences under various scenarios (killing a mouse mid-sequence, being blocked by new spawns, etc.).
 
 **Acceptance Criteria:**
+
 - Pangur can legally perform both special sequences; other cats remain limited to one move + one attack batch.
 - Sequence state is visible to players and resets correctly between turns.
 - No regression in existing attack/move validation for other cats.

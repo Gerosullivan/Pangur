@@ -69,15 +69,15 @@
 }
 
 .board-cell.interior {
-  background: rgba(158, 158, 158, 0.18);
+  background: rgba(128, 128, 128, 0.5);
 }
 
 .board-cell.shadow {
-  background: rgba(60, 60, 70, 0.6);
+  background: rgba(60, 60, 60, 0.8);
 }
 
 .board-cell.gate {
-  background: rgba(240, 240, 240, 0.06);
+  background: rgba(255, 215, 0, 0.4);
 }
 
 .board-cell.valid-move {
