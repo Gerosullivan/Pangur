@@ -129,7 +129,8 @@ After the one-time setup placement, each round repeats these phases in order:
 - **Shadow Bonus (Catch)**
   - Perimeter cells — entire row `1` plus columns `A` and `D` across all rows — grant +1 catch.
   - Exceptions: `B4` and `C4` are "open gate" and provide no bonus.
-  - UI: cat catch number bold with red glow while occupying/hovering; render these shadow bonus cells darker.
+  - Bonus eligibility is captured at the **start of each cat phase**: a cat must begin its turn on a shadow cell to gain +1 catch. Moving across shadow cells preserves the bonus, but stepping onto a non-shadow cell removes it for the remainder of that cat’s turn (even if they return to shadow later).
+  - UI: cat catch number bold with red glow while the bonus is active; render these shadow bonus cells darker so the player can plan formations.
 
 ## 9. Resource & State Tracking
 

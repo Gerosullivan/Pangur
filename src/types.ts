@@ -29,6 +29,7 @@ export interface CatState {
   turnEnded: boolean;
   specialSequence?: PangurSpecialSequence;
   specialLeg: PangurSequenceLeg;
+  shadowBonusActive: boolean;
 }
 
 export interface MouseState {

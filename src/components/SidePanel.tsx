@@ -51,7 +51,11 @@ function SidePanel() {
           break;
       }
       if (isShadowBonus(cat.position)) {
-        catchParts.push('+1 shadow');
+        if (cat.shadowBonusActive) {
+          catchParts.push('+1 shadow');
+        } else {
+          catchParts.push('(shadow bonus lost this turn)');
+        }
       }
     } else {
       laneModifier = 'Off board';

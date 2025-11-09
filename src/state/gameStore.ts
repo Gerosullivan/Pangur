@@ -13,7 +13,7 @@ import {
   upgradeMouse,
   getDeterrenceSnapshot,
 } from '../lib/mechanics';
-import { getNeighborCells, pathCellsBetween, isPerimeter } from '../lib/board';
+import { getNeighborCells, pathCellsBetween, isPerimeter, isShadowBonus } from '../lib/board';
 
 interface GameActions {
   resetGame: () => void;
@@ -116,6 +116,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         draft.cats[catId].position = destination;
         draft.cats[catId].moveUsed = true;
         draft.cells[destination].occupant = { type: 'cat', id: catId };
+        if (draft.cats[catId].shadowBonusActive && !isShadowBonus(destination)) {
+          draft.cats[catId].shadowBonusActive = false;
+        }
         if (isPangur) {
           updatePangurAfterMove(draft.cats[catId], usingBonusMove);
         } else if (draft.cats[catId].attackCommitted) {

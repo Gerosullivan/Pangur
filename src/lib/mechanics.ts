@@ -23,6 +23,7 @@ export function createInitialGameState(): GameState {
       turnEnded: false,
       stunned: false,
       specialLeg: 'idle',
+      shadowBonusActive: false,
     },
     guardian: {
       id: 'guardian',
@@ -33,6 +34,7 @@ export function createInitialGameState(): GameState {
       turnEnded: false,
       stunned: false,
       specialLeg: 'idle',
+      shadowBonusActive: false,
     },
     baircne: {
       id: 'baircne',
@@ -43,6 +45,7 @@ export function createInitialGameState(): GameState {
       turnEnded: false,
       stunned: false,
       specialLeg: 'idle',
+      shadowBonusActive: false,
     },
   };
 
@@ -117,7 +120,7 @@ export function getCatEffectiveCatch(state: CatStatContext, catId: CatId): numbe
     const aura = getBaircneAuraSummary(state);
     total += aura.catchBonus;
   }
-  if (isShadowBonus(cat.position)) {
+  if (cat.shadowBonusActive && isShadowBonus(cat.position)) {
     total += 1;
   }
   return total;
@@ -173,14 +176,16 @@ export function getBaircneAuraSummary(state: CatStatContext): BaircneAuraSummary
       if (!neighborCells.has(candidate.position)) return;
       const candidateCatch = getCatEffectiveCatch(state, catId);
       const candidateMeow = getCatEffectiveMeow(state, catId);
-      if (candidateCatch > candidateMeow && !catchSource) {
-        catchSource = catId;
-      } else if (candidateMeow > candidateCatch && !meowSource) {
+      if (candidateMeow > candidateCatch && !meowSource) {
         meowSource = catId;
+        return;
+      }
+      if (!catchSource && candidateCatch > candidateMeow) {
+        catchSource = catId;
       }
     });
   return {
-    catchBonus: catchSource ? 1 : 0,
+    catchBonus: catchSource && !meowSource ? 1 : 0,
     meowBonus: meowSource ? 1 : 0,
     catchSource,
     meowSource,
@@ -195,6 +200,7 @@ export function resetCatTurnState(state: GameState): void {
     cat.turnEnded = false;
     cat.specialSequence = undefined;
     cat.specialLeg = 'idle';
+    cat.shadowBonusActive = !!(cat.position && isShadowBonus(cat.position));
   }
 }
 
