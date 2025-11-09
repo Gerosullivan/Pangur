@@ -1,5 +1,5 @@
 import { catDefinitions, CAT_STARTING_HEARTS } from './cats';
-import { columns, parseCell, rows, isShadowBonus } from './board';
+import { columns, parseCell, rows, isShadowBonus, buildInitialCells, isPerimeter } from './board';
 import type {
   CatId,
   GameState,
@@ -9,14 +9,7 @@ import type {
 } from '../types';
 
 export function createInitialGameState(): GameState {
-  const cells = {} as GameState['cells'];
-  for (const column of columns) {
-    for (const row of rows) {
-      const id = `${column}${row}` as CellId;
-      const terrain = row === 1 && (column === 'A' || column === 'D') ? 'shadow' : id === 'B4' || id === 'C4' ? 'gate' : 'interior';
-      cells[id] = { id, terrain };
-    }
-  }
+  const cells = buildInitialCells();
 
   const cats: GameState['cats'] = {
     pangur: {
@@ -53,8 +46,7 @@ export function createInitialGameState(): GameState {
   for (const column of columns) {
     for (const row of rows) {
       const id = `${column}${row}` as CellId;
-      const isPerimeter = row === 1 || row === 4 || column === 'A' || column === 'D';
-      if (!isPerimeter) continue;
+      if (!isPerimeter(id)) continue;
       const mouseId = `mouse-${++mouseIdCounter}`;
       const mouse: MouseState = {
         id: mouseId,
