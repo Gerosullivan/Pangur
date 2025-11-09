@@ -24,33 +24,19 @@ This document captures near-term improvements queued up for the Pangur prototype
 
 > Note: completed features live in `features_archive.md`. See that file for the Pangur special sequencing notes that were just accepted.
 
-## 2. Guardian Synergy Aura (2/2 Cat Stat Borrowing)
+## 2. Guardian Synergy Aura (2/2 Cat Stat Borrowing) — ✅ Implemented
 
-**Goal:** Give the `2/2` Guardian a tactical support role by letting him temporarily copy the stronger stat (catch or meow) from any adjacent/diagonal friendly cat, on top of existing terrain buffs.
+> ✅ Baircne now scans the eight adjacent cells each frame. For every nearby ally he copies that cat’s dominant stat: Pangur grants +1 catch, the Guardian (`1/3`) grants +1 meow, and having both adjacent grants both bonuses. Aura bonuses are applied before lane/shadow modifiers and vanish instantly when the formation breaks.
 
-**Behavioural Rules:**
+**Behaviour Highlights:**
 
-- Aura radius: any of the eight neighboring cells (same footprint we use for attack adjacency). Multiple neighbors can exist, but only the single highest stat value among them is copied each turn.
-- Copied stat logic:
-  - Compare each nearby cat’s effective catch and effective meow (after their own terrain modifiers).
-  - Identify the largest single attribute value among those neighbors; grant that to Guardian as a flat +1 bonus applied to the matching stat (catch or meow).
-  - Shadow (+1 catch) or gate (×2 meow) bonuses apply *after* the aura. Example: Guardian next to Pangur in a shadow cell becomes base 2 catch +1 aura +1 shadow = 4.
-  - If multiple neighbors tie for best value but on different stats, prefer catch (offense priority) unless we explicitly decide otherwise later.
-- Bonus refreshes dynamically as formations change; leaving adjacency removes it immediately.
+- Aura bonuses stack with terrain (shadow, gate). Example: Pangur neighbor + shadow lane yields `2 base +1 aura +1 shadow = 4` catch, while Guardian neighbor + gate lane yields `(2 base +1 aura) ×2 = 6` meow.
+- Deterministic: each stat can gain at most +1 regardless of how many cats share the same dominant attribute.
+- UI surfacing:
+  - Side panel shows `Aura +1 Catch/Meow` badges whenever active and names the contributing cat inside the breakdown text (“+1 aura (Pangur)”).
+  - Cat pieces inherit the boosted stats automatically, so attack ranges and deterrence previews always match the aura-enhanced numbers.
 
-**Implementation Outline:**
+**Testing Notes:**
 
-- Extend `getCatEffectiveCatch` / `getCatEffectiveMeow` to accept an optional `includeGuardianAura` flag or compute Guardian separately to avoid circular lookups.
-- Board/UI:
-  - Show a new badge (“Aura +1 Catch/Meow”) on Guardian when active.
-  - Include helper text in the side panel breakdown (e.g., “+1 aura from Pangur”).
-  - Consider a subtle glow on neighbor cells when Guardian is selected to teach the mechanic.
-- Mechanics:
-  - Re-run deterrence and remaining catch calculations whenever adjacency changes so previews stay accurate.
-  - Ensure stacking works with existing modifiers (shadow, gate, Pangur sequencing) and cannot exceed caps like heart limits.
-
-**Acceptance Criteria:**
-
-- Guardian gains +1 to either catch or meow whenever at least one neighboring friendly cat has a strictly higher value in that stat; stacks with terrain bonuses.
-- Removing adjacency or knocking out the source cat immediately removes the aura.
-- Side panel and badges make it obvious which stat is currently buffed and why.
+- Verify adjacency in all eight directions, including diagonals, and ensure bonuses drop immediately once the supporting cat moves or is removed.
+- Confirm deterrence recalculations and remaining catch tracking account for the aura (e.g., Guardian gains the extra catch point to spend during the same turn).

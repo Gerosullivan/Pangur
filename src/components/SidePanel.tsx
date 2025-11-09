@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useGameStore } from '../state/gameStore';
 import { catDefinitions, CAT_STARTING_HEARTS } from '../lib/cats';
 import { isShadowBonus, parseCell } from '../lib/board';
+import { getBaircneAuraSummary, getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch } from '../lib/mechanics';
 import type { CatState } from '../types';
 const laneLabels: Record<number, string> = {
   4: 'Meow x2 (Entrance)',
@@ -13,6 +14,7 @@ const laneLabels: Record<number, string> = {
 function SidePanel() {
   const selectedCatId = useGameStore((state) => state.selectedCatId);
   const cats = useGameStore((state) => state.cats);
+  const cells = useGameStore((state) => state.cells);
   const finishPangurSequenceEarly = useGameStore((state) => state.finishPangurSequenceEarly);
 
   const detail = useMemo(() => {
@@ -20,42 +22,64 @@ function SidePanel() {
     const cat = cats[selectedCatId];
     if (!cat) return undefined;
     const definition = catDefinitions[selectedCatId];
-    let effectiveCatch = definition.baseCatch;
-    let catchBreakdown = `${definition.baseCatch} base`;
-    let effectiveMeow = 0;
-    let meowBreakdown = `${definition.baseMeow} base`;
+    const context = { cats, cells };
+    const effectiveCatch = getCatEffectiveCatch(context, selectedCatId);
+    const effectiveMeow = getCatEffectiveMeow(context, selectedCatId);
+    const remainingCatch = getCatRemainingCatch(context, selectedCatId);
+    const aura = selectedCatId === 'baircne' ? getBaircneAuraSummary(context) : undefined;
+    const catchParts = [`${definition.baseCatch} base`];
+    const meowParts = [`${definition.baseMeow} base`];
     let positionLabel = 'Off board';
     let lane = '—';
+    let laneModifier = '';
 
     if (cat.position) {
       const { row } = parseCell(cat.position);
       positionLabel = cat.position;
+      lane = laneLabels[row];
       switch (row) {
         case 4:
-          effectiveMeow = definition.baseMeow * 2;
-          meowBreakdown = `${definition.baseMeow} base ×2 lane`;
+          laneModifier = '×2 lane';
           break;
         case 3:
-          effectiveMeow = definition.baseMeow;
-          meowBreakdown = `${definition.baseMeow} base`;
           break;
         case 2:
-          effectiveMeow = Math.floor(definition.baseMeow * 0.5);
-          meowBreakdown = `${definition.baseMeow} base ×0.5 lane`;
+          laneModifier = '×0.5 lane';
           break;
         default:
-          effectiveMeow = 0;
-          meowBreakdown = `Lane suppresses meow`;
+          laneModifier = 'Lane suppresses meow';
           break;
       }
-      lane = laneLabels[row];
       if (isShadowBonus(cat.position)) {
-        effectiveCatch += 1;
-        catchBreakdown = `${definition.baseCatch} base +1 shadow`;
+        catchParts.push('+1 shadow');
       }
+    } else {
+      laneModifier = 'Off board';
     }
 
-    const remainingCatch = Math.max(effectiveCatch - cat.catchSpent, 0);
+    if (aura?.catchBonus) {
+      const sourceName = aura.catchSource ? catDefinitions[aura.catchSource].name : 'Aura';
+      catchParts.push(`+${aura.catchBonus} aura (${sourceName})`);
+    }
+    if (aura?.meowBonus) {
+      const sourceName = aura.meowSource ? catDefinitions[aura.meowSource].name : 'Aura';
+      meowParts.push(`+${aura.meowBonus} aura (${sourceName})`);
+    }
+
+    let catchBreakdown = catchParts.join(' ');
+    let meowBreakdown = '';
+    if (laneModifier === 'Off board') {
+      meowBreakdown = laneModifier;
+    } else if (laneModifier === 'Lane suppresses meow') {
+      meowBreakdown = laneModifier;
+    } else {
+      const parts = [...meowParts];
+      if (laneModifier) {
+        parts.push(laneModifier);
+      }
+      meowBreakdown = parts.join(' ');
+    }
+
     const hearts = `${'❤️'.repeat(Math.max(cat.hearts, 0))}${'🤍'.repeat(
       Math.max(CAT_STARTING_HEARTS - Math.max(cat.hearts, 0), 0)
     )}`;
@@ -74,8 +98,9 @@ function SidePanel() {
       remainingCatch,
       hearts,
       sequenceInfo,
+      aura,
     };
-  }, [selectedCatId, cats]);
+  }, [selectedCatId, cats, cells]);
 
   if (!detail) {
     return (
@@ -112,6 +137,8 @@ function SidePanel() {
         {detail.cat.moveUsed && <span className="badge secondary">Moved</span>}
         {detail.cat.turnEnded && <span className="badge">Turn Locked</span>}
         {detail.remainingCatch === 0 && <span className="badge">Catch 0</span>}
+        {detail.definition.id === 'baircne' && detail.aura?.catchBonus === 1 && <span className="badge secondary">Aura +1 Catch</span>}
+        {detail.definition.id === 'baircne' && detail.aura?.meowBonus === 1 && <span className="badge secondary">Aura +1 Meow</span>}
       </div>
       {detail.sequenceInfo && (
         <div className="pangur-sequence">

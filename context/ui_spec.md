@@ -59,6 +59,7 @@ Use responsive layout:
         - `Catch 0` grey badge if out of attacks this turn.
       - full meow and attack base points and modifiers. e.g. "Attack 4 (3 base +1 shadow bonus")"
       - Pangur-specific callout: when his special sequence is in progress, show a small `MAM` or `AMA` badge plus helper text describing the remaining leg, along with a “Finish Pangur Sequence” pill button that forfeits the outstanding action.
+      - Guardian-specific aura indicator: when Baircne’s aura is active, surface an `Aura +1 Catch` or `Aura +1 Meow` badge (or both) and name the contributing cat inside the stat breakdown text (e.g., “+1 aura (Pangur)”).
 
 - **Bottom Action Area**
 

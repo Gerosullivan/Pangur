@@ -52,6 +52,7 @@ After the one-time setup placement, each round repeats these phases in order:
   - Players may swap between cats freely; switching to another cat does not reset the ordering restriction on the original cat.
   - Example: Pangur attacks to clear a path, the `2/2` cat moves into the new space and attacks, then Pangur spends remaining catch before choosing to move at the end of its own sequence.
   - **Pangur exception:** Pangur may execute exactly one of two special sequences each turn: Move→Attack→Move (`MAM`) or Attack→Move→Attack (`AMA`). The first action picked locks in the sequence. `MAM` grants a second queen-style move after his attack leg; `AMA` lets him split his catch spends around a single move. He may finish early at any point, but forfeits any remaining legs for that turn.
+  - **Guardian Aura (Baircne `2/2`):** Whenever Baircne is adjacent (orthogonal or diagonal) to another friendly cat, he copies that cat’s stronger attribute: +1 Catch if the neighbor’s catch exceeds their meow, or +1 Meow if their meow is higher. Each stat can only gain +1 per turn (so Pangur + Guardian neighbors grant +1 Catch *and* +1 Meow if both are adjacent), the aura recalculates immediately as formations shift, and these bonuses stack with terrain modifiers (shadow, gate, etc.).
 - **Attacking**
   - Valid targets: Adjacent and diagonal resident mice (max 8 surrounding cells).
   - Spending 1 catch reduces the target mouse health by 1.

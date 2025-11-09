@@ -2,8 +2,8 @@ import { useMemo, type DragEvent } from 'react';
 import { useGameStore } from '../state/gameStore';
 import CatPiece from './CatPiece';
 import MousePiece from './MousePiece';
-import { catDefinitions } from '../lib/cats';
 import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter } from '../lib/board';
+import { getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch } from '../lib/mechanics';
 import type { CatId, CatState, CellId, CellState } from '../types';
 
 function Board() {
@@ -19,27 +19,16 @@ function Board() {
   const stepper = useGameStore((state) => state.stepper);
 
   const catStats = useMemo(() => {
+    const context = { cats, cells };
     const result = new Map<CatId, { effectiveCatch: number; effectiveMeow: number; remainingCatch: number }>();
     (Object.keys(cats) as CatId[]).forEach((id) => {
-      const cat = cats[id];
-      const definition = catDefinitions[id];
-      let effectiveCatch = definition.baseCatch;
-      let effectiveMeow = 0;
-      if (cat.position) {
-        if (isShadowBonus(cat.position)) {
-          effectiveCatch += 1;
-        }
-        const row = parseCell(cat.position).row;
-        if (row === 4) effectiveMeow = definition.baseMeow * 2;
-        else if (row === 3) effectiveMeow = definition.baseMeow;
-        else if (row === 2) effectiveMeow = Math.floor(definition.baseMeow * 0.5);
-        else effectiveMeow = 0;
-      }
-      const remainingCatch = Math.max(effectiveCatch - cat.catchSpent, 0);
+      const effectiveCatch = getCatEffectiveCatch(context, id);
+      const effectiveMeow = getCatEffectiveMeow(context, id);
+      const remainingCatch = getCatRemainingCatch(context, id);
       result.set(id, { effectiveCatch, effectiveMeow, remainingCatch });
     });
     return result;
-  }, [cats]);
+  }, [cats, cells]);
 
   const validMoves = useMemo(() => {
     if (phase !== 'cat' || !selectedCatId) return new Set<CellId>();

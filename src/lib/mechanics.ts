@@ -1,5 +1,5 @@
 import { catDefinitions, CAT_STARTING_HEARTS } from './cats';
-import { columns, parseCell, rows, isShadowBonus, buildInitialCells, isPerimeter } from './board';
+import { columns, parseCell, rows, isShadowBonus, buildInitialCells, isPerimeter, getNeighborCells } from './board';
 import type {
   CatId,
   GameState,
@@ -7,6 +7,8 @@ import type {
   CellId,
   StepFrame,
 } from '../types';
+
+export type CatStatContext = Pick<GameState, 'cats' | 'cells'>;
 
 export function createInitialGameState(): GameState {
   const cells = buildInitialCells();
@@ -106,22 +108,34 @@ export function getDeterrenceSnapshot(state: GameState) {
   return { scared, entering, totalMeow };
 }
 
-export function getCatEffectiveCatch(state: GameState, catId: CatId): number {
+export function getCatEffectiveCatch(state: CatStatContext, catId: CatId): number {
   const cat = state.cats[catId];
-  if (!cat.position) return catDefinitions[catId].baseCatch;
-  const base = catDefinitions[catId].baseCatch;
-  const bonus = isShadowBonus(cat.position) ? 1 : 0;
-  return base + bonus;
+  const definition = catDefinitions[catId];
+  let total = definition.baseCatch;
+  if (!cat.position) return total;
+  if (catId === 'baircne') {
+    const aura = getBaircneAuraSummary(state);
+    total += aura.catchBonus;
+  }
+  if (isShadowBonus(cat.position)) {
+    total += 1;
+  }
+  return total;
 }
 
-export function getCatRemainingCatch(state: GameState, catId: CatId): number {
+export function getCatRemainingCatch(state: CatStatContext, catId: CatId): number {
   return Math.max(getCatEffectiveCatch(state, catId) - state.cats[catId].catchSpent, 0);
 }
 
-export function getCatEffectiveMeow(state: GameState, catId: CatId): number {
+export function getCatEffectiveMeow(state: CatStatContext, catId: CatId): number {
   const cat = state.cats[catId];
   if (!cat.position) return 0;
-  const base = catDefinitions[catId].baseMeow;
+  const definition = catDefinitions[catId];
+  let base = definition.baseMeow;
+  if (catId === 'baircne') {
+    const aura = getBaircneAuraSummary(state);
+    base += aura.meowBonus;
+  }
   const row = parseCell(cat.position).row;
   switch (row) {
     case 4:
@@ -134,6 +148,43 @@ export function getCatEffectiveMeow(state: GameState, catId: CatId): number {
     default:
       return 0;
   }
+}
+
+export interface BaircneAuraSummary {
+  catchBonus: number;
+  meowBonus: number;
+  catchSource?: CatId;
+  meowSource?: CatId;
+}
+
+export function getBaircneAuraSummary(state: CatStatContext): BaircneAuraSummary {
+  const guardian = state.cats.baircne;
+  if (!guardian?.position) {
+    return { catchBonus: 0, meowBonus: 0 };
+  }
+  const neighborCells = new Set(getNeighborCells(guardian.position));
+  let catchSource: CatId | undefined;
+  let meowSource: CatId | undefined;
+  (Object.keys(state.cats) as CatId[])
+    .filter((id) => id !== 'baircne')
+    .forEach((catId) => {
+      const candidate = state.cats[catId];
+      if (!candidate?.position) return;
+      if (!neighborCells.has(candidate.position)) return;
+      const candidateCatch = getCatEffectiveCatch(state, catId);
+      const candidateMeow = getCatEffectiveMeow(state, catId);
+      if (candidateCatch > candidateMeow && !catchSource) {
+        catchSource = catId;
+      } else if (candidateMeow > candidateCatch && !meowSource) {
+        meowSource = catId;
+      }
+    });
+  return {
+    catchBonus: catchSource ? 1 : 0,
+    meowBonus: meowSource ? 1 : 0,
+    catchSource,
+    meowSource,
+  };
 }
 
 export function resetCatTurnState(state: GameState): void {
