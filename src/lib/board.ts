@@ -186,6 +186,14 @@ function chebyshevDistance(a: CellId, b: CellId): number {
   return Math.max(colDiff, rowDiff);
 }
 
+export function manhattanDistance(a: CellId, b: CellId): number {
+  const aPos = parseCell(a);
+  const bPos = parseCell(b);
+  const colDiff = Math.abs(columns.indexOf(aPos.column) - columns.indexOf(bPos.column));
+  const rowDiff = Math.abs(rows.indexOf(aPos.row) - rows.indexOf(bPos.row));
+  return colDiff + rowDiff;
+}
+
 export function getEntryCells(): EntryCellDefinition[] {
   return entryCellDefinitions;
 }

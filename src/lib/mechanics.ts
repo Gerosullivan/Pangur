@@ -9,6 +9,7 @@ import {
   getMeowZone,
   getEntryCells,
   getNearestEntryCells,
+  manhattanDistance,
 } from './board';
 import type { CatId, GameState, MouseState, CellId, StepFrame, DeterrencePreview } from '../types';
 
@@ -148,7 +149,13 @@ export function getDeterrenceSnapshot(state: GameState): DeterrencePreview {
     if (!cat.position) return;
     const nearestEntries = getNearestEntryCells(cat.position);
     if (nearestEntries.length === 0) return;
-    const sortedEntries = [...nearestEntries].sort();
+    const sortedEntries = [...nearestEntries].sort((a, b) => {
+      const catPos = cat.position!;
+      const aDist = manhattanDistance(catPos, a);
+      const bDist = manhattanDistance(catPos, b);
+      if (aDist !== bDist) return aDist - bDist;
+      return a.localeCompare(b);
+    });
     const share = Math.floor(meow / sortedEntries.length);
     let remainder = meow % sortedEntries.length;
     sortedEntries.forEach((entryId) => {

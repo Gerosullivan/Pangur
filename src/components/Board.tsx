@@ -19,7 +19,9 @@ const eastSlots = verticalOrder.map((row) => cellId(eastColumn, row));
 
 interface EntrySlotState {
   direction: EntryDirection;
-  queue: number;
+  total: number;
+  deterred: number;
+  entering: number;
   meow: number;
 }
 
@@ -96,10 +98,15 @@ function Board() {
     const result: Partial<Record<CellId, EntrySlotState>> = {};
     entryDefinitions.forEach((entry) => {
       const detail = deterPreview.perEntry[entry.id];
-      const queueLength = incomingQueues[entry.id]?.length ?? detail?.incoming ?? 0;
+      const fallbackTotal = incomingQueues[entry.id]?.length ?? 0;
+      const total = detail?.incoming ?? fallbackTotal;
+      const deterred = detail?.deterred ?? 0;
+      const entering = detail?.entering ?? Math.max(total - deterred, 0);
       result[entry.id] = {
         direction: entry.direction,
-        queue: queueLength,
+        total,
+        deterred,
+        entering,
         meow: detail?.meow ?? 0,
       };
     });
@@ -153,14 +160,20 @@ function Board() {
     if (!entry || entry.direction !== slotDirection) {
       return <div key={key} className="entry-slot" />;
     }
-    const miceIcons = Array.from({ length: entry.queue }, (_, index) => (
+    const scaredIcons = Array.from({ length: entry.deterred }, (_, index) => (
+      <span key={`${key}-scared-${index}`} className="entry-mouse scared" role="img" aria-hidden>
+        😱
+      </span>
+    ));
+    const incomingIcons = Array.from({ length: entry.entering }, (_, index) => (
       <span key={`${key}-mouse-${index}`} className="entry-mouse" role="img" aria-hidden>
         🐭
       </span>
     ));
+    const miceIcons = [...scaredIcons, ...incomingIcons];
     return (
       <div key={key} className={`entry-slot has-entry direction-${slotDirection}`}>
-        <div className="entry-mice" aria-label={`${entry.queue} incoming mice at ${slotId}`}>
+        <div className="entry-mice" aria-label={`${entry.total} incoming mice at ${slotId}`}>
           {miceIcons.length > 0 ? miceIcons : <span className="entry-empty">—</span>}
         </div>
         <div className="entry-meta">

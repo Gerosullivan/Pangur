@@ -152,6 +152,14 @@
   flex-direction: column;
 }
 
+.entry-slot .entry-mouse {
+  font-size: 1rem;
+}
+
+.entry-slot .entry-mouse.scared {
+  filter: grayscale(0.2);
+}
+
 .entry-slot .entry-meta {
   display: flex;
   flex-direction: column;
