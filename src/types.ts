@@ -1,8 +1,25 @@
 export type Column = 'A' | 'B' | 'C' | 'D';
 export type Row = 1 | 2 | 3 | 4;
 export type CellId = `${Column}${Row}`;
+export type EntryDirection = 'north' | 'south' | 'east' | 'west';
 
 export type Phase = 'setup' | 'cat' | 'stepper';
+
+export interface EntryDeterrenceDetail {
+  cellId: CellId;
+  direction: EntryDirection;
+  incoming: number;
+  deterred: number;
+  entering: number;
+  meow: number;
+}
+
+export interface DeterrencePreview {
+  scared: number;
+  entering: number;
+  totalMeow: number;
+  perEntry: Partial<Record<CellId, EntryDeterrenceDetail>>;
+}
 
 export interface CatDefinition {
   id: CatId;
@@ -62,7 +79,7 @@ export interface StepFrame {
     | 'incoming-overrun'
     | 'incoming-finish';
   description: string;
-  payload?: Record<string, unknown>;
+  payload?: unknown;
 }
 
 export interface StepperState {
@@ -87,12 +104,8 @@ export interface GameState {
   catOrder: CatId[];
   handCats: CatId[];
   selectedCatId?: CatId;
-  incomingQueue: MouseState[];
-  deterPreview: {
-    scared: number;
-    entering: number;
-    totalMeow: number;
-  };
+  incomingQueues: Partial<Record<CellId, MouseState[]>>;
+  deterPreview: DeterrencePreview;
   stepper?: StepperState;
   log: string[];
   status: GameStatus;

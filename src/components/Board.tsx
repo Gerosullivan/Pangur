@@ -2,9 +2,26 @@ import { useMemo, type DragEvent } from 'react';
 import { useGameStore } from '../state/gameStore';
 import CatPiece from './CatPiece';
 import MousePiece from './MousePiece';
-import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter } from '../lib/board';
+import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter, cellId, getEntryCells } from '../lib/board';
 import { getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch } from '../lib/mechanics';
-import type { CatId, CatState, CellId, CellState } from '../types';
+import type { CatId, CatState, CellId, CellState, EntryDirection } from '../types';
+
+const entryDefinitions = getEntryCells();
+const northRow = rows[rows.length - 1];
+const southRow = rows[0];
+const westColumn = columns[0];
+const eastColumn = columns[columns.length - 1];
+const northSlots = columns.map((column) => cellId(column, northRow));
+const southSlots = columns.map((column) => cellId(column, southRow));
+const verticalOrder = rows.slice().reverse();
+const westSlots = verticalOrder.map((row) => cellId(westColumn, row));
+const eastSlots = verticalOrder.map((row) => cellId(eastColumn, row));
+
+interface EntrySlotState {
+  direction: EntryDirection;
+  queue: number;
+  meow: number;
+}
 
 function Board() {
   const cells = useGameStore((state) => state.cells);
@@ -17,6 +34,8 @@ function Board() {
   const moveCat = useGameStore((state) => state.moveCat);
   const attackMouse = useGameStore((state) => state.attackMouse);
   const stepper = useGameStore((state) => state.stepper);
+  const deterPreview = useGameStore((state) => state.deterPreview);
+  const incomingQueues = useGameStore((state) => state.incomingQueues);
 
   const catStats = useMemo(() => {
     const context = { cats, cells };
@@ -73,6 +92,20 @@ function Board() {
     };
   }, [phase, stepper, mice, cats]);
 
+  const entryState = useMemo(() => {
+    const result: Partial<Record<CellId, EntrySlotState>> = {};
+    entryDefinitions.forEach((entry) => {
+      const detail = deterPreview.perEntry[entry.id];
+      const queueLength = incomingQueues[entry.id]?.length ?? detail?.incoming ?? 0;
+      result[entry.id] = {
+        direction: entry.direction,
+        queue: queueLength,
+        meow: detail?.meow ?? 0,
+      };
+    });
+    return result;
+  }, [incomingQueues, deterPreview.perEntry]);
+
   const handleCellClick = (cell: CellState) => {
     const occupant = cell.occupant;
     if (occupant?.type === 'cat') {
@@ -114,70 +147,106 @@ function Board() {
     event.dataTransfer.clearData();
   };
 
-  return (
-    <div className="game-board">
-      {rows
-        .slice()
-        .reverse()
-        .map((row) =>
-          columns.map((column) => {
-            const id = `${column}${row}` as CellId;
-            const cell = cells[id];
-            const occupant = cell?.occupant;
-            const isSelected = occupant?.type === 'cat' && occupant.id === selectedCatId;
-            const isValidMove = !occupant && validMoves.has(id);
-            const isValidAttack = occupant?.type === 'mouse' && attackTargets.has(id);
-            const cellClasses = [
-              'board-cell',
-              cell.terrain,
-              isSelected ? 'selected' : undefined,
-              isValidMove ? 'valid-move' : undefined,
-              isValidAttack ? 'valid-attack' : undefined,
-            ]
-              .filter(Boolean)
-              .join(' ');
+  const renderEntrySlot = (slotId: CellId, slotDirection: EntryDirection) => {
+    const entry = entryState[slotId];
+    const key = `${slotDirection}-${slotId}`;
+    if (!entry || entry.direction !== slotDirection) {
+      return <div key={key} className="entry-slot" />;
+    }
+    const miceIcons = Array.from({ length: entry.queue }, (_, index) => (
+      <span key={`${key}-mouse-${index}`} className="entry-mouse" role="img" aria-hidden>
+        🐭
+      </span>
+    ));
+    return (
+      <div key={key} className={`entry-slot has-entry direction-${slotDirection}`}>
+        <div className="entry-mice" aria-label={`${entry.queue} incoming mice at ${slotId}`}>
+          {miceIcons.length > 0 ? miceIcons : <span className="entry-empty">—</span>}
+        </div>
+        <div className="entry-meta">
+          <span className="entry-cell">{slotId}</span>
+          <span className="entry-deterring">Meow Deterring: {entry.meow}</span>
+        </div>
+      </div>
+    );
+  };
 
-            return (
-              <div
-                key={id}
-                className={cellClasses}
-                onClick={() => handleCellClick(cell)}
-                onDragOver={(event) => handleDragOver(event, cell)}
-                onDrop={(event) => handleDrop(event, cell)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    handleCellClick(cell);
-                  }
-                }}
-                aria-label={`Cell ${id}`}
-              >
-                {occupant?.type === 'cat' && cats[occupant.id] && (
-                  <CatPiece
-                    cat={cats[occupant.id]}
-                    catId={occupant.id}
-                    effectiveCatch={catStats.get(occupant.id)?.effectiveCatch ?? 0}
-                    effectiveMeow={catStats.get(occupant.id)?.effectiveMeow ?? 0}
-                    remainingCatch={catStats.get(occupant.id)?.remainingCatch ?? 0}
-                    isSelected={isSelected}
-                    onSelect={selectCat}
-                    cellRef={id}
-                    highlighted={attackHighlight?.catCell === id && attackHighlight.catId === occupant.id}
-                  />
-                )}
-                {occupant?.type === 'mouse' && mice[occupant.id] && (
-                  <MousePiece
-                    mouse={mice[occupant.id]}
-                    highlighted={attackHighlight?.mouseCell === id && attackHighlight.mouseId === occupant.id}
-                  />
-                )}
-                {!occupant && <span style={{ position: 'absolute', bottom: 6, right: 8, fontSize: '0.65rem', opacity: 0.4 }}>{id}</span>}
-              </div>
-            );
-          })
-        )}
+  const boardCells = rows
+    .slice()
+    .reverse()
+    .map((row) =>
+      columns.map((column) => {
+        const id = `${column}${row}` as CellId;
+        const cell = cells[id];
+        const occupant = cell?.occupant;
+        const isSelected = occupant?.type === 'cat' && occupant.id === selectedCatId;
+        const isValidMove = !occupant && validMoves.has(id);
+        const isValidAttack = occupant?.type === 'mouse' && attackTargets.has(id);
+        const cellClasses = [
+          'board-cell',
+          cell.terrain,
+          isSelected ? 'selected' : undefined,
+          isValidMove ? 'valid-move' : undefined,
+          isValidAttack ? 'valid-attack' : undefined,
+        ]
+          .filter(Boolean)
+          .join(' ');
+
+        return (
+          <div
+            key={id}
+            className={cellClasses}
+            onClick={() => handleCellClick(cell)}
+            onDragOver={(event) => handleDragOver(event, cell)}
+            onDrop={(event) => handleDrop(event, cell)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                handleCellClick(cell);
+              }
+            }}
+            aria-label={`Cell ${id}`}
+          >
+            {occupant?.type === 'cat' && cats[occupant.id] && (
+              <CatPiece
+                cat={cats[occupant.id]}
+                catId={occupant.id}
+                effectiveCatch={catStats.get(occupant.id)?.effectiveCatch ?? 0}
+                effectiveMeow={catStats.get(occupant.id)?.effectiveMeow ?? 0}
+                remainingCatch={catStats.get(occupant.id)?.remainingCatch ?? 0}
+                isSelected={isSelected}
+                onSelect={selectCat}
+                cellRef={id}
+                highlighted={attackHighlight?.catCell === id && attackHighlight.catId === occupant.id}
+              />
+            )}
+            {occupant?.type === 'mouse' && mice[occupant.id] && (
+              <MousePiece
+                mouse={mice[occupant.id]}
+                highlighted={attackHighlight?.mouseCell === id && attackHighlight.mouseId === occupant.id}
+              />
+            )}
+            {!occupant && <span style={{ position: 'absolute', bottom: 6, right: 8, fontSize: '0.65rem', opacity: 0.4 }}>{id}</span>}
+          </div>
+        );
+      })
+    );
+
+  return (
+    <div className="board-stage">
+      <div className="entry-band entry-band-north">
+        {northSlots.map((slot) => renderEntrySlot(slot, 'north'))}
+      </div>
+      <div className="board-stage-middle">
+        <div className="entry-band entry-band-west">{westSlots.map((slot) => renderEntrySlot(slot, 'west'))}</div>
+        <div className="game-board">{boardCells}</div>
+        <div className="entry-band entry-band-east">{eastSlots.map((slot) => renderEntrySlot(slot, 'east'))}</div>
+      </div>
+      <div className="entry-band entry-band-south">
+        {southSlots.map((slot) => renderEntrySlot(slot, 'south'))}
+      </div>
     </div>
   );
 }

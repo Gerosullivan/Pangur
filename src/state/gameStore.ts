@@ -1,6 +1,17 @@
 import { create } from 'zustand';
 import { produce } from 'immer';
-import type { CatId, CellId, GameState, MouseState, StepFrame, StepPhase, CatState } from '../types';
+import type {
+  CatId,
+  CellId,
+  GameState,
+  MouseState,
+  StepFrame,
+  StepPhase,
+  CatState,
+  EntryDirection,
+  EntryDeterrenceDetail,
+  DeterrencePreview,
+} from '../types';
 import {
   createInitialGameState,
   applyDeterrence,
@@ -13,7 +24,7 @@ import {
   upgradeMouse,
   getDeterrenceSnapshot,
 } from '../lib/mechanics';
-import { getNeighborCells, pathCellsBetween, isPerimeter, isShadowBonus } from '../lib/board';
+import { getNeighborCells, pathCellsBetween, isPerimeter, isShadowBonus, getEntryCells } from '../lib/board';
 
 interface GameActions {
   resetGame: () => void;
@@ -352,31 +363,35 @@ function buildMousePhaseFrames(state: GameState): StepFrame[] {
 function buildIncomingPhaseFrames(state: GameState): StepFrame[] {
   const frames: StepFrame[] = [];
   const snapshot = getDeterrenceSnapshot(state);
-  const { scared, entering, totalMeow } = snapshot;
+  const { totalMeow } = snapshot;
 
   frames.push({
     id: 'incoming-summary',
     phase: 'incoming-summary',
-    description: `Deterring ${scared} mice (Meow ${totalMeow})`,
+    description: `Deterring ${snapshot.scared} mice (Meow ${totalMeow})`,
     payload: snapshot,
   });
 
-  for (let i = 0; i < scared; i++) {
-    frames.push({
-      id: `scare-${i + 1}`,
-      phase: 'incoming-scare',
-      description: 'Mouse flees the queue',
-      payload: { index: i },
-    });
-  }
+  const orderedEntries = getOrderedEntryDetails(snapshot);
+  orderedEntries.forEach((detail) => {
+    for (let i = 0; i < detail.deterred; i++) {
+      frames.push({
+        id: `scare-${detail.cellId}-${i + 1}`,
+        phase: 'incoming-scare',
+        description: `Mouse flees ${detail.cellId} queue`,
+        payload: { entryId: detail.cellId },
+      });
+    }
+  });
 
-  const placements = computeIncomingPlacements(state, entering);
-  if (placements.length < entering) {
+  const totalEntering = snapshot.entering;
+  const placements = computeIncomingPlacements(state, totalEntering);
+  if (placements.length < totalEntering) {
     frames.push({
       id: 'incoming-overrun',
       phase: 'incoming-overrun',
       description: 'Building overwhelmed! Not enough space for incoming mice.',
-      payload: { required: entering, available: placements.length },
+      payload: { required: totalEntering, available: placements.length },
     });
     frames.push({
       id: 'incoming-finish',
@@ -386,12 +401,14 @@ function buildIncomingPhaseFrames(state: GameState): StepFrame[] {
     return frames;
   }
 
+  const placementSources = buildPlacementSources(orderedEntries);
   placements.forEach((cellId, idx) => {
+    const entryId = placementSources[idx];
     frames.push({
       id: `place-${cellId}-${idx}`,
       phase: 'incoming-place',
       description: `Place mouse at ${cellId}`,
-      payload: { cellId },
+      payload: { cellId, entryId },
     });
   });
 
@@ -417,6 +434,65 @@ function computeIncomingPlacements(state: GameState, entering: number): CellId[]
       return a.localeCompare(b);
     });
   return emptyCells.slice(0, entering);
+}
+
+function getOrderedEntryDetails(snapshot: DeterrencePreview): EntryDeterrenceDetail[] {
+  return Object.values(snapshot.perEntry).sort((a, b) => {
+    const dirDiff = directionPriority(a.direction) - directionPriority(b.direction);
+    if (dirDiff !== 0) return dirDiff;
+    return a.cellId.localeCompare(b.cellId);
+  });
+}
+
+function buildPlacementSources(details: EntryDeterrenceDetail[]): CellId[] {
+  const sources: CellId[] = [];
+  details.forEach((detail) => {
+    for (let i = 0; i < detail.entering; i++) {
+      sources.push(detail.cellId);
+    }
+  });
+  return sources;
+}
+
+function directionPriority(direction: EntryDirection): number {
+  const order: EntryDirection[] = ['north', 'east', 'south', 'west'];
+  const index = order.indexOf(direction);
+  return index === -1 ? order.length : index;
+}
+
+function findFirstQueueWithMice(queues: Partial<Record<CellId, MouseState[]>>): CellId | undefined {
+  for (const [cellId, queue] of Object.entries(queues)) {
+    if (queue && queue.length > 0) {
+      return cellId as CellId;
+    }
+  }
+  return undefined;
+}
+
+function getTotalIncomingQueued(queues: Partial<Record<CellId, MouseState[]>>): number {
+  return Object.values(queues).reduce((sum, queue) => sum + (queue?.length ?? 0), 0);
+}
+
+function refillEntryQueues(state: GameState): void {
+  const entries = getEntryCells();
+  entries.forEach((entry) => {
+    const queue = state.incomingQueues[entry.id] ?? (state.incomingQueues[entry.id] = []);
+    while (queue.length < entry.incomingMice) {
+      queue.push({
+        id: `queue-next-${entry.id}-${Date.now()}-${queue.length}`,
+        attack: 1,
+        hearts: 1,
+        grainFed: false,
+        stunned: false,
+      });
+    }
+  });
+}
+
+function recomputePreviewEntering(preview: DeterrencePreview): number {
+  const entering = Object.values(preview.perEntry).reduce((sum, detail) => sum + detail.entering, 0);
+  preview.entering = entering;
+  return entering;
 }
 
 function pickMouseTarget(state: GameState, mouse: { position?: CellId }): CatId | undefined {
@@ -495,12 +571,22 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
     case 'incoming-summary':
       return state;
     case 'incoming-scare': {
+      const { entryId } = frame.payload as { entryId: CellId };
       return produce(state, (draft) => {
-        draft.incomingQueue.shift();
+        const queue = draft.incomingQueues[entryId];
+        if (queue?.length) {
+          queue.shift();
+        }
         if (draft.deterPreview.scared > 0) {
           draft.deterPreview.scared = Math.max(draft.deterPreview.scared - 1, 0);
         }
-        draft.deterPreview.entering = Math.max(draft.incomingQueue.length - draft.deterPreview.scared, 0);
+        const detail = draft.deterPreview.perEntry[entryId];
+        if (detail) {
+          if (detail.incoming > 0) detail.incoming -= 1;
+          if (detail.deterred > 0) detail.deterred -= 1;
+          detail.entering = Math.max(detail.incoming - detail.deterred, 0);
+        }
+        draft.deterPreview.entering = recomputePreviewEntering(draft.deterPreview);
       });
     }
     case 'incoming-overrun': {
@@ -510,10 +596,13 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
       });
     }
     case 'incoming-place': {
-      const { cellId } = frame.payload as { cellId: CellId };
+      const { cellId, entryId } = frame.payload as { cellId: CellId; entryId?: CellId };
       return produce(state, (draft) => {
-        if (draft.incomingQueue.length === 0) return;
-        const enteringMouse = draft.incomingQueue.shift()!;
+        const sourceId = entryId ?? findFirstQueueWithMice(draft.incomingQueues);
+        if (!sourceId) return;
+        const queue = draft.incomingQueues[sourceId];
+        if (!queue || queue.length === 0) return;
+        const enteringMouse = queue.shift()!;
         const newId = `mouse-${draft.nextMouseId++}`;
         draft.mice[newId] = {
           id: newId,
@@ -524,27 +613,23 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
           position: cellId,
         };
         draft.cells[cellId].occupant = { type: 'mouse', id: newId };
+        const detail = draft.deterPreview.perEntry[sourceId];
+        if (detail) {
+          if (detail.incoming > 0) detail.incoming -= 1;
+          if (detail.entering > 0) detail.entering -= 1;
+        }
         draft.deterPreview.entering = Math.max(draft.deterPreview.entering - 1, 0);
       });
     }
     case 'incoming-finish': {
       return produce(state, (draft) => {
-        if (draft.status.state === 'playing' && Object.keys(draft.mice).length === 0 && draft.incomingQueue.length === 0) {
+        if (draft.status.state === 'playing' && Object.keys(draft.mice).length === 0 && getTotalIncomingQueued(draft.incomingQueues) === 0) {
           draft.status = { state: 'won', reason: 'All mice deterred' };
         }
         if (draft.status.state !== 'playing') {
           return;
         }
-        const missing = 12 - draft.incomingQueue.length;
-        for (let i = 0; i < missing; i++) {
-          draft.incomingQueue.push({
-            id: `queue-next-${Date.now()}-${i}`,
-            attack: 1,
-            hearts: 1,
-            grainFed: false,
-            stunned: false,
-          });
-        }
+        refillEntryQueues(draft);
         draft.wave += 1;
         draft.turn += 1;
         applyDeterrence(draft);

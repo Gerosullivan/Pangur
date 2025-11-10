@@ -1,12 +1,16 @@
 import { catDefinitions, CAT_STARTING_HEARTS } from './cats';
-import { columns, rows, isShadowBonus, buildInitialCells, isPerimeter, getNeighborCells, getMeowZone } from './board';
-import type {
-  CatId,
-  GameState,
-  MouseState,
-  CellId,
-  StepFrame,
-} from '../types';
+import {
+  columns,
+  rows,
+  isShadowBonus,
+  buildInitialCells,
+  isPerimeter,
+  getNeighborCells,
+  getMeowZone,
+  getEntryCells,
+  getNearestEntryCells,
+} from './board';
+import type { CatId, GameState, MouseState, CellId, StepFrame, DeterrencePreview } from '../types';
 
 export type CatStatContext = Pick<GameState, 'cats' | 'cells'>;
 
@@ -69,13 +73,17 @@ export function createInitialGameState(): GameState {
     }
   }
 
-  const incomingQueue: MouseState[] = Array.from({ length: 12 }, (_, index) => ({
-    id: `queue-${index + 1}`,
-    attack: 1,
-    hearts: 1,
-    stunned: false,
-    grainFed: false,
-  }));
+  const incomingQueues: GameState['incomingQueues'] = {};
+  const entryCells = getEntryCells();
+  for (const entry of entryCells) {
+    incomingQueues[entry.id] = Array.from({ length: entry.incomingMice }, (_, index) => ({
+      id: `queue-${entry.id}-${index + 1}`,
+      attack: 1,
+      hearts: 1,
+      stunned: false,
+      grainFed: false,
+    }));
+  }
 
   const baseState: GameState = {
     phase: 'setup',
@@ -89,8 +97,8 @@ export function createInitialGameState(): GameState {
     catOrder: ['pangur', 'baircne', 'guardian'],
     handCats: ['pangur', 'baircne', 'guardian'],
     selectedCatId: undefined,
-    incomingQueue,
-    deterPreview: { scared: 0, entering: incomingQueue.length, totalMeow: 0 },
+    incomingQueues,
+    deterPreview: { scared: 0, entering: 0, totalMeow: 0, perEntry: {} },
     stepper: undefined,
     log: [],
     status: { state: 'playing' },
@@ -104,11 +112,64 @@ export function applyDeterrence(state: GameState): void {
   state.deterPreview = getDeterrenceSnapshot(state);
 }
 
-export function getDeterrenceSnapshot(state: GameState) {
-  const totalMeow = state.catOrder.reduce((sum, catId) => sum + getCatEffectiveMeow(state, catId), 0);
-  const scared = Math.min(totalMeow, state.incomingQueue.length);
-  const entering = Math.max(state.incomingQueue.length - scared, 0);
-  return { scared, entering, totalMeow };
+export function getDeterrenceSnapshot(state: GameState): DeterrencePreview {
+  const entryCells = getEntryCells();
+  const perEntry: DeterrencePreview['perEntry'] = {};
+  entryCells.forEach((entry) => {
+    const queueLength = state.incomingQueues[entry.id]?.length ?? 0;
+    perEntry[entry.id] = {
+      cellId: entry.id,
+      direction: entry.direction,
+      incoming: queueLength,
+      deterred: 0,
+      entering: queueLength,
+      meow: 0,
+    };
+  });
+
+  const catMeowValues = state.catOrder.map((catId) => ({
+    catId,
+    meow: getCatEffectiveMeow(state, catId),
+  }));
+  const totalMeow = catMeowValues.reduce((sum, item) => sum + item.meow, 0);
+
+  if (entryCells.length === 0) {
+    return { scared: 0, entering: 0, totalMeow, perEntry };
+  }
+
+  const buckets: Partial<Record<CellId, number>> = {};
+  entryCells.forEach((entry) => {
+    buckets[entry.id] = 0;
+  });
+
+  catMeowValues.forEach(({ catId, meow }) => {
+    if (meow <= 0) return;
+    const cat = state.cats[catId];
+    if (!cat.position) return;
+    const nearestEntries = getNearestEntryCells(cat.position);
+    if (nearestEntries.length === 0) return;
+    const sortedEntries = [...nearestEntries].sort();
+    const share = Math.floor(meow / sortedEntries.length);
+    let remainder = meow % sortedEntries.length;
+    sortedEntries.forEach((entryId) => {
+      const allocation = share + (remainder > 0 ? 1 : 0);
+      remainder = Math.max(remainder - 1, 0);
+      buckets[entryId] = (buckets[entryId] ?? 0) + allocation;
+    });
+  });
+
+  Object.entries(buckets).forEach(([entryId, meow]) => {
+    const detail = perEntry[entryId as CellId];
+    if (!detail) return;
+    detail.meow = meow;
+    detail.deterred = Math.min(meow, detail.incoming);
+    detail.entering = Math.max(detail.incoming - detail.deterred, 0);
+  });
+
+  const scared = Object.values(perEntry).reduce((sum, detail) => sum + detail.deterred, 0);
+  const entering = Object.values(perEntry).reduce((sum, detail) => sum + detail.entering, 0);
+
+  return { scared, entering, totalMeow, perEntry };
 }
 
 export function getCatEffectiveCatch(state: CatStatContext, catId: CatId): number {

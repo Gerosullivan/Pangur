@@ -1,33 +1,55 @@
 import { useMemo } from 'react';
 import { useGameStore } from '../state/gameStore';
+import type { EntryDirection } from '../types';
 
 function IncomingQueueRow() {
-  const incomingQueue = useGameStore((state) => state.incomingQueue);
+  const incomingQueues = useGameStore((state) => state.incomingQueues);
   const deterPreview = useGameStore((state) => state.deterPreview);
 
-  const icons = useMemo(() => {
-    const scared = Array.from({ length: deterPreview.scared }, (_, index) => (
-      <span key={`scared-${index}`} className="queue-piece scared" role="img" aria-hidden>
-        😱
-      </span>
-    ));
-    const remaining = Math.max(incomingQueue.length - deterPreview.scared, 0);
-    const entering = Array.from({ length: remaining }, (_, index) => (
-      <span key={`incoming-${index}`} className="queue-piece" role="img" aria-hidden>
-        🐭
-      </span>
-    ));
-    return [...scared, ...entering];
-  }, [incomingQueue.length, deterPreview.scared]);
+  const totalQueued = useMemo(
+    () => Object.values(incomingQueues).reduce((sum, queue) => sum + queue.length, 0),
+    [incomingQueues]
+  );
+
+  const entryChips = useMemo(() => {
+    const entries = Object.values(deterPreview.perEntry);
+    if (entries.length === 0) return [];
+    return entries
+      .sort((a, b) => {
+        const dirDiff = directionPriority(a.direction) - directionPriority(b.direction);
+        if (dirDiff !== 0) return dirDiff;
+        return a.cellId.localeCompare(b.cellId);
+      })
+      .map((detail) => {
+        const queued = incomingQueues[detail.cellId]?.length ?? detail.incoming;
+        return (
+          <div key={detail.cellId} className="entry-chip">
+            <span className="chip-cell">{detail.cellId.toUpperCase()}</span>
+            <span className="chip-count">
+              {queued} 🐭 · Meow {detail.meow}
+            </span>
+          </div>
+        );
+      });
+  }, [incomingQueues, deterPreview.perEntry]);
 
   return (
     <div className="incoming-row">
-      <div className="queue-row" aria-label="Incoming mice queue">
-        {icons.length > 0 ? icons : <span className="deterrence-info">No mice queued</span>}
+      <div className="incoming-summary">
+        <span>Total queued: {totalQueued}</span>
+        <span>Deterring: {deterPreview.scared} · Entering: {deterPreview.entering}</span>
       </div>
-      <div className="deterrence-info">Deterring: {deterPreview.scared} · Entering: {deterPreview.entering}</div>
+      <div className="entry-chip-row">
+        {entryChips.length > 0 ? entryChips : <span className="deterrence-info">No entry points configured.</span>}
+      </div>
     </div>
   );
+}
+
+function directionPriority(direction: EntryDirection): number {
+  const order: EntryDirection[] = ['north', 'east', 'south', 'west'];
+  const index = order.indexOf(direction);
+  return index === -1 ? order.length : index;
 }
 
 export default IncomingQueueRow;

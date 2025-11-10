@@ -1,0 +1,31 @@
+{
+  "cells": [
+    { "id": "A1", "terrain": "shadow" },
+    { "id": "B1", "terrain": "shadow" },
+    { "id": "C1", "terrain": "shadow" },
+    { "id": "D1", "terrain": "shadow" },
+
+    { "id": "A2", "terrain": "shadow" },
+    { "id": "B2", "terrain": "interior" },
+    { "id": "C2", "terrain": "interior" },
+    { "id": "D2", "terrain": "shadow" },
+
+    { "id": "A3", "terrain": "shadow" },
+    { "id": "B3", "terrain": "interior" },
+    { "id": "C3", "terrain": "interior" },
+    { "id": "D3", "terrain": "shadow" },
+
+    { "id": "A4", "terrain": "shadow" },
+    {
+      "id": "B4",
+      "terrain": "gate",
+      "entry": { "direction": "north", "incomingMice": 6 }
+    },
+    {
+      "id": "C4",
+      "terrain": "gate",
+      "entry": { "direction": "north", "incomingMice": 6 }
+    },
+    { "id": "D4", "terrain": "shadow" }
+  ]
+}

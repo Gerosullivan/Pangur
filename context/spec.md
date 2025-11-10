@@ -11,11 +11,11 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 
 ## 2. Starting State
 
-- Board: 4x4 grid representing the building interior. Perimeter cells (row 4, row 1, column A, column D) begin occupied by resident `1/1` mice pieces, filling all edge squares (12 total); interior cells start empty. Shadow bonus cells should render dark, while open gate cells appear light (B4, C4).
+- Board: 4x4 grid representing the building interior. Perimeter cells (row 4, row 1, column A, column D) begin occupied by resident `1/1` mice pieces, filling all edge squares (12 total); interior cells start empty. Shadow bonus cells should render dark, while open gate cells appear light (B4, C4). The board layout is fully data-driven via `src/data/boardLayout.json`, which defines each cell’s `terrain` plus optional `entry` metadata (`direction: north/south/east/west`, `incomingMice`). Entry cells automatically render staging divs outside the matching board edge to hold their queue of emoji mice.
 - Cat pieces: Three residents off-board at the bottom center, displayed side-by-side (same cat component as will be on board - see UI spec). Base stats use `catch/meow`: `1/3`, Pangur (aka Cruibne) `3/1`, `2/2`. Each cat begins with five hearts (health).
 - Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat piece from the off board onto any free interior cell. This occurs once per game; cats cannot be placed on occupied perimeter cells until cleared. After placing all three cats, the player must confirm their starting formation before entering the normal turn loop.
 - Grain: 16 units stored inside the building.
-- Incoming Wave: 12 mouse pieces waiting outside (queue for next entry phase) above board.
+- Incoming Wave: 12 mouse pieces waiting outside, split per entry cell as configured in `boardLayout.json` (current default: 6 for `B4 north` and 6 for `C4 north`). UI shows one staging band per entry directly outside the corresponding perimeter cell so the player can see how many mice are queued on each side.
 
 ## 3. Attributes & Terminology
 
@@ -40,7 +40,9 @@ After the one-time setup placement, each round repeats these phases in order:
    - Surviving mice eat grain, potentially evolving.
    - Every meaningful state update (target selection, damage, eating, stat changes) pauses until the player advances with the stepper control.
 3. **Incoming Wave Phase**
-   - Calculate meow deterrence, remove scared mice from the queue, and place the remaining mice onto the grid.
+   - Calculate meow deterrence per entry cell (see §8). Each cat’s meow is assigned to the nearest entry cell(s) using Chebyshev distance; ties split evenly and any remainder is distributed deterministically left-to-right. This produces a `meow` bucket for every entry, which drives both the UI labels (“Meow Deterring: X”) and the scare counts.
+   - Remove scared mice from each entry’s queue independently (`deterred = min(bucket, queued)`), updating the staging bands so players can watch mice flee from specific gates.
+   - After deterrence, place the remaining mice by pulling from each entry queue in order (north → east → south → west), spawning them onto the highest available rows just like the earlier prototype. If the board lacks free cells for the required entrants, trigger the “Building overwhelmed” loss condition.
    - Apply the same stepper control so each placement or deterrence change requires explicit user progression.
 
 ## 5. Cat Phase Details
@@ -122,6 +124,11 @@ After the one-time setup placement, each round repeats these phases in order:
 
 ## 8. Special Cells & Modifiers
 
+- **Board Layout JSON**
+  - `src/data/boardLayout.json` enumerates every cell with a `terrain` tag (`shadow`, `gate`, `interior`) and optional `entry` block. Entry metadata captures `direction` (`north`, `south`, `east`, `west`) and the number of mice queued outside that perimeter cell on turn 1.
+  - The loader validates that entry cells live on the perimeter and that their direction matches the side they touch; invalid layouts fail fast at build time.
+  - UI + gameplay both hydrate directly from this file: updating `incomingMice` immediately changes the staging bands, queue refill targets, and deterrence math with no code changes.
+
 - **Meow Zones**
   - `B4` and `C4` (yellow gate cells) double meow (UI: cat meow number bold with blue glow).
   - Cells nearest to those gates (using the `Nearest` definition above) — `A4`, `D4`, `B3`, `C3`, `A3`, and `D3` — allow normal meow (no multiplier).
@@ -136,7 +143,7 @@ After the one-time setup placement, each round repeats these phases in order:
 
 - Track per-cat: position (or hand slot), hearts, base catch/meow, temporary modifiers, spent catch, move-used flag.
 - Track per-mouse: position, current stats (`1/1` or `2/2`), stun flag.
-- Track global: grain total, incoming queue count (0-12), turn counter, deterrence preview.
+- Track global: grain total, per-entry incoming queues (maps `CellId -> MouseState[]`), turn counter, and the deterrence preview object (`totalMeow`, `scared`, `entering`, plus per-entry breakdown).
 
 ## 10. Win & Loss Conditions
 

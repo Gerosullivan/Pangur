@@ -13,3 +13,9 @@ This log records previously scoped work that has shipped so we can reference the
 - **Outcome:** Baircne now checks all eight neighboring cells each frame and copies the dominant stat of nearby allies: Pangur grants +1 catch, the Guardian (`1/3`) grants +1 meow, and having both adjacent provides both bonuses. Aura bonuses apply before terrain modifiers and disappear instantly when formations break.
 - **Behaviour Notes:** Bonuses stack with terrain (shadow, gate). Side panel shows `Aura +1 Catch/Meow` badges plus the contributing cat name inside the stat breakdown, and cat pieces inherit the boosted stats so deterrence previews remain accurate.
 - **Testing Notes:** Verified adjacency across orthogonal and diagonal positions, ensured bonuses drop the moment the supporting cat moves or is removed, and confirmed deterrence + remaining catch tracking includes aura adjustments.
+
+## Configurable Board Layout & Multi-Entry Queues
+
+- **Outcome:** Cell terrain, entry points, and initial queue sizes now live in `src/data/boardLayout.json`. The loader validates perimeter-only entries and hydrates both gameplay (incoming queues, deterrence buckets) and presentation (staging bands wrapped around the board).
+- **Behaviour Notes:** Incoming mice are grouped outside each entry cell (north/south/east/west) with emoji counts and live `Meow Deterring` labels. Cat meow splits into the nearest entry buckets, feeds the per-entry scare logic, and the stepper now resolves deterrence/placements per gate before refilling queues back to their configured targets.
+- **Testing Notes:** Edited the JSON defaults (B4/C4 with 6 mice each) and confirmed UI + queue math update instantly; verified Playwright renders staging bands and that changing cat positions updates the per-entry meow labels/queue counts without page reloads.

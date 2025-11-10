@@ -11,15 +11,11 @@
   color: #f2f2f2;
 }
 
-.top-bar,
-.incoming-row {
+.top-bar {
   display: flex;
   align-items: center;
   padding: 0 32px;
   gap: 32px;
-}
-
-.top-bar {
   background: rgba(20, 24, 32, 0.9);
 }
 
@@ -36,6 +32,51 @@
   font-size: 1rem;
 }
 
+.incoming-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 12px 32px;
+  gap: 12px;
+  background: rgba(20, 24, 32, 0.8);
+}
+
+.incoming-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.95rem;
+  color: rgba(242, 242, 242, 0.85);
+}
+
+.entry-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.entry-chip {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  border: 1px solid rgba(148, 197, 255, 0.35);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  background: rgba(15, 23, 42, 0.7);
+}
+
+.chip-cell {
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.chip-count {
+  color: rgba(226, 241, 255, 0.85);
+  font-size: 0.8rem;
+}
+
 .board-region {
   display: flex;
   align-items: stretch;
@@ -44,8 +85,98 @@
   gap: 32px;
 }
 
-.game-board {
+.board-stage {
+  --entry-side-width: 96px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.board-stage-middle {
+  display: grid;
+  grid-template-columns: var(--entry-side-width) minmax(320px, 1fr) var(--entry-side-width);
+  gap: 12px;
+  align-items: center;
+}
+
+.entry-band {
+  display: grid;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.entry-band-north,
+.entry-band-south {
+  grid-template-columns: repeat(4, 1fr);
+  margin-left: var(--entry-side-width);
+  margin-right: var(--entry-side-width);
+}
+
+.entry-band-east,
+.entry-band-west {
+  grid-template-rows: repeat(4, 1fr);
+  width: var(--entry-side-width);
+}
+
+.entry-slot {
+  min-height: 48px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #dfe3f0;
+  font-size: 0.7rem;
+  text-align: center;
+  background: rgba(17, 24, 39, 0.4);
+}
+
+.entry-slot.has-entry {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(8, 8, 12, 0.55);
+}
+
+.entry-slot .entry-mice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  justify-content: center;
+}
+
+.entry-slot.direction-east .entry-mice,
+.entry-slot.direction-west .entry-mice {
+  flex-direction: column;
+}
+
+.entry-slot .entry-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.entry-slot .entry-cell {
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.entry-slot .entry-deterring {
+  font-size: 0.65rem;
+  color: rgba(173, 216, 230, 0.85);
+}
+
+.entry-slot .entry-empty {
+  opacity: 0.4;
+  font-size: 0.9rem;
+}
+
+.game-board {
+  width: 100%;
   max-width: 640px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -370,21 +501,6 @@
 .stepper-label {
   font-size: 0.95rem;
   color: rgba(242, 242, 242, 0.7);
-}
-
-.queue-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 12px;
-}
-
-.queue-piece {
-  font-size: 2rem;
-  transition: transform 0.2s ease;
-}
-
-.queue-piece.scared {
-  transform: translateY(-12px);
 }
 
 .deterrence-info {
