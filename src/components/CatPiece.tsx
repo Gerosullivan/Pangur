@@ -1,7 +1,7 @@
 import type { DragEvent, KeyboardEvent } from 'react';
 import type { CatId, CatState } from '../types';
 import { catDefinitions, CAT_STARTING_HEARTS } from '../lib/cats';
-import { isShadowBonus, parseCell } from '../lib/board';
+import { getMeowZone, isShadowBonus } from '../lib/board';
 
 interface CatPieceProps {
   cat: CatState;
@@ -38,12 +38,10 @@ function CatPiece({
   const currentHearts = Math.max(cat.hearts, 0);
   const emptyHearts = Math.max(CAT_STARTING_HEARTS - currentHearts, 0);
   const catchBonus = cat.position && cat.shadowBonusActive && isShadowBonus(cat.position) ? 1 : 0;
-  const positionRow = cat.position ? parseCell(cat.position).row : undefined;
-
+  const meowZone = cat.position ? getMeowZone(cat.position) : undefined;
   const meowClass =
-    positionRow === 4 ? 'glow-blue' :
-    positionRow === 2 ? 'halved' :
-    positionRow === 1 ? 'disabled' :
+    meowZone === 'gate' ? 'glow-blue' :
+    meowZone === 'silent' ? 'disabled' :
     '';
 
   const hearts = (

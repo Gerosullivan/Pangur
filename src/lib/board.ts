@@ -2,12 +2,15 @@ import type { CellId, CellState, Column, Row } from '../types';
 
 export const columns: Column[] = ['A', 'B', 'C', 'D'];
 export const rows: Row[] = [1, 2, 3, 4];
+export const gateCells: CellId[] = ['B4', 'C4'];
 
 export const perimeterCells: CellId[] = columns.flatMap((column) =>
   rows
     .map((row) => `${column}${row}` as CellId)
     .filter((cellId) => isPerimeter(cellId))
 );
+
+const gateRingCells = buildGateRingCells();
 
 export function cellId(column: Column, row: Row): CellId {
   return `${column}${row}` as CellId;
@@ -30,7 +33,15 @@ export function isShadowBonus(id: CellId): boolean {
 }
 
 export function isGate(id: CellId): boolean {
-  return id === 'B4' || id === 'C4';
+  return gateCells.includes(id);
+}
+
+export type MeowZone = 'gate' | 'gateRing' | 'silent';
+
+export function getMeowZone(id: CellId): MeowZone {
+  if (isGate(id)) return 'gate';
+  if (gateRingCells.has(id)) return 'gateRing';
+  return 'silent';
 }
 
 export function terrainForCell(id: CellId): CellState['terrain'] {
@@ -102,4 +113,27 @@ export function pathCellsBetween(origin: CellId, target: CellId): CellId[] {
     cells.push(cellId(nextColumn, nextRow));
   }
   return cells;
+}
+
+function buildGateRingCells(): Set<CellId> {
+  const ring = new Set<CellId>();
+  for (const column of columns) {
+    for (const row of rows) {
+      const id = cellId(column, row);
+      if (isGate(id)) continue;
+      const minDistance = Math.min(...gateCells.map((gate) => chebyshevDistance(id, gate)));
+      if (minDistance === 1) {
+        ring.add(id);
+      }
+    }
+  }
+  return ring;
+}
+
+function chebyshevDistance(a: CellId, b: CellId): number {
+  const aPos = parseCell(a);
+  const bPos = parseCell(b);
+  const colDiff = Math.abs(columns.indexOf(aPos.column) - columns.indexOf(bPos.column));
+  const rowDiff = Math.abs(rows.indexOf(aPos.row) - rows.indexOf(bPos.row));
+  return Math.max(colDiff, rowDiff);
 }

@@ -24,6 +24,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 - `Hearts`: Cat / mouse health. When a cat or mouse reaches 0 hearts it is removed.
 - `Stunned (mouse only)`: Mouse skips its attack/eat actions for the rest of the current turn cycle.
 - Mouse stat formats: `1/1` (attack/health base) or `2/2` (attack/health after grain).
+- `Nearest` (adjacent): Any cell that shares an edge **or** a corner with the origin cell (orthogonal or diagonal). This definition applies to cat/mouse attack ranges, aura checks, and terrain effects that reference “closest” cells (e.g., gate meow zones).
 
 ## 4. Turn Loop Overview
 
@@ -121,11 +122,10 @@ After the one-time setup placement, each round repeats these phases in order:
 
 ## 8. Special Cells & Modifiers
 
-- **Meow Lanes**
-  - Row `4`: Meow x2 (UI: cat meow number bold with blue glow).
-  - Row `3`: Meow x1 (no change).
-  - Row `2`: Meow x0.5, rounded down (UI: cat meow number outlined in purple).
-  - Row `1`: Meow = 0 (UI: cat meow number greyed or crossed out).
+- **Meow Zones**
+  - `B4` and `C4` (yellow gate cells) double meow (UI: cat meow number bold with blue glow).
+  - Cells nearest to those gates (using the `Nearest` definition above) — `A4`, `D4`, `B3`, `C3`, `A3`, and `D3` — allow normal meow (no multiplier).
+  - Every other board cell suppresses meow entirely (UI: cat meow number greyed/disabled).
 - **Shadow Bonus (Catch)**
   - Perimeter cells — entire row `1` plus columns `A` and `D` across all rows — grant +1 catch.
   - Exceptions: `B4` and `C4` are "open gate" and provide no bonus.

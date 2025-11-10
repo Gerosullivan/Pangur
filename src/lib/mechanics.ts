@@ -1,5 +1,5 @@
 import { catDefinitions, CAT_STARTING_HEARTS } from './cats';
-import { columns, parseCell, rows, isShadowBonus, buildInitialCells, isPerimeter, getNeighborCells } from './board';
+import { columns, rows, isShadowBonus, buildInitialCells, isPerimeter, getNeighborCells, getMeowZone } from './board';
 import type {
   CatId,
   GameState,
@@ -139,18 +139,14 @@ export function getCatEffectiveMeow(state: CatStatContext, catId: CatId): number
     const aura = getBaircneAuraSummary(state);
     base += aura.meowBonus;
   }
-  const row = parseCell(cat.position).row;
-  switch (row) {
-    case 4:
-      return base * 2;
-    case 3:
-      return base;
-    case 2:
-      return Math.floor(base * 0.5);
-    case 1:
-    default:
-      return 0;
+  const zone = getMeowZone(cat.position);
+  if (zone === 'gate') {
+    return base * 2;
   }
+  if (zone === 'gateRing') {
+    return base;
+  }
+  return 0;
 }
 
 export interface BaircneAuraSummary {

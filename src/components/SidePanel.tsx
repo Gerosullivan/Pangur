@@ -1,14 +1,19 @@
 import { useMemo } from 'react';
 import { useGameStore } from '../state/gameStore';
 import { catDefinitions, CAT_STARTING_HEARTS } from '../lib/cats';
-import { isShadowBonus, parseCell } from '../lib/board';
+import { getMeowZone, isShadowBonus, type MeowZone } from '../lib/board';
 import { getBaircneAuraSummary, getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch } from '../lib/mechanics';
 import type { CatState } from '../types';
-const laneLabels: Record<number, string> = {
-  4: 'Meow x2 (Entrance)',
-  3: 'Meow x1',
-  2: 'Meow x0.5 (rounded down)',
-  1: 'No Meow (Back wall)',
+const meowZoneLabels: Record<MeowZone, string> = {
+  gate: 'Gate surge (×2)',
+  gateRing: 'Gate ring (normal)',
+  silent: 'Silenced zone',
+};
+
+const meowZoneModifiers: Record<MeowZone, string> = {
+  gate: '×2 gate',
+  gateRing: '',
+  silent: 'Too far from entrance',
 };
 
 function SidePanel() {
@@ -34,22 +39,10 @@ function SidePanel() {
     let laneModifier = '';
 
     if (cat.position) {
-      const { row } = parseCell(cat.position);
       positionLabel = cat.position;
-      lane = laneLabels[row];
-      switch (row) {
-        case 4:
-          laneModifier = '×2 lane';
-          break;
-        case 3:
-          break;
-        case 2:
-          laneModifier = '×0.5 lane';
-          break;
-        default:
-          laneModifier = 'Lane suppresses meow';
-          break;
-      }
+      const zone = getMeowZone(cat.position);
+      lane = meowZoneLabels[zone];
+      laneModifier = meowZoneModifiers[zone];
       if (isShadowBonus(cat.position)) {
         if (cat.shadowBonusActive) {
           catchParts.push('+1 shadow');
@@ -74,7 +67,7 @@ function SidePanel() {
     let meowBreakdown = '';
     if (laneModifier === 'Off board') {
       meowBreakdown = laneModifier;
-    } else if (laneModifier === 'Lane suppresses meow') {
+    } else if (laneModifier === 'Too far from entrance') {
       meowBreakdown = laneModifier;
     } else {
       const parts = [...meowParts];
