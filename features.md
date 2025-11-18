@@ -1,3 +1,47 @@
 # Upcoming Feature Work
 
-There are no queued features at the moment. Add new proposals here and archive completed specs in `features_archive.md` (latest addition: configurable board layout + multi-entry deterrence).
+New rules 13/Nov
+
+- New default grid :
+  - 5x5 cells (up from 4x4)
+  - Shadow cells cover all perimeter cells around board except gate cells
+  - Gates are at B5, C5 & D5
+- New mouse upgrade rule:
+  - Mice can only upgrade attributes if on shadow cells.
+- New incoming mice rules:
+  - Maximum 6 Incoming mice
+  - If a cat is present on a gate cell, it reduces incoming mice count by its meow value (no double bonus any more). e.g. 1/3 cat deters 3 mice, leaving 3 to come in.
+  - Cats meow detterance only applies when on gate cells.
+  - Incoming mice must be placed on a starting gate cell. If there is a cat on a gate cell it must choose another gate cell. If there is another mouse present on a gate cell, the next mouse in incoming queue can be place on the next adjacent cell to the gate mouse. Incoming mice placement continues along the uninterrupted ‘mouse line’ until all incoming mice are on the board. If a mouse can’t be placed on the board (e.g. due to a cat blocking the mouse line) no more mice enter the board. Incoming mice will tend to want to end up in shadows so they can upgrade to larger mice in later turns.
+  - On the mice turn:
+    - Phase 1: mice can either move or attack another cat
+    - Phase 2: mice can upgrade to a larger mouse gaining attack, health and move attributes, but only if in shadow cell.
+- New move rules:
+  - Mice can move tiles equal to their attack value. e.g. a 2/2 mouse can move up to 2 tiles each turn
+  - Mice can only move to adjacent tiles (cross, not diagonal)
+  - All cats can move like Chess Queen (not just Pangur).
+- New attack rules:
+  - All Cats can attack or move first
+  - If a cat starts an attack phase, they gain a shadow bonus attack point only if starting in a shadow cell (after moving or starting turn on shadow cell).
+  - If cats have attack points left over after moving, they can attack again
+  - When a cat attacks a mouse, the mouse will retaliate with a counter attack calculated as mouse attack minus cat meow value.
+  - Surviving mice will regain all health at the end of turn.
+    - UI update: mice will have persistent hearts above avatar to show damage in turn combat (if >= 2/2 stats)
+  - Example 1:
+    - a 2/2 cat attacks a 3/3 mouse for 2 attack damage (
+    - Cat receives retaliation damage of 1 (3 mouse attack minus 2 meow)
+    - Mouse is considered ‘whacked’ or ‘stunned’ - same as current game.
+    - Another cat finishes the stunned mouse off with 1 damage (receiving no retaliation damage as mouse is stunned) and that cat gains 1 life.
+- Pangur can move twice. This is a simpler rule than MAM or AMA.
+- 2/2 mouse gains one attack if near Pangur (no meow bonus)
+- Mice turn
+  - Phase 1: attack OR move (number of cells = attack value)
+  - Phase 2: gain +1/+1 if in shadow
+  - Phase 3: bring in new recruits (minus meow)
+    - New recruits follow mouse line in adjacent tiles
+- Clean up phase
+  - Un-whack mice
+- Mice win condition
+  - Populate all cells on board
+  - Kill a cat
+  - Grow a mouse to 7/7 (can’t be killed by 3 cats)
