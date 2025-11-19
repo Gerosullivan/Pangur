@@ -1,47 +1,42 @@
 # Upcoming Feature Work
 
-New rules 13/Nov
+Handoff-ready plan for the next iteration. Keep specs in `context/spec.md` aligned as each block ships.
 
-- New default grid :
-  - 5x5 cells (up from 4x4)
-  - Shadow cells cover all perimeter cells around board except gate cells
-  - Gates are at B5, C5 & D5
-- New mouse upgrade rule:
-  - Mice can only upgrade attributes if on shadow cells.
-- New incoming mice rules:
-  - Maximum 6 Incoming mice
-  - If a cat is present on a gate cell, it reduces incoming mice count by its meow value (no double bonus any more). e.g. 1/3 cat deters 3 mice, leaving 3 to come in.
-  - Cats meow detterance only applies when on gate cells.
-  - Incoming mice must be placed on a starting gate cell. If there is a cat on a gate cell it must choose another gate cell. If there is another mouse present on a gate cell, the next mouse in incoming queue can be place on the next adjacent cell to the gate mouse. Incoming mice placement continues along the uninterrupted ‘mouse line’ until all incoming mice are on the board. If a mouse can’t be placed on the board (e.g. due to a cat blocking the mouse line) no more mice enter the board. Incoming mice will tend to want to end up in shadows so they can upgrade to larger mice in later turns.
-  - On the mice turn:
-    - Phase 1: mice can either move or attack another cat
-    - Phase 2: mice can upgrade to a larger mouse gaining attack, health and move attributes, but only if in shadow cell.
-- New move rules:
-  - Mice can move tiles equal to their attack value. e.g. a 2/2 mouse can move up to 2 tiles each turn
-  - Mice can only move to adjacent tiles (cross, not diagonal)
-  - All cats can move like Chess Queen (not just Pangur).
-- New attack rules:
-  - All Cats can attack or move first
-  - If a cat starts an attack phase, they gain a shadow bonus attack point only if starting in a shadow cell (after moving or starting turn on shadow cell).
-  - If cats have attack points left over after moving, they can attack again
-  - When a cat attacks a mouse, the mouse will retaliate with a counter attack calculated as mouse attack minus cat meow value.
-  - Surviving mice will regain all health at the end of turn.
-    - UI update: mice will have persistent hearts above avatar to show damage in turn combat (if >= 2/2 stats)
-  - Example 1:
-    - a 2/2 cat attacks a 3/3 mouse for 2 attack damage (
-    - Cat receives retaliation damage of 1 (3 mouse attack minus 2 meow)
-    - Mouse is considered ‘whacked’ or ‘stunned’ - same as current game.
-    - Another cat finishes the stunned mouse off with 1 damage (receiving no retaliation damage as mouse is stunned) and that cat gains 1 life.
-- Pangur can move twice. This is a simpler rule than MAM or AMA.
-- 2/2 mouse gains one attack if near Pangur (no meow bonus)
-- Mice turn
-  - Phase 1: attack OR move (number of cells = attack value)
-  - Phase 2: gain +1/+1 if in shadow
-  - Phase 3: bring in new recruits (minus meow)
-    - New recruits follow mouse line in adjacent tiles
-- Clean up phase
-  - Un-whack mice
-- Mice win condition
-  - Populate all cells on board
-  - Kill a cat
-  - Grow a mouse to 7/7 (can’t be killed by 3 cats)
+## 1. Board & Layout Upgrade
+
+- Expand geometry to 5x5 (add column `E`, row `5`). Ensure `src/types.ts`, `src/lib/board.ts`, board layout JSON, and styling all honor the new grid.
+- Mark the outer ring as `shadow` terrain except the new gates at `B5`, `C5`, `D5`. Entry definitions for those cells should cap the combined incoming queue at six mice.
+- Initial game state now starts with **no resident ring of mice** on the perimeter; only cats in hand plus the shared incoming queue populate the board.
+- Specs + docs need to describe the new single incoming staging area (see §4) once code lands.
+
+## 2. Cat Rules Refresh
+
+- Let every cat move like a chess queen; remove Pangur-only movement code (shared validator for `Board.tsx` + `gameStore.moveCat`).
+- Replace Pangur’s MAM/AMA tracking with a simple “two moves per turn” counter that resets each cat phase.
+- Allow attack-first or move-first turns globally. Track the attack-starting cell so only cats who began attacking from shadow keep the +1 catch bonus.
+- Extend `attackMouse` so surviving mice retaliate for `max(mouse.attack - effectiveMeow, 0)` damage. Hook into existing cat defeat logic.
+
+## 3. Resident Mouse Phase Changes
+
+- Give mice a dedicated movement phase: each unstunned mouse either attacks an adjacent cat or walks up to its attack value in orthogonal steps toward its goal (prefer shadows/gates). Encode the heuristic in `context/spec.md`.
+- Restrict upgrades to mice standing on shadow cells during the feed phase.
+- Surviving mice heal to full hearts during cleanup; display persistent hearts in `MousePiece` when hearts > 1 to show damage.
+- Pangur aura: any `2/2` mouse adjacent to Pangur gains +1 attack (no meow bonus). Implement in mechanics and document.
+
+## 4. Incoming Wave Logic
+
+- Replace the ring UI with **one shared incoming mice area** (think staging lane) that shows the live deterrence total (“Meowge”) updating continuously from cat placement. No perimeter emojis remain.
+- Meow deterrence only occurs from cats on gate cells (no more doubled zones). A cat’s meow reduces the six-mouse cap directly; the shared staging UI should show total incoming, deterred, and entering counts driven by this single preview object.
+- Refactor `refillEntryQueues` into a single queue feeding all gates. When entrants spawn, compute the legal “mouse line” per gate: walk from the gate cell straight inward (orthogonal only), skipping gates blocked by cats, and stop when the line encounters a cat or the board edge. Within that line, choose exact cells by weighting shadow tiles first so mice tend to end turns where they can upgrade next turn (e.g., prioritize the nearest shadow cell along the path; fall back to the first open tile).
+- Update the deterrence preview UI and entry bands (now a single staging panel) plus specs to reflect the consolidated queue and placement priorities.
+
+## 5. Win / Loss Conditions & Cleanup
+
+- Loss triggers now include: all interior cells filled by mice, any cat death, or a mouse reaching `7/7`.
+- Keep the existing “grain 0” and “building overwhelmed” checks. Win still fires when no mice remain on board and in queues.
+- Document the revised conditions in the spec and confirm the stepper transitions reset stunned/healed flags correctly.
+
+## 6. QA / Follow-Up
+
+- After each milestone, validate flows manually via the local Vite dev server and the Playwright MCP tool.
+- Sync `context/spec.md`, `features_archive.md`, or other battle specs as soon as functionality lands to keep design + code in lockstep.
