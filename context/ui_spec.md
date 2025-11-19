@@ -26,14 +26,14 @@ Use responsive layout:
   - Background: Semi-opaque charcoal (`rgba(20, 24, 32, 0.9)`).
   - Content order (left → right):
     1. Title block `Pangur` with current wave (`Wave 3`).
-    2. Grain counter (icon 🌾 + numeric total, e.g., `Grain 16`).
+    2. Grain loss tracker (icon 🌾 + numeric total, e.g., `Grain Loss 12 / 32`).
 
 - **Incoming Mice Row**
 
   - Height: 80px, full width.
   - Background: Semi-opaque charcoal (`rgba(20, 24, 32, 0.9)`).
-  - Contains a single staging lane of up to six mouse icons.
-  - Scared mice (deterred by Meowge) float slightly higher using 😱 icons; entering mice stay on the baseline as 🐭.
+  - Left-justified label `Next Wave`, followed by a fixed row of six mouse slots that never changes length.
+  - Meow preview swaps slots to 😱 when Meowge would deter that mouse; remaining slots show 🐭.
 
 - **Central Board Region**
 
@@ -58,7 +58,7 @@ Use responsive layout:
         - `Catch 0` grey badge if out of attacks this turn.
       - full meow and attack base points and modifiers. e.g. "Attack 4 (3 base +1 shadow bonus")"
       - Pangur-specific callout: show a `Moves 2/2` badge that decrements after each queen move so players track his remaining mobility at a glance.
-      - Guardian-specific aura indicator: when Baircne’s aura is active, surface an `Aura +1 Catch` or `Aura +1 Meow` badge (or both) and name the contributing cat inside the stat breakdown text (e.g., “+1 aura (Pangur)”).
+      - Guardian-specific aura indicator: when Baircne’s aura is active, surface an `Aura +1 Catch` badge and name the contributing cat inside the stat breakdown text (e.g., “+1 aura (Pangur)”).
 
 - **Bottom Action Area**
 
@@ -71,6 +71,7 @@ Use responsive layout:
     - `End Turn` button (primary CTA; ends cat phase and starts mouse phase).
     - other buttons like `Restart game` and `Undo move` (TBC)
   - When `End Turn` is pressed, swap the action button group for a `Phase Stepper` control rail: `Next` primary button, disabled `Previous` stub (future-proofed), and textual label describing the current frame (e.g., `Resident Mouse Attack 1/5`).
+  - Stepper behavior: resident attacks still advance one frame per hit, but incoming deterrence now uses **one combined frame** for all scared mice leaving before individual placement frames.
   - Phase Stepper persists through all sub-phases until the incoming wave phase concludes, then hand control back to the action buttons for the next cat phase.
 
 ## 2. Key Visual Components
@@ -87,7 +88,7 @@ Use responsive layout:
     - top row: two heart pips floating above badge
     - bottom row: Attack attribute: floating bottom middle in red text
   - Persistent heart pips stay visible even after combat damage so players can track how close a mouse is to defeat.
-  - Incoming Queue: single horizontal lane above the board; scared 😱 mice float, entering 🐭 sit baseline.
+  - Incoming Queue: labelled `Next Wave`, always six slots. Swap the leftmost slots to 😱 as Meowge increases; remaining slots show 🐭.
 - **Buttons**
   - Default: Rounded rectangle, 48px height, .
   - Confirmation: `End Turn` uses orange accent to emphasize irreversible action.
@@ -95,7 +96,7 @@ Use responsive layout:
 ## 3. Interaction Notes
 
 - Hovering a dragged cat over a grid cell:
-  - updates the deterrence readout in the top bar and the Meowge counters in the incoming lane in real time.
+  - updates the deterrence readout in the top bar and live `Next Wave` icon mix (swap 🐭↔😱) in real time.
   - updates the cats attributes according to cell modifiers.
 - After pressing `End Turn`, freeze cat controls until mouse phase completes.
 - During resident mouse and incoming wave phases, dim non-active UI and focus on the Phase Stepper; each `Next` press should trigger one discrete state change so automated tests can assert the intermediate board states.

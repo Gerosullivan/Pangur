@@ -8,20 +8,20 @@ This prototype intentionally leaves implementation details to the next developer
 - Favor the simplest approach that satisfies the current design specs.
 - Record any trade-offs or new questions back in the context docs as work progresses.
 
-## Current Implementation Priorities
+## Key Implementation Notes
 
 1. **Board + Layout**
-   - Promote the grid helpers to handle 5×5 coordinates (`A-E`, `1-5`) and a shadow perimeter with gates at `B5/C5/D5`.
-   - Remove the auto-spawned perimeter mice and rely solely on the shared incoming queue for new mice.
+   - Grid helpers (`src/lib/board.ts`) operate on a 5×5 interior (`A-E`, `1-5`). All perimeter cells are `shadow` terrain except gates `B5/C5/D5`, and there are no resident mice pre-placed—only cats in hand plus the incoming queue.
+   - Entry metadata in `boardLayout.json` seeds the “Next Wave” lane but no longer spawns per-edge staging bands.
 2. **Cats**
-   - Replace Pangur’s special-sequence logic with a simple two-move counter and ensure every cat now uses queen-style movement.
-   - Shadow Strike bonus only applies if the cat starts its first attack from a shadow tile; store that transient flag per cat each turn.
-   - Cat attacks must trigger mouse retaliation damage of `max(mouse attack − cat meow, 0)` and heal the cat on kills.
+   - Movement validator treats every cat as a queen mover; Pangur tracks a per-turn `movesRemaining = 2` counter.
+   - Shadow Strike is tracked on each cat when its first attack originates from a shadow tile. Guardian’s aura only boosts catch; his meow stays at zero.
+   - Attacks call into mechanics helpers to apply damage, trigger single retaliation hits, and heal on kills.
 3. **Mice**
-   - During the resident phase, give each unstunned mouse a “attack if adjacent else move up to attack value orthogonally” behavior with Pangur aura handling (+1 attack for adjacent `2/2` mice).
-   - Feeding/upgrading should consume grain but only award stat boosts if the mouse currently occupies a shadow tile; heal surviving mice in cleanup.
+   - Resident phase logic first lets mice move toward shadow tiles (up to their attack value in orthogonal steps); they will forgo attacks if that move reaches a shadow tile.
+   - Feeding increments the grain loss counter and upgrades any shadow-sitting mouse by +1/+1 without an upper cap, followed by a cleanup heal + stun reset.
 4. **Incoming Wave**
-   - Maintain a single queue (max six) with live Meowge preview. Meow only counts from cats on gate cells.
-   - Placement must obey the “mouse line” from each gate, prioritizing shadow tiles on that line before other cells. Abort with a loss if there is insufficient space.
+   - Deterrence uses a single Meowge value coming from gate cats only. Preview + stepper share the same six-slot “Next Wave” lane, flipping icons 🐭↔😱.
+   - Placement searches orthogonal paths from each gate toward the nearest shadow perimeter (south/east/west) and prioritizes shadow cells. Excess entrants are discarded if no legal tiles remain.
 5. **Win/Loss**
-   - Add checks for any cat death, the entire board filling with mice, and future-proofing for a `7/7` mouse alongside the existing grain/overrun failures.
+   - Global checks monitor: grain loss reaching 32, any cat death, full board occupation by mice, and a mouse scaling to 7/7. Incoming overflow simply deletes extra mice instead of causing a loss.
