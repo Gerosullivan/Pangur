@@ -55,7 +55,7 @@ After the one-time setup placement, each round repeats these phases in order:
   - Pangur exception: Pangur receives two queen-style moves per turn. He may use them before attacking, after attacking, or split on both sides of a single attack sequence, but cannot chain more than two total moves.
   - Shadow Strike bonus: when a cat begins its first attack of the turn while standing on a shadow tile, it gains +1 temporary catch for that attack sequence. Leaving the shadow tile before starting the attack removes this bonus.
   - Players may swap between cats freely; switching away remembers how many moves/catch the previous cat has remaining.
-  - **Guardian Aura (Baircne `2/2`):** Whenever Baircne is adjacent (orthogonal or diagonal) to another friendly cat, he copies that cat’s higher attribute but only for catch. The aura grants +1 catch if the neighbor’s catch exceeds their meow; it no longer grants additional meow.
+  - **Baircne Passive (“Pangur’s Shield”):** Whenever the `2/2` cat stands adjacent (orthogonal or diagonal) to Pangur, he gains +1 catch. This bonus belongs to Baircne’s passive kit (not Pangur’s) and never grants meow. Leaving Pangur’s side removes the bonus immediately.
 - **Attacking**
   - Valid targets: Adjacent and diagonal resident mice (max 8 surrounding cells).
   - Spending 1 catch deals 1 damage. Cats may keep spending while they have remaining catch.

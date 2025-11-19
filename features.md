@@ -6,7 +6,8 @@ Handoff-ready plan for the next iteration. Keep specs in `context/spec.md` align
 
 - Expand geometry to 5x5 (add column `E`, row `5`). Ensure `src/types.ts`, `src/lib/board.ts`, board layout JSON, and styling all honor the new grid.
 - Mark the outer ring as `shadow` terrain except the new gates at `B5`, `C5`, `D5`. Entry definitions for those cells should cap the combined incoming queue at six mice.
-- Initial game state now starts with **no resident ring of mice** on the perimeter; only cats in hand plus the shared incoming queue populate the board.
+- Initial game state now spawns `1/1` mice on every perimeter cell (still data-driven via `boardLayout.json`), while interior cells remain open for cat placement.
+- During setup, players can drag cats on/off the board freely with no limits until they click `Confirm Formation`; make sure the store + UI allow infinite rearrangements before locking in.
 - Specs + docs need to describe the new single incoming staging area (see §4) once code lands.
 
 ## 2. Cat Rules Refresh
@@ -21,7 +22,7 @@ Handoff-ready plan for the next iteration. Keep specs in `context/spec.md` align
 - Give mice a dedicated movement phase: each unstunned mouse either attacks an adjacent cat or walks up to its attack value in orthogonal steps toward its goal (prefer shadows/gates). Encode the heuristic in `context/spec.md`.
 - Restrict upgrades to mice standing on shadow cells during the feed phase.
 - Surviving mice heal to full hearts during cleanup; display persistent hearts in `MousePiece` when hearts > 1 to show damage.
-- Pangur aura: any `2/2` mouse adjacent to Pangur gains +1 attack (no meow bonus). Implement in mechanics and document.
+- Baircne passive: the `2/2` cat gains +1 catch whenever he is adjacent to Pangur (no meow bonus). Surface this as Baircne’s passive badge rather than Pangur’s.
 
 ## 4. Incoming Wave Logic
 

@@ -15,7 +15,7 @@ This prototype intentionally leaves implementation details to the next developer
    - Entry metadata in `boardLayout.json` seeds the “Next Wave” lane but no longer spawns per-edge staging bands; designers can toggle perimeter occupants through the same file.
 2. **Cats**
    - Movement validator treats every cat as a queen mover; Pangur tracks a per-turn `movesRemaining = 2` counter.
-   - Shadow Strike is tracked on each cat when its first attack originates from a shadow tile. Guardian’s aura only boosts catch; his meow stays at zero.
+   - Shadow Strike is tracked on each cat when its first attack originates from a shadow tile. Baircne’s passive (“Pangur’s Shield”) checks adjacency to Pangur and grants +1 catch (never meow) whenever they’re neighboring.
    - Attacks call into mechanics helpers to apply damage, trigger single retaliation hits, and heal on kills.
 3. **Mice**
    - Resident phase logic first lets mice move toward shadow tiles (up to their attack value in orthogonal steps); they will forgo attacks if that move reaches a shadow tile.
