@@ -43,7 +43,7 @@ Use responsive layout:
     - Interior cells: grey.
     - Shadow bonus cells (outer ring minus gates): dark grey.
     - Open gate cells (`B5`, `C5`, `D5`): yellow with subtle glowing outline to hint at meow interaction.
-  - Setup begins with all board cells empty; only cats in hand are visible.
+  - Setup begins with perimeter cells pre-populated by `1/1` mice (per layout config) while interior cells are empty and cats start in hand.
 
   - **Right Side Panel (active when cat selected)**
   - 300px wide information panel showing:
@@ -66,6 +66,7 @@ Use responsive layout:
   - Contains cat-hand div at beginning of game (centered)
   - Cat pieces in hand: 98px × 98px
   - Setup message appears to the right of cat pieces with left arrow: "← Drag cats onto the board to start (avoid perimeter cells)"
+  - Players may drag already-placed cats back into the hand (or onto new cells) freely during setup; no limit until `Confirm Formation` is pressed.
   - Once all cats are placed, show a primary `Confirm Formation` button; the main turn loop only begins after the player clicks it.
   - After confirmation, replace the setup UI with action button(s), center middle
     - `End Turn` button (primary CTA; ends cat phase and starts mouse phase).

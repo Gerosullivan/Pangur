@@ -11,8 +11,8 @@ This prototype intentionally leaves implementation details to the next developer
 ## Key Implementation Notes
 
 1. **Board + Layout**
-   - Grid helpers (`src/lib/board.ts`) operate on a 5×5 interior (`A-E`, `1-5`). All perimeter cells are `shadow` terrain except gates `B5/C5/D5`, and there are no resident mice pre-placed—only cats in hand plus the incoming queue.
-   - Entry metadata in `boardLayout.json` seeds the “Next Wave” lane but no longer spawns per-edge staging bands.
+   - Grid helpers (`src/lib/board.ts`) operate on a 5×5 interior (`A-E`, `1-5`). All perimeter cells are `shadow` terrain except gates `B5/C5/D5`, and the default layout spawns `1/1` mice on every perimeter tile (but remains fully data-driven via `boardLayout.json`).
+   - Entry metadata in `boardLayout.json` seeds the “Next Wave” lane but no longer spawns per-edge staging bands; designers can toggle perimeter occupants through the same file.
 2. **Cats**
    - Movement validator treats every cat as a queen mover; Pangur tracks a per-turn `movesRemaining = 2` counter.
    - Shadow Strike is tracked on each cat when its first attack originates from a shadow tile. Guardian’s aura only boosts catch; his meow stays at zero.
