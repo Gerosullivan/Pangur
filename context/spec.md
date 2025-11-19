@@ -12,7 +12,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 ## 2. Starting State
 
 - Board: 5x5 grid representing the building interior. All perimeter cells render as `shadow` terrain except the three open gates at `B5`, `C5`, `D5`. No mice begin on the perimeter; the only residents at start are the cats in hand. The board layout is fully data-driven via `src/data/boardLayout.json`, which defines each cell’s `terrain` plus optional `entry` metadata (`direction: north/south/east/west`, `incomingMice`). Entry cells no longer create per-edge staging bands; instead, their metadata informs the single shared queue described in §8.
-- Cat pieces: Three residents off-board at the bottom center, displayed side-by-side (same cat component as will be on board - see UI spec). Base stats use `catch/meow`: Pangur (aka Cruibne) `3/1`, Guardian `1/3`, Baircne `2/0` (the `2/2` cat no longer contributes meow at all). Each cat begins with five hearts (health).
+- Cat pieces: Three residents off-board at the bottom center, displayed side-by-side (same cat component as will be on board - see UI spec). Base stats use `catch/meow`: Pangur (aka Cruibne) `3/1`, Guardian `1/3`, Baircne `2/2`. Each cat begins with five hearts (health).
 - Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat piece from the off board onto any free interior cell (non-gate). This occurs once per game. After placing all three cats, the player must confirm their starting formation before entering the normal turn loop.
 - Grain Loss Tracker: Start at `0` loss. Each grain eaten by mice increments the counter; reaching `32` loss triggers Game Over.
 - Incoming Wave: Six mouse pieces per wave, visualized as a `Next Wave` lane of six icons. As cats generate Meowge, the leftmost icons flip to 😱 to preview how many will be deterred; remaining icons stay 🐭.
@@ -55,7 +55,7 @@ After the one-time setup placement, each round repeats these phases in order:
   - Pangur exception: Pangur receives two queen-style moves per turn. He may use them before attacking, after attacking, or split on both sides of a single attack sequence, but cannot chain more than two total moves.
   - Shadow Strike bonus: when a cat begins its first attack of the turn while standing on a shadow tile, it gains +1 temporary catch for that attack sequence. Leaving the shadow tile before starting the attack removes this bonus.
   - Players may swap between cats freely; switching away remembers how many moves/catch the previous cat has remaining.
-  - **Guardian Aura (Baircne `2/0`):** Whenever Baircne is adjacent (orthogonal or diagonal) to another friendly cat, he copies that cat’s higher attribute but only for catch. The aura grants +1 catch if the neighbor’s catch exceeds their meow; it never grants meow bonuses. Aura bonuses recalculate immediately as formations shift and stack with terrain modifiers (shadow strike, gates).
+  - **Guardian Aura (Baircne `2/2`):** Whenever Baircne is adjacent (orthogonal or diagonal) to another friendly cat, he copies that cat’s higher attribute but only for catch. The aura grants +1 catch if the neighbor’s catch exceeds their meow; it no longer grants additional meow.
 - **Attacking**
   - Valid targets: Adjacent and diagonal resident mice (max 8 surrounding cells).
   - Spending 1 catch deals 1 damage. Cats may keep spending while they have remaining catch.
