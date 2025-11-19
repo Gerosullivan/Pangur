@@ -1,24 +1,14 @@
-export type Column = 'A' | 'B' | 'C' | 'D';
-export type Row = 1 | 2 | 3 | 4;
+export type Column = 'A' | 'B' | 'C' | 'D' | 'E';
+export type Row = 1 | 2 | 3 | 4 | 5;
 export type CellId = `${Column}${Row}`;
 export type EntryDirection = 'north' | 'south' | 'east' | 'west';
 
 export type Phase = 'setup' | 'cat' | 'stepper';
 
-export interface EntryDeterrenceDetail {
-  cellId: CellId;
-  direction: EntryDirection;
-  incoming: number;
+export interface DeterrencePreview {
+  meowge: number;
   deterred: number;
   entering: number;
-  meow: number;
-}
-
-export interface DeterrencePreview {
-  scared: number;
-  entering: number;
-  totalMeow: number;
-  perEntry: Partial<Record<CellId, EntryDeterrenceDetail>>;
 }
 
 export interface CatDefinition {
@@ -32,30 +22,25 @@ export interface CatDefinition {
 
 export type CatId = 'pangur' | 'guardian' | 'baircne';
 
-export type PangurSpecialSequence = 'move-attack-move' | 'attack-move-attack';
-export type PangurSequenceLeg = 'idle' | 'attack-after-move' | 'second-move' | 'move-after-attack' | 'final-attack' | 'complete';
-
 export interface CatState {
   id: CatId;
   hearts: number;
   position?: CellId;
   catchSpent: number;
-  moveUsed: boolean;
+  movesRemaining: number;
   attackCommitted: boolean;
-  stunned: false;
   turnEnded: boolean;
-  specialSequence?: PangurSpecialSequence;
-  specialLeg: PangurSequenceLeg;
   shadowBonusActive: boolean;
 }
 
 export interface MouseState {
   id: string;
   position?: CellId;
+  tier: number;
   attack: number;
   hearts: number;
+  maxHearts: number;
   stunned: boolean;
-  grainFed: boolean;
 }
 
 export type OccupantRef =
@@ -71,12 +56,12 @@ export interface CellState {
 export interface StepFrame {
   id: string;
   phase:
+    | 'mouse-move'
     | 'mouse-attack'
-    | 'mouse-eat'
+    | 'mouse-feed'
     | 'incoming-summary'
     | 'incoming-scare'
     | 'incoming-place'
-    | 'incoming-overrun'
     | 'incoming-finish';
   description: string;
   payload?: unknown;
@@ -95,7 +80,7 @@ export type StepPhase = 'resident-mice' | 'incoming-wave';
 export interface GameState {
   phase: Phase;
   turn: number;
-  grain: number;
+  grainLoss: number;
   wave: number;
   nextMouseId: number;
   cells: Record<CellId, CellState>;
@@ -104,7 +89,7 @@ export interface GameState {
   catOrder: CatId[];
   handCats: CatId[];
   selectedCatId?: CatId;
-  incomingQueues: Partial<Record<CellId, MouseState[]>>;
+  incomingQueue: MouseState[];
   deterPreview: DeterrencePreview;
   stepper?: StepperState;
   log: string[];

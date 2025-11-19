@@ -41,3 +41,7 @@ Handoff-ready plan for the next iteration. Keep specs in `context/spec.md` align
 
 - After each milestone, validate flows manually via the local Vite dev server and the Playwright MCP tool.
 - Sync `context/spec.md`, `features_archive.md`, or other battle specs as soon as functionality lands to keep design + code in lockstep.
+
+## Backlog
+
+- Cats can swap positions if next to each other. Counts as one move each.

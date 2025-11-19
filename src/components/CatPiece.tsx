@@ -1,7 +1,7 @@
 import type { DragEvent, KeyboardEvent } from 'react';
 import type { CatId, CatState } from '../types';
 import { catDefinitions, CAT_STARTING_HEARTS } from '../lib/cats';
-import { getMeowZone, isShadowBonus } from '../lib/board';
+import { isShadowBonus } from '../lib/board';
 
 interface CatPieceProps {
   cat: CatState;
@@ -38,11 +38,6 @@ function CatPiece({
   const currentHearts = Math.max(cat.hearts, 0);
   const emptyHearts = Math.max(CAT_STARTING_HEARTS - currentHearts, 0);
   const catchBonus = cat.position && cat.shadowBonusActive && isShadowBonus(cat.position) ? 1 : 0;
-  const meowZone = cat.position ? getMeowZone(cat.position) : undefined;
-  const meowClass =
-    meowZone === 'gate' ? 'glow-blue' :
-    meowZone === 'silent' ? 'disabled' :
-    '';
 
   const hearts = (
     <div className="piece-hearts" aria-hidden>
@@ -108,7 +103,7 @@ function CatPiece({
         <span className={`piece-catch ${catchBonus > 0 ? 'glow-red' : ''}`}>
           {remainingCatch}
         </span>
-        <span className={`piece-meow ${meowClass}`}>{effectiveMeow}</span>
+        <span className="piece-meow">{definition.baseMeow}</span>
       </div>
     </div>
   );

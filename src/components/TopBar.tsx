@@ -1,9 +1,11 @@
-import type { Phase, GameState, GameStatus } from '../types';
+import type { Phase, GameStatus, DeterrencePreview } from '../types';
+
+const MAX_GRAIN_LOSS = 32;
 
 interface TopBarProps {
-  grain: number;
+  grainLoss: number;
   wave: number;
-  deterPreview: GameState['deterPreview'];
+  deterPreview: DeterrencePreview;
   phase: Phase;
   status: GameStatus;
 }
@@ -14,7 +16,7 @@ const phaseLabels: Record<Phase, string> = {
   stepper: 'Resolving Phases',
 };
 
-function TopBar({ grain, wave, deterPreview, phase, status }: TopBarProps) {
+function TopBar({ grainLoss, wave, deterPreview, phase, status }: TopBarProps) {
   const statusLabel =
     status.state === 'playing'
       ? 'In Progress'
@@ -31,12 +33,12 @@ function TopBar({ grain, wave, deterPreview, phase, status }: TopBarProps) {
       </div>
       <div className="top-bar-metric" aria-label="Grain remaining">
         <span>🌾</span>
-        <span>Grain {grain}</span>
+        <span>Grain Loss {grainLoss} / {MAX_GRAIN_LOSS}</span>
       </div>
       <div className="top-bar-metric" aria-label="Deterrence preview">
         <span>😼</span>
         <span>
-          Meow {deterPreview.totalMeow} → Scaring {deterPreview.scared} / Incoming {deterPreview.entering}
+          Meowge {deterPreview.meowge} · Deterred {deterPreview.deterred} · Entering {deterPreview.entering}
         </span>
       </div>
       <div className="top-bar-metric" aria-label="Game status">

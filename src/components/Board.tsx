@@ -2,28 +2,9 @@ import { useMemo, type DragEvent } from 'react';
 import { useGameStore } from '../state/gameStore';
 import CatPiece from './CatPiece';
 import MousePiece from './MousePiece';
-import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter, cellId, getEntryCells } from '../lib/board';
+import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter } from '../lib/board';
 import { getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch } from '../lib/mechanics';
-import type { CatId, CatState, CellId, CellState, EntryDirection } from '../types';
-
-const entryDefinitions = getEntryCells();
-const northRow = rows[rows.length - 1];
-const southRow = rows[0];
-const westColumn = columns[0];
-const eastColumn = columns[columns.length - 1];
-const northSlots = columns.map((column) => cellId(column, northRow));
-const southSlots = columns.map((column) => cellId(column, southRow));
-const verticalOrder = rows.slice().reverse();
-const westSlots = verticalOrder.map((row) => cellId(westColumn, row));
-const eastSlots = verticalOrder.map((row) => cellId(eastColumn, row));
-
-interface EntrySlotState {
-  direction: EntryDirection;
-  total: number;
-  deterred: number;
-  entering: number;
-  meow: number;
-}
+import type { CatId, CellId, CellState } from '../types';
 
 function Board() {
   const cells = useGameStore((state) => state.cells);
@@ -36,8 +17,6 @@ function Board() {
   const moveCat = useGameStore((state) => state.moveCat);
   const attackMouse = useGameStore((state) => state.attackMouse);
   const stepper = useGameStore((state) => state.stepper);
-  const deterPreview = useGameStore((state) => state.deterPreview);
-  const incomingQueues = useGameStore((state) => state.incomingQueues);
 
   const catStats = useMemo(() => {
     const context = { cats, cells };
@@ -54,13 +33,8 @@ function Board() {
   const validMoves = useMemo(() => {
     if (phase !== 'cat' || !selectedCatId) return new Set<CellId>();
     const cat = cats[selectedCatId];
-    if (!cat.position || cat.turnEnded) return new Set<CellId>();
-    const secondMoveWindow = selectedCatId === 'pangur' && canPangurTakeSecondMove(cat);
-    if (cat.moveUsed && !secondMoveWindow) return new Set<CellId>();
-    if (selectedCatId === 'pangur') {
-      return getQueenMoves(cat.position, cells);
-    }
-    return getKingMoves(cat.position, cells);
+    if (!cat.position || cat.turnEnded || cat.movesRemaining <= 0) return new Set<CellId>();
+    return getQueenMoves(cat.position, cells);
   }, [phase, selectedCatId, cats, cells]);
 
   const attackTargets = useMemo(() => {
@@ -93,25 +67,6 @@ function Board() {
       catCell: cats[targetId]?.position,
     };
   }, [phase, stepper, mice, cats]);
-
-  const entryState = useMemo(() => {
-    const result: Partial<Record<CellId, EntrySlotState>> = {};
-    entryDefinitions.forEach((entry) => {
-      const detail = deterPreview.perEntry[entry.id];
-      const fallbackTotal = incomingQueues[entry.id]?.length ?? 0;
-      const total = detail?.incoming ?? fallbackTotal;
-      const deterred = detail?.deterred ?? 0;
-      const entering = detail?.entering ?? Math.max(total - deterred, 0);
-      result[entry.id] = {
-        direction: entry.direction,
-        total,
-        deterred,
-        entering,
-        meow: detail?.meow ?? 0,
-      };
-    });
-    return result;
-  }, [incomingQueues, deterPreview.perEntry]);
 
   const handleCellClick = (cell: CellState) => {
     const occupant = cell.occupant;
@@ -152,36 +107,6 @@ function Board() {
     if (cell.occupant) return;
     placeCat(transferred, cell.id);
     event.dataTransfer.clearData();
-  };
-
-  const renderEntrySlot = (slotId: CellId, slotDirection: EntryDirection) => {
-    const entry = entryState[slotId];
-    const key = `${slotDirection}-${slotId}`;
-    if (!entry || entry.direction !== slotDirection) {
-      return <div key={key} className="entry-slot" />;
-    }
-    const scaredIcons = Array.from({ length: entry.deterred }, (_, index) => (
-      <span key={`${key}-scared-${index}`} className="entry-mouse scared" role="img" aria-hidden>
-        😱
-      </span>
-    ));
-    const incomingIcons = Array.from({ length: entry.entering }, (_, index) => (
-      <span key={`${key}-mouse-${index}`} className="entry-mouse" role="img" aria-hidden>
-        🐭
-      </span>
-    ));
-    const miceIcons = [...scaredIcons, ...incomingIcons];
-    return (
-      <div key={key} className={`entry-slot has-entry direction-${slotDirection}`}>
-        <div className="entry-mice" aria-label={`${entry.total} incoming mice at ${slotId}`}>
-          {miceIcons.length > 0 ? miceIcons : <span className="entry-empty">—</span>}
-        </div>
-        <div className="entry-meta">
-          <span className="entry-cell">{slotId}</span>
-          <span className="entry-deterring">Meow Deterring: {entry.meow}</span>
-        </div>
-      </div>
-    );
   };
 
   const boardCells = rows
@@ -247,29 +172,7 @@ function Board() {
       })
     );
 
-  return (
-    <div className="board-stage">
-      <div className="entry-band entry-band-north">
-        {northSlots.map((slot) => renderEntrySlot(slot, 'north'))}
-      </div>
-      <div className="board-stage-middle">
-        <div className="entry-band entry-band-west">{westSlots.map((slot) => renderEntrySlot(slot, 'west'))}</div>
-        <div className="game-board">{boardCells}</div>
-        <div className="entry-band entry-band-east">{eastSlots.map((slot) => renderEntrySlot(slot, 'east'))}</div>
-      </div>
-      <div className="entry-band entry-band-south">
-        {southSlots.map((slot) => renderEntrySlot(slot, 'south'))}
-      </div>
-    </div>
-  );
-}
-
-function canPangurTakeSecondMove(cat?: CatState): boolean {
-  if (!cat) return false;
-  if (cat.id !== 'pangur') return false;
-  if (cat.turnEnded) return false;
-  if (cat.specialSequence !== 'move-attack-move') return false;
-  return cat.specialLeg === 'attack-after-move' || cat.specialLeg === 'second-move';
+  return <div className="game-board">{boardCells}</div>;
 }
 
 function getQueenMoves(origin: CellId, cells: Record<CellId, CellState>): Set<CellId> {
@@ -300,12 +203,6 @@ function getQueenMoves(origin: CellId, cells: Record<CellId, CellState>): Set<Ce
     }
   });
   return moves;
-}
-
-function getKingMoves(origin: CellId, cells: Record<CellId, CellState>): Set<CellId> {
-  const neighbors = getNeighborCells(origin);
-  const moves = neighbors.filter((cellId) => !cells[cellId]?.occupant);
-  return new Set<CellId>(moves);
 }
 
 export default Board;

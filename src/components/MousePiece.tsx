@@ -6,11 +6,11 @@ interface MousePieceProps {
 }
 
 function MousePiece({ mouse, highlighted }: MousePieceProps) {
-  const showStats = mouse.hearts > 1 || mouse.attack > 1;
+  const showStats = mouse.maxHearts > 1 || mouse.attack > 1;
 
   const imageSrc = (() => {
     if (mouse.stunned) return '/assets/mice/mouse_dizzy.png';
-    if (mouse.grainFed) return '/assets/mice/mouse_grain_fed.png';
+    if (mouse.attack > 1) return '/assets/mice/mouse_grain_fed.png';
     return '/assets/mice/mouse_normal.png';
   })();
 
@@ -19,11 +19,11 @@ function MousePiece({ mouse, highlighted }: MousePieceProps) {
     .join(' ');
 
   return (
-    <div className={className} aria-label={`Mouse ${mouse.grainFed ? '2/2' : '1/1'}`}>
+    <div className={className} aria-label={`Mouse ${mouse.attack}/${mouse.maxHearts}`}>
       {showStats && (
         <div className="piece-hearts" aria-hidden>
-          {Array.from({ length: mouse.hearts }).map((_, idx) => (
-            <span key={idx}>❤️</span>
+          {Array.from({ length: mouse.maxHearts }).map((_, idx) => (
+            <span key={idx}>{idx < mouse.hearts ? '❤️' : '🩶'}</span>
           ))}
         </div>
       )}

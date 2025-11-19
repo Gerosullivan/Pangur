@@ -1,8 +1,8 @@
 import boardLayout from '../data/boardLayout.json';
 import type { CellId, CellState, Column, EntryDirection, Row } from '../types';
 
-export const columns: Column[] = ['A', 'B', 'C', 'D'];
-export const rows: Row[] = [1, 2, 3, 4];
+export const columns: Column[] = ['A', 'B', 'C', 'D', 'E'];
+export const rows: Row[] = [1, 2, 3, 4, 5];
 
 interface EntryConfig {
   direction: EntryDirection;
@@ -53,9 +53,6 @@ const entryDefinitionMap = new Map<CellId, EntryCellDefinition>(
   entryCellDefinitions.map((entry) => [entry.id, entry])
 );
 
-const gateRingCells = buildGateRingCells();
-const nearestEntryLookup = buildNearestEntryLookup();
-
 export function cellId(column: Column, row: Row): CellId {
   return `${column}${row}` as CellId;
 }
@@ -68,7 +65,7 @@ export function parseCell(id: CellId): { column: Column; row: Row } {
 
 export function isPerimeter(id: CellId): boolean {
   const { column, row } = parseCell(id);
-  return row === 1 || row === 4 || column === 'A' || column === 'D';
+  return row === 1 || row === 5 || column === 'A' || column === 'E';
 }
 
 export function isShadowBonus(id: CellId): boolean {
@@ -79,12 +76,10 @@ export function isGate(id: CellId): boolean {
   return gateCells.includes(id);
 }
 
-export type MeowZone = 'gate' | 'gateRing' | 'silent';
+export type MeowZone = 'gate' | 'silent';
 
 export function getMeowZone(id: CellId): MeowZone {
-  if (isGate(id)) return 'gate';
-  if (gateRingCells.has(id)) return 'gateRing';
-  return 'silent';
+  return isGate(id) ? 'gate' : 'silent';
 }
 
 export function terrainForCell(id: CellId): CellState['terrain'] {
@@ -156,36 +151,6 @@ export function pathCellsBetween(origin: CellId, target: CellId): CellId[] {
   return cells;
 }
 
-function buildGateRingCells(): Set<CellId> {
-  const ring = new Set<CellId>();
-  if (gateCells.length === 0) {
-    return ring;
-  }
-  for (const column of columns) {
-    for (const row of rows) {
-      const id = cellId(column, row);
-      if (isGate(id)) continue;
-      const distances = gateCells.map((gate) => chebyshevDistance(id, gate));
-      const minDistance = Math.min(...distances);
-      if (!Number.isFinite(minDistance)) {
-        continue;
-      }
-      if (minDistance === 1) {
-        ring.add(id);
-      }
-    }
-  }
-  return ring;
-}
-
-function chebyshevDistance(a: CellId, b: CellId): number {
-  const aPos = parseCell(a);
-  const bPos = parseCell(b);
-  const colDiff = Math.abs(columns.indexOf(aPos.column) - columns.indexOf(bPos.column));
-  const rowDiff = Math.abs(rows.indexOf(aPos.row) - rows.indexOf(bPos.row));
-  return Math.max(colDiff, rowDiff);
-}
-
 export function manhattanDistance(a: CellId, b: CellId): number {
   const aPos = parseCell(a);
   const bPos = parseCell(b);
@@ -204,30 +169,6 @@ export function getEntryDefinition(cellId: CellId): EntryCellDefinition | undefi
 
 export function isEntryCell(cellId: CellId): boolean {
   return entryDefinitionMap.has(cellId);
-}
-
-export function getNearestEntryCells(cellId: CellId): CellId[] {
-  return nearestEntryLookup[cellId] ?? [];
-}
-
-function buildNearestEntryLookup(): Partial<Record<CellId, CellId[]>> {
-  const lookup: Partial<Record<CellId, CellId[]>> = {};
-  const entries = getEntryCells();
-  if (entries.length === 0) {
-    return lookup;
-  }
-  for (const column of columns) {
-    for (const row of rows) {
-      const id = cellId(column, row);
-      const distances = entries.map((entry) => ({
-        entryId: entry.id,
-        distance: chebyshevDistance(id, entry.id),
-      }));
-      const minDistance = Math.min(...distances.map((item) => item.distance));
-      lookup[id] = distances.filter((item) => item.distance === minDistance).map((item) => item.entryId);
-    }
-  }
-  return lookup;
 }
 
 function validateLayout(map: Map<CellId, LayoutCell>): void {
@@ -250,10 +191,10 @@ function validateLayout(map: Map<CellId, LayoutCell>): void {
       const { direction } = cell.entry;
       const { column, row } = parseCell(cell.id);
       const matchesSide =
-        (direction === 'north' && row === 4) ||
-        (direction === 'south' && row === 1) ||
-        (direction === 'west' && column === 'A') ||
-        (direction === 'east' && column === 'D');
+        (direction === 'north' && row === rows[rows.length - 1]) ||
+        (direction === 'south' && row === rows[0]) ||
+        (direction === 'west' && column === columns[0]) ||
+        (direction === 'east' && column === columns[columns.length - 1]);
       if (!matchesSide) {
         throw new Error(`Entry cell ${cell.id} has mismatched direction ${direction}`);
       }

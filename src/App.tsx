@@ -9,7 +9,7 @@ import ActionArea from './components/ActionArea';
 
 function App() {
   const phase = useGameStore((state) => state.phase);
-  const grain = useGameStore((state) => state.grain);
+  const grainLoss = useGameStore((state) => state.grainLoss);
   const wave = useGameStore((state) => state.wave);
   const deterPreview = useGameStore((state) => state.deterPreview);
   const status = useGameStore((state) => state.status);
@@ -18,7 +18,7 @@ function App() {
 
   return (
     <div className={shellClass}>
-      <TopBar grain={grain} wave={wave} deterPreview={deterPreview} phase={phase} status={status} />
+      <TopBar grainLoss={grainLoss} wave={wave} deterPreview={deterPreview} phase={phase} status={status} />
       <IncomingQueueRow />
       <div className="board-region">
         <Board />

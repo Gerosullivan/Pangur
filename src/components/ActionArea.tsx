@@ -50,7 +50,7 @@ function ActionArea() {
             );
           })}
         </div>
-        <div className="setup-hint">← Drag cats onto the board to start (avoid perimeter cells)</div>
+        <div className="setup-hint">← Drag cats onto interior cells to plan your opening (rearrange freely until confirmed)</div>
         <button
           type="button"
           className={`button-primary ${handCats.length > 0 ? 'button-disabled' : ''}`}
@@ -112,19 +112,10 @@ function ActionArea() {
     );
   }
 
-  const pangur = cats.pangur;
-  const pangurSequenceBlocked =
-    !!pangur.specialSequence && pangur.specialLeg !== 'idle' && pangur.specialLeg !== 'complete' && !pangur.turnEnded;
-
   return (
     <div className="action-area">
       <div className="action-controls">
-        <button
-          type="button"
-          className={`button-primary ${pangurSequenceBlocked ? 'button-disabled' : ''}`}
-          onClick={endCatPhase}
-          disabled={pangurSequenceBlocked}
-        >
+        <button type="button" className="button-primary" onClick={endCatPhase}>
           End Turn
         </button>
         <button type="button" className="button-secondary" onClick={focusNextCat}>
@@ -136,7 +127,6 @@ function ActionArea() {
       </div>
       <div className="action-messages">
         {selectedCatId && <div className="deterrence-info">Active: {catDefinitions[selectedCatId].name}</div>}
-        {pangurSequenceBlocked && <div className="deterrence-info">Finish Pangur’s sequence before ending the turn.</div>}
       </div>
     </div>
   );
