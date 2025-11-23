@@ -24,7 +24,7 @@ function SidePanel() {
     if (cat.position) {
       positionLabel = cat.position;
       if (isShadowBonus(cat.position)) {
-        if (cat.shadowBonusActive) {
+        if (cat.shadowBonusPrimed) {
           catchParts.push('+1 shadow');
         } else {
           catchParts.push('(shadow bonus lost this turn)');

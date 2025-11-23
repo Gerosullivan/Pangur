@@ -98,9 +98,9 @@ After the one-time setup placement, each round repeats these phases in order:
   - At phase start, entrants = `max(6 - Meowge, 0)`. Remove deterred mice from the queue in a single summary step (one frame) and log the scare total.
 - **Placement Algorithm**
   - Process gates left-to-right (`B5`, `C5`, `D5`). Skip a gate entirely if a cat currently occupies it.
-  - For each gate, evaluate all reachable orthogonal paths that move the mouse closer to any shadow perimeter cell. This may mean stepping south, east, or west depending on which neighbor cell reduces the Manhattan distance to the nearest shadow tile. Collect open cells along these preferred paths until a blocking cat or board edge stops progress.
-  - Example: a mouse entering from `D5` will prioritize stepping east to `E5` (shadow) before marching south, since that move immediately reaches the perimeter.
-  - Rank these cells by (1) whether they are shadow tiles, (2) distance to the shadow edge (shorter first), (3) proximity to the gate (closer first).
+  - For each gate, flood-fill the “mouse line”: start on the gate cell, then traverse orthogonally through any connected chain of mice or empty cells, stopping only when a cat blocks the path or the board edge is reached. Every empty tile discovered along that traversal becomes a placement candidate — effectively letting the incoming mouse append to the end (or branches) of the existing mouse snake.
+  - Example: if a mouse already sits on `D5`, the traversal steps to `D4`, `D3`, `D2`, `E5`, etc., exposing empty cells like `C4`, `D3`, `D2`, or `E1` as valid drop points even though the gate itself is occupied.
+  - Rank the candidate cells by (1) shadow tiles first, (2) fewest steps away from the gate along the mouse line, then (3) board order (A→E, bottom→top) for determinism.
   - Place entering mice by consuming ranked cells from the current gate before moving to the next. Continue cycling until all entrants are placed or no legal cells remain. If there are more entrants than legal cells, delete the excess mice (they fail to infiltrate), giving the cats the advantage for that wave.
 - **Stepper Presentation**
   - Frame order: Meowge summary (including total scared), **one combined frame for all scared mice fleeing**, then one frame per placement describing gate + destination.

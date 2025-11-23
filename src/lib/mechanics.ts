@@ -56,7 +56,7 @@ export function applyDeterrence(state: GameState): void {
 }
 
 export function getDeterrenceSnapshot(state: GameState): DeterrencePreview {
-  const meowge = state.catOrder.reduce((sum, catId) => sum + getCatEffectiveMeow(state, catId), 0);
+  const meowge = state.catOrder.reduce((sum, catId) => sum + getCatDeterrenceMeow(state, catId), 0);
   const queued = state.incomingQueue.length;
   const deterred = Math.min(meowge, queued);
   const entering = Math.max(queued - deterred, 0);
@@ -71,7 +71,7 @@ export function getCatEffectiveCatch(state: CatStatContext, catId: CatId): numbe
   if (catId === 'baircne' && isBaircneShielded(state)) {
     total += 1;
   }
-  if (cat.shadowBonusActive && isShadowBonus(cat.position)) {
+  if (cat.shadowBonusPrimed && cat.position && isShadowBonus(cat.position)) {
     total += 1;
   }
   return total;
@@ -82,6 +82,12 @@ export function getCatRemainingCatch(state: CatStatContext, catId: CatId): numbe
 }
 
 export function getCatEffectiveMeow(state: CatStatContext, catId: CatId): number {
+  const cat = state.cats[catId];
+  if (!cat.position) return 0;
+  return catDefinitions[catId].baseMeow;
+}
+
+export function getCatDeterrenceMeow(state: CatStatContext, catId: CatId): number {
   const cat = state.cats[catId];
   if (!cat.position) return 0;
   const zone = getMeowZone(cat.position);
@@ -103,7 +109,7 @@ export function resetCatTurnState(state: GameState): void {
     cat.movesRemaining = cat.id === 'pangur' ? 2 : 1;
     cat.attackCommitted = false;
     cat.turnEnded = false;
-    cat.shadowBonusActive = !!(cat.position && isShadowBonus(cat.position));
+    cat.shadowBonusPrimed = !!(cat.position && isShadowBonus(cat.position));
   }
 }
 
@@ -152,6 +158,6 @@ function createCatState(catId: CatId) {
     movesRemaining: catId === 'pangur' ? 2 : 1,
     attackCommitted: false,
     turnEnded: false,
-    shadowBonusActive: false,
+    shadowBonusPrimed: false,
   };
 }

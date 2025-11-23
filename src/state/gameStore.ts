@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { produce } from 'immer';
-import type { CatId, CellId, CatState, GameState, MouseState, StepFrame, StepPhase } from '../types';
+import type { CatId, CellId, CatState, GameState, MouseState, StepFrame, StepPhase, OccupantRef } from '../types';
 import {
   applyDeterrence,
   createInitialGameState,
@@ -120,8 +120,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         draft.cells[movingCat.position!].occupant = undefined;
         movingCat.position = destination;
         movingCat.movesRemaining = Math.max(0, movingCat.movesRemaining - 1);
-        if (movingCat.shadowBonusActive && !isShadowBonus(destination)) {
-          movingCat.shadowBonusActive = false;
+        if (movingCat.shadowBonusPrimed && !isShadowBonus(destination)) {
+          movingCat.shadowBonusPrimed = false;
         }
         draft.cells[destination].occupant = { type: 'cat', id: catId };
         maybeFinalizeCatTurn(draft, catId);
@@ -148,9 +148,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         if (!draftMouse?.position) return;
         draftCat.catchSpent += 1;
         draftCat.attackCommitted = true;
-        if (draftCat.shadowBonusActive) {
-          draftCat.shadowBonusActive = false;
-        }
+        // Keep shadow bonus primed until the cat leaves the shadow zone.
         damageMouse(draftMouse, 1);
         if (draftMouse.hearts <= 0) {
           draft.cells[draftMouse.position].occupant = undefined;
@@ -613,35 +611,79 @@ function planIncomingPlacements(state: GameState, entering: number): Array<{ cel
       .filter((cell) => cell.occupant)
       .map((cell) => cell.id)
   );
+  const virtualBoard = new Map<CellId, OccupantRef | undefined>();
+  (Object.keys(state.cells) as CellId[]).forEach((cellId) => {
+    virtualBoard.set(cellId, state.cells[cellId].occupant);
+  });
 
   let remaining = entering;
   entries.forEach((entry) => {
     if (remaining <= 0) return;
-    if (state.cells[entry.id].occupant?.type === 'cat') return;
-    const path = [entry.id, ...getLineTowardShadow(entry.id)];
-    for (const cellId of path) {
-      if (remaining <= 0) break;
-      if (occupancy.has(cellId)) continue;
-      placements.push({ cellId, gateId: entry.id });
-      occupancy.add(cellId);
+    if (virtualBoard.get(entry.id)?.type === 'cat') return;
+    const virtualMice = new Set<CellId>(
+      Array.from(virtualBoard.entries())
+        .filter(([, occ]) => occ?.type === 'mouse')
+        .map(([cellId]) => cellId)
+    );
+    while (remaining > 0) {
+      const candidates = collectMouseLineCandidates(virtualBoard, entry.id, occupancy, virtualMice);
+      if (candidates.length === 0) break;
+      candidates.sort((a, b) => {
+        const aShadow = isShadowBonus(a.cell);
+        const bShadow = isShadowBonus(b.cell);
+        if (aShadow !== bShadow) return aShadow ? -1 : 1;
+        if (a.depth !== b.depth) return a.depth - b.depth;
+        return a.cell.localeCompare(b.cell);
+      });
+      const candidate = candidates.shift();
+      if (!candidate) break;
+      placements.push({ cellId: candidate.cell, gateId: entry.id });
+      occupancy.add(candidate.cell);
+      virtualMice.add(candidate.cell);
+      virtualBoard.set(candidate.cell, { type: 'mouse', id: `virtual-${candidate.cell}` });
       remaining -= 1;
     }
   });
   return placements;
 }
 
-function getLineTowardShadow(gateId: CellId): CellId[] {
-  const line: CellId[] = [];
-  const [column, rowStr] = [gateId[0], gateId[1]];
-  const row = Number(rowStr);
-  const targets = [
-    `${columns[0]}${row}` as CellId,
-    `${columns[columns.length - 1]}${row}` as CellId,
-    `${column}1` as CellId,
-  ];
-  const preferred = targets.find((cell) => terrainForCell(cell) === 'shadow');
-  if (!preferred) return line;
-  const path = pathCellsBetween(gateId, preferred);
-  path.push(preferred);
-  return path;
+function collectMouseLineCandidates(
+  board: Map<CellId, OccupantRef | undefined>,
+  gateId: CellId,
+  occupancy: Set<CellId>,
+  virtualMice: Set<CellId>
+): Array<{ cell: CellId; depth: number }> {
+  const gateOccupant = board.get(gateId);
+  if (gateOccupant?.type === 'cat') {
+    return [];
+  }
+  if (!gateOccupant) {
+    return occupancy.has(gateId) ? [] : [{ cell: gateId, depth: 0 }];
+  }
+
+  const visited = new Set<CellId>();
+  const queue: Array<{ cell: CellId; depth: number }> = [{ cell: gateId, depth: 0 }];
+  const candidates: Array<{ cell: CellId; depth: number }> = [];
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    if (visited.has(current.cell)) continue;
+    visited.add(current.cell);
+    const occupant = board.get(current.cell);
+    const treatedAsMouse = occupant?.type === 'mouse' || virtualMice.has(current.cell);
+    if (!treatedAsMouse) continue;
+
+    getOrthNeighbors(current.cell).forEach((neighbor) => {
+      if (visited.has(neighbor)) return;
+      const neighborOcc = board.get(neighbor);
+      if (neighborOcc?.type === 'cat') return;
+      if (!neighborOcc && !occupancy.has(neighbor)) {
+        candidates.push({ cell: neighbor, depth: current.depth + 1 });
+      } else if (neighborOcc?.type === 'mouse' || virtualMice.has(neighbor)) {
+        queue.push({ cell: neighbor, depth: current.depth + 1 });
+      }
+    });
+  }
+
+  return candidates;
 }
