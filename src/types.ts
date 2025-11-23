@@ -54,19 +54,63 @@ export interface CellState {
   occupant?: OccupantRef;
 }
 
-export interface StepFrame {
+export type MouseMoveFrame = {
   id: string;
-  phase:
-    | 'mouse-move'
-    | 'mouse-attack'
-    | 'mouse-feed'
-    | 'incoming-summary'
-    | 'incoming-scare'
-    | 'incoming-place'
-    | 'incoming-finish';
+  phase: 'mouse-move';
   description: string;
-  payload?: unknown;
-}
+  payload: { mouseId: string; from: CellId; to: CellId };
+};
+
+export type MouseAttackFrame = {
+  id: string;
+  phase: 'mouse-attack';
+  description: string;
+  payload: { mouseId: string; targetId: CatId };
+};
+
+export type MouseFeedFrame = {
+  id: string;
+  phase: 'mouse-feed';
+  description: string;
+  payload: { eaters: string[] };
+};
+
+export type IncomingSummaryFrame = {
+  id: string;
+  phase: 'incoming-summary';
+  description: string;
+  payload: DeterrencePreview;
+};
+
+export type IncomingScareFrame = {
+  id: string;
+  phase: 'incoming-scare';
+  description: string;
+  payload: { amount: number };
+};
+
+export type IncomingPlaceFrame = {
+  id: string;
+  phase: 'incoming-place';
+  description: string;
+  payload: { cellId: CellId; gateId: CellId };
+};
+
+export type IncomingFinishFrame = {
+  id: string;
+  phase: 'incoming-finish';
+  description: string;
+  payload: DeterrencePreview;
+};
+
+export type StepFrame =
+  | MouseMoveFrame
+  | MouseAttackFrame
+  | MouseFeedFrame
+  | IncomingSummaryFrame
+  | IncomingScareFrame
+  | IncomingPlaceFrame
+  | IncomingFinishFrame;
 
 export interface StepperState {
   frames: StepFrame[];

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { produce } from 'immer';
-import type { CatId, CellId, CatState, GameState, MouseState, StepFrame, StepPhase, OccupantRef } from '../types';
+import type { CatId, CellId, CatState, GameState, StepFrame, StepPhase } from '../types';
 import {
   applyDeterrence,
   createInitialGameState,
@@ -10,24 +10,15 @@ import {
   getCatEffectiveCatch,
   getCatEffectiveMeow,
   getCatRemainingCatch,
-  getDeterrenceSnapshot,
   healCat,
   resetCatTurnState,
   resetMouseAfterTurn,
   upgradeMouse,
 } from '../lib/mechanics';
-import {
-  columns,
-  getEntryCells,
-  getNeighborCells,
-  getWaveSize,
-  isGate,
-  isPerimeter,
-  isShadowBonus,
-  pathCellsBetween,
-  rows,
-  terrainForCell,
-} from '../lib/board';
+import { getNeighborCells, getWaveSize, isPerimeter, isShadowBonus, pathCellsBetween } from '../lib/board';
+import { maybeActivateShadowBonus, updateShadowBonusOnMove } from '../lib/shadowBonus';
+import { buildMousePhaseFrames } from '../lib/mousePhase';
+import { buildIncomingPhaseFrames, replenishIncomingQueue } from '../lib/incomingWave';
 
 const DEFAULT_WAVE_SIZE = 6;
 const MAX_GRAIN_LOSS = 32;
@@ -122,13 +113,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         draft.cells[movingCat.position!].occupant = undefined;
         movingCat.position = destination;
         movingCat.movesRemaining = Math.max(0, movingCat.movesRemaining - 1);
-        const destinationIsShadow = isShadowBonus(destination);
-        if (!movingCat.attackCommitted && destinationIsShadow) {
-          movingCat.shadowBonusPrimed = true;
-        }
-        if (!destinationIsShadow) {
-          movingCat.shadowBonusPrimed = false;
-        }
+        updateShadowBonusOnMove(movingCat, isShadowBonus(destination));
         draft.cells[destination].occupant = { type: 'cat', id: catId };
         maybeFinalizeCatTurn(draft, catId);
         applyDeterrence(draft);
@@ -153,11 +138,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const draftCat = draft.cats[catId];
         const draftMouse = draft.mice[mouseId];
         if (!draftMouse?.position) return;
-        const onShadowAtAttackStart = draftCat.position ? isShadowBonus(draftCat.position) : false;
-        if (!draftCat.shadowBonusActive && draftCat.shadowBonusPrimed && onShadowAtAttackStart) {
-          draftCat.shadowBonusActive = true;
-        }
-        draftCat.shadowBonusPrimed = false;
+        maybeActivateShadowBonus(draftCat);
         draftCat.catchSpent += 1;
         draftCat.attackCommitted = true;
         damageMouse(draftMouse, 1);
@@ -259,126 +240,10 @@ function maybeFinalizeCatTurn(state: GameState, catId: CatId): void {
   }
 }
 
-function buildMousePhaseFrames(state: GameState): StepFrame[] {
-  const frames: StepFrame[] = [];
-  const occupancy = new Map<CellId, { type: 'cat' | 'mouse'; id: string }>();
-  Object.values(state.cats).forEach((cat) => {
-    if (cat.position && cat.hearts > 0) {
-      occupancy.set(cat.position, { type: 'cat', id: cat.id });
-    }
-  });
-  Object.values(state.mice).forEach((mouse) => {
-    if (mouse.position) {
-      occupancy.set(mouse.position, { type: 'mouse', id: mouse.id });
-    }
-  });
-
-  const orderedMice = sortMiceForPhase(state);
-  const plannedPositions = new Map<string, CellId | undefined>();
-  orderedMice.forEach((mouse) => plannedPositions.set(mouse.id, mouse.position));
-
-  for (const mouse of orderedMice) {
-    if (!mouse.position || mouse.hearts <= 0 || mouse.stunned) continue;
-    const plannedPosition = plannedPositions.get(mouse.id) ?? mouse.position;
-    const movePlan = findMovePlan(state, mouse, plannedPosition, occupancy);
-    const hasShadowMove = movePlan && isShadowBonus(movePlan.destination);
-    const adjacentCats = getAdjacentCats(state, plannedPosition);
-    if (!isShadowBonus(plannedPosition) && hasShadowMove) {
-      frames.push({
-        id: `${mouse.id}-move`,
-        phase: 'mouse-move',
-        description: `${mouse.id} moves to ${movePlan!.destination}`,
-        payload: { mouseId: mouse.id, from: plannedPosition, to: movePlan!.destination },
-      });
-      occupancy.delete(plannedPosition);
-      occupancy.set(movePlan!.destination, { type: 'mouse', id: mouse.id });
-      plannedPositions.set(mouse.id, movePlan!.destination);
-      continue;
-    }
-    if (adjacentCats.length > 0) {
-      const targetId = pickMouseTarget(state, plannedPosition);
-      if (targetId) {
-        for (let i = 0; i < mouse.attack; i += 1) {
-          frames.push({
-            id: `${mouse.id}-attack-${i + 1}`,
-            phase: 'mouse-attack',
-            description: `${mouse.id} attacks ${targetId}`,
-            payload: { mouseId: mouse.id, targetId },
-          });
-        }
-      }
-      continue;
-    }
-    if (movePlan) {
-      frames.push({
-        id: `${mouse.id}-move`,
-        phase: 'mouse-move',
-        description: `${mouse.id} moves to ${movePlan.destination}`,
-        payload: { mouseId: mouse.id, from: plannedPosition, to: movePlan.destination },
-      });
-      occupancy.delete(plannedPosition);
-      occupancy.set(movePlan.destination, { type: 'mouse', id: mouse.id });
-      plannedPositions.set(mouse.id, movePlan.destination);
-    }
-  }
-
-  const feedingMice = orderedMice
-    .filter((mouse) => {
-      const pos = plannedPositions.get(mouse.id);
-      return pos && mouse.hearts > 0 && !mouse.stunned;
-    })
-    .map((mouse) => ({ id: mouse.id }));
-  if (feedingMice.length > 0) {
-    frames.push({
-      id: 'mouse-feed',
-      phase: 'mouse-feed',
-      description: 'Resident mice feed',
-      payload: { eaters: feedingMice.map((m) => m.id) },
-    });
-  }
-
-  return frames;
-}
-
-function buildIncomingPhaseFrames(state: GameState): StepFrame[] {
-  const frames: StepFrame[] = [];
-  const snapshot = getDeterrenceSnapshot(state);
-  frames.push({
-    id: 'incoming-summary',
-    phase: 'incoming-summary',
-    description: `Meowge ${snapshot.meowge} · ${snapshot.deterred} flee`,
-    payload: snapshot,
-  });
-  if (snapshot.deterred > 0) {
-    frames.push({
-      id: 'incoming-scare',
-      phase: 'incoming-scare',
-      description: `${snapshot.deterred} mice flee the queue`,
-      payload: { amount: snapshot.deterred },
-    });
-  }
-  const placements = planIncomingPlacements(state, snapshot.entering);
-  placements.forEach((placement, index) => {
-    frames.push({
-      id: `incoming-place-${index}`,
-      phase: 'incoming-place',
-      description: `Mouse enters at ${placement.cellId}`,
-      payload: placement,
-    });
-  });
-  frames.push({
-    id: 'incoming-finish',
-    phase: 'incoming-finish',
-    description: 'Incoming wave resolved',
-    payload: snapshot,
-  });
-  return frames;
-}
-
 function applyFrame(state: GameStore, frame: StepFrame): GameStore {
   switch (frame.phase) {
     case 'mouse-move': {
-      const { mouseId, from, to } = frame.payload as { mouseId: string; from: CellId; to: CellId };
+      const { mouseId, from, to } = frame.payload;
       return produce(state, (draft) => {
         const mouse = draft.mice[mouseId];
         if (!mouse || mouse.hearts <= 0) return;
@@ -391,7 +256,7 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
       });
     }
     case 'mouse-attack': {
-      const { mouseId, targetId } = frame.payload as { mouseId: string; targetId: CatId };
+      const { mouseId, targetId } = frame.payload;
       return produce(state, (draft) => {
         const mouse = draft.mice[mouseId];
         const cat = draft.cats[targetId];
@@ -406,7 +271,7 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
       });
     }
     case 'mouse-feed': {
-      const { eaters } = frame.payload as { eaters: string[] };
+      const { eaters } = frame.payload;
       return produce(state, (draft) => {
         eaters.forEach((mouseId) => {
           const mouse = draft.mice[mouseId];
@@ -429,14 +294,14 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
     case 'incoming-summary':
       return state;
     case 'incoming-scare': {
-      const { amount } = frame.payload as { amount: number };
+      const { amount } = frame.payload;
       return produce(state, (draft) => {
         draft.incomingQueue.splice(0, amount);
         applyDeterrence(draft);
       });
     }
     case 'incoming-place': {
-      const { cellId } = frame.payload as { cellId: CellId; gateId: CellId };
+      const { cellId } = frame.payload;
       return produce(state, (draft) => {
         if (!draft.cells[cellId] || draft.cells[cellId].occupant) return;
         const entering = draft.incomingQueue.shift();
@@ -458,10 +323,7 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
           draft.status = { state: 'won', reason: 'All mice deterred' };
         }
         if (draft.status.state === 'playing') {
-          while (draft.incomingQueue.length < WAVE_SIZE) {
-            const queuedId = `queue-${Date.now()}-${draft.incomingQueue.length}`;
-            draft.incomingQueue.push(createMouse(queuedId, 1));
-          }
+          draft.incomingQueue = replenishIncomingQueue(draft.incomingQueue);
         }
         applyDeterrence(draft);
         checkInteriorFloodLoss(draft);
@@ -522,195 +384,4 @@ function checkInteriorFloodLoss(state: GameState): void {
   if (allMice) {
     state.status = { state: 'lost', reason: 'Interior overrun' };
   }
-}
-
-function sortMiceForPhase(state: GameState): MouseState[] {
-  return Object.values(state.mice)
-    .filter((mouse) => mouse.position)
-    .sort((a, b) => {
-      const posA = a.position!;
-      const posB = b.position!;
-      const rowA = Number(posA[1]);
-      const rowB = Number(posB[1]);
-      if (rowA !== rowB) return rowB - rowA;
-      return posA.localeCompare(posB);
-    });
-}
-
-function findMovePlan(
-  state: GameState,
-  mouse: MouseState,
-  origin: CellId,
-  occupancy: Map<CellId, { type: 'cat' | 'mouse'; id: string }>
-): { destination: CellId } | undefined {
-  const maxSteps = mouse.attack;
-  const visited = new Map<CellId, CellId | null>();
-  const queue: { cell: CellId; steps: number }[] = [{ cell: origin, steps: 0 }];
-  visited.set(origin, null);
-  const candidates: { cell: CellId; steps: number }[] = [];
-
-  while (queue.length > 0) {
-    const current = queue.shift()!;
-    if (current.steps >= maxSteps) continue;
-    for (const neighbor of getOrthNeighbors(current.cell)) {
-      if (visited.has(neighbor)) continue;
-      if (occupancy.has(neighbor)) continue;
-      visited.set(neighbor, current.cell);
-      const steps = current.steps + 1;
-      candidates.push({ cell: neighbor, steps });
-      queue.push({ cell: neighbor, steps });
-    }
-  }
-
-  if (candidates.length === 0) return undefined;
-  const shadowCandidates = candidates.filter((candidate) => isShadowBonus(candidate.cell));
-  const selectionPool = shadowCandidates.length > 0 ? shadowCandidates : candidates;
-  selectionPool.sort((a, b) => {
-    if (isShadowBonus(a.cell) && !isShadowBonus(b.cell)) return -1;
-    if (!isShadowBonus(a.cell) && isShadowBonus(b.cell)) return 1;
-    if (a.steps !== b.steps) return a.steps - b.steps;
-    return distanceToPerimeter(a.cell) - distanceToPerimeter(b.cell);
-  });
-  return { destination: selectionPool[0].cell };
-}
-
-function getOrthNeighbors(cellId: CellId): CellId[] {
-  const neighbors: CellId[] = [];
-  const column = cellId[0] as (typeof columns)[number];
-  const row = Number(cellId.slice(1));
-  const colIndex = columns.indexOf(column);
-  const deltas: [number, number][] = [
-    [0, 1],
-    [0, -1],
-    [1, 0],
-    [-1, 0],
-  ];
-  deltas.forEach(([dc, dr]) => {
-    const targetColumn = columns[colIndex + dc];
-    const targetRow = row + dr;
-    if (!targetColumn) return;
-    if (targetRow < rows[0] || targetRow > rows[rows.length - 1]) return;
-    neighbors.push(`${targetColumn}${targetRow}` as CellId);
-  });
-  return neighbors;
-}
-
-function distanceToPerimeter(cellId: CellId): number {
-  const row = Number(cellId.slice(1));
-  const column = cellId[0] as (typeof columns)[number];
-  const toRow = Math.min(Math.abs(row - rows[0]), Math.abs(row - rows[rows.length - 1]));
-  const columnIndex = columns.indexOf(column);
-  const toColumn = Math.min(columnIndex, columns.length - 1 - columnIndex);
-  return toRow + toColumn;
-}
-
-function getAdjacentCats(state: GameState, cellId: CellId): CatId[] {
-  const neighbors = new Set(getNeighborCells(cellId));
-  return Object.entries(state.cats)
-    .filter(([, cat]) => cat.position && neighbors.has(cat.position))
-    .map(([id]) => id as CatId);
-}
-
-function pickMouseTarget(state: GameState, position: CellId): CatId | undefined {
-  const neighbors = new Set(getNeighborCells(position));
-  const candidates = Object.entries(state.cats)
-    .filter(([, cat]) => cat.position && neighbors.has(cat.position!) && cat.hearts > 0)
-    .map(([id, cat]) => ({ id: id as CatId, cat }));
-  if (candidates.length === 0) return undefined;
-  const guardian = candidates.find(({ id }) => id === 'guardian');
-  if (guardian) return guardian.id;
-  const frontCats = candidates
-    .filter(({ cat }) => cat.position && (cat.position[1] === '5' || cat.position[1] === '4'))
-    .sort((a, b) => a.cat.position!.localeCompare(b.cat.position!));
-  if (frontCats.length > 0) return frontCats[0].id;
-  return candidates.sort((a, b) => {
-    if (a.cat.hearts !== b.cat.hearts) return a.cat.hearts - b.cat.hearts;
-    return a.cat.position!.localeCompare(b.cat.position!);
-  })[0].id;
-}
-
-function planIncomingPlacements(state: GameState, entering: number): Array<{ cellId: CellId; gateId: CellId }> {
-  if (entering <= 0) return [];
-  const placements: Array<{ cellId: CellId; gateId: CellId }> = [];
-  const entries = getEntryCells().sort((a, b) => a.id.localeCompare(b.id));
-  const occupancy = new Set(
-    Object.values(state.cells)
-      .filter((cell) => cell.occupant)
-      .map((cell) => cell.id)
-  );
-  const virtualBoard = new Map<CellId, OccupantRef | undefined>();
-  (Object.keys(state.cells) as CellId[]).forEach((cellId) => {
-    virtualBoard.set(cellId, state.cells[cellId].occupant);
-  });
-
-  let remaining = entering;
-  entries.forEach((entry) => {
-    if (remaining <= 0) return;
-    if (virtualBoard.get(entry.id)?.type === 'cat') return;
-    const virtualMice = new Set<CellId>(
-      Array.from(virtualBoard.entries())
-        .filter(([, occ]) => occ?.type === 'mouse')
-        .map(([cellId]) => cellId)
-    );
-    while (remaining > 0) {
-      const candidates = collectMouseLineCandidates(virtualBoard, entry.id, occupancy, virtualMice);
-      if (candidates.length === 0) break;
-      candidates.sort((a, b) => {
-        const aShadow = isShadowBonus(a.cell);
-        const bShadow = isShadowBonus(b.cell);
-        if (aShadow !== bShadow) return aShadow ? -1 : 1;
-        if (a.depth !== b.depth) return a.depth - b.depth;
-        return a.cell.localeCompare(b.cell);
-      });
-      const candidate = candidates.shift();
-      if (!candidate) break;
-      placements.push({ cellId: candidate.cell, gateId: entry.id });
-      occupancy.add(candidate.cell);
-      virtualMice.add(candidate.cell);
-      virtualBoard.set(candidate.cell, { type: 'mouse', id: `virtual-${candidate.cell}` });
-      remaining -= 1;
-    }
-  });
-  return placements;
-}
-
-function collectMouseLineCandidates(
-  board: Map<CellId, OccupantRef | undefined>,
-  gateId: CellId,
-  occupancy: Set<CellId>,
-  virtualMice: Set<CellId>
-): Array<{ cell: CellId; depth: number }> {
-  const gateOccupant = board.get(gateId);
-  if (gateOccupant?.type === 'cat') {
-    return [];
-  }
-  if (!gateOccupant) {
-    return occupancy.has(gateId) ? [] : [{ cell: gateId, depth: 0 }];
-  }
-
-  const visited = new Set<CellId>();
-  const queue: Array<{ cell: CellId; depth: number }> = [{ cell: gateId, depth: 0 }];
-  const candidates: Array<{ cell: CellId; depth: number }> = [];
-
-  while (queue.length > 0) {
-    const current = queue.shift()!;
-    if (visited.has(current.cell)) continue;
-    visited.add(current.cell);
-    const occupant = board.get(current.cell);
-    const treatedAsMouse = occupant?.type === 'mouse' || virtualMice.has(current.cell);
-    if (!treatedAsMouse) continue;
-
-    getOrthNeighbors(current.cell).forEach((neighbor) => {
-      if (visited.has(neighbor)) return;
-      const neighborOcc = board.get(neighbor);
-      if (neighborOcc?.type === 'cat') return;
-      if (!neighborOcc && !occupancy.has(neighbor)) {
-        candidates.push({ cell: neighbor, depth: current.depth + 1 });
-      } else if (neighborOcc?.type === 'mouse' || virtualMice.has(neighbor)) {
-        queue.push({ cell: neighbor, depth: current.depth + 1 });
-      }
-    });
-  }
-
-  return candidates;
 }

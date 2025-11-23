@@ -117,6 +117,27 @@ export function getNeighborCells(origin: CellId): CellId[] {
   return neighbors;
 }
 
+export function getOrthNeighbors(cellId: CellId): CellId[] {
+  const neighbors: CellId[] = [];
+  const column = cellId[0] as (typeof columns)[number];
+  const row = Number(cellId.slice(1));
+  const colIndex = columns.indexOf(column);
+  const deltas: [number, number][] = [
+    [0, 1],
+    [0, -1],
+    [1, 0],
+    [-1, 0],
+  ];
+  deltas.forEach(([dc, dr]) => {
+    const targetColumn = columns[colIndex + dc];
+    const targetRow = row + dr;
+    if (!targetColumn) return;
+    if (targetRow < rows[0] || targetRow > rows[rows.length - 1]) return;
+    neighbors.push(`${targetColumn}${targetRow}` as CellId);
+  });
+  return neighbors;
+}
+
 export function pathCellsBetween(origin: CellId, target: CellId): CellId[] {
   const { column: originColumn, row: originRow } = parseCell(origin);
   const { column: targetColumn, row: targetRow } = parseCell(target);
@@ -157,6 +178,15 @@ export function manhattanDistance(a: CellId, b: CellId): number {
   const colDiff = Math.abs(columns.indexOf(aPos.column) - columns.indexOf(bPos.column));
   const rowDiff = Math.abs(rows.indexOf(aPos.row) - rows.indexOf(bPos.row));
   return colDiff + rowDiff;
+}
+
+export function distanceToPerimeter(cellId: CellId): number {
+  const row = Number(cellId.slice(1));
+  const column = cellId[0] as (typeof columns)[number];
+  const toRow = Math.min(Math.abs(row - rows[0]), Math.abs(row - rows[rows.length - 1]));
+  const columnIndex = columns.indexOf(column);
+  const toColumn = Math.min(columnIndex, columns.length - 1 - columnIndex);
+  return toRow + toColumn;
 }
 
 export function getEntryCells(): EntryCellDefinition[] {

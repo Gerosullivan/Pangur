@@ -1,5 +1,6 @@
 import { catDefinitions, CAT_STARTING_HEARTS } from './cats';
 import { columns, rows, isShadowBonus, buildInitialCells, isPerimeter, getNeighborCells, getMeowZone, getWaveSize } from './board';
+import { resetShadowBonusForTurn } from './shadowBonus';
 import type { CatId, GameState, MouseState, CellId, StepFrame, DeterrencePreview } from '../types';
 
 export type CatStatContext = Pick<GameState, 'cats' | 'cells'>;
@@ -111,8 +112,7 @@ export function resetCatTurnState(state: GameState): void {
     cat.movesRemaining = cat.id === 'pangur' ? 2 : 1;
     cat.attackCommitted = false;
     cat.turnEnded = false;
-    cat.shadowBonusActive = false;
-    cat.shadowBonusPrimed = !!(cat.position && isShadowBonus(cat.position));
+    resetShadowBonusForTurn(cat);
   }
 }
 
