@@ -21,15 +21,13 @@ function SidePanel() {
     const catchParts = [`${definition.baseCatch} base`];
     const meowParts = [`${definition.baseMeow} base`];
     let positionLabel = 'Off board';
+    if (cat.shadowBonusActive) {
+      catchParts.push('+1 shadow (active)');
+    } else if (cat.position && isShadowBonus(cat.position)) {
+      catchParts.push(cat.shadowBonusPrimed ? '+1 shadow (primed)' : '(shadow bonus lost this turn)');
+    }
     if (cat.position) {
       positionLabel = cat.position;
-      if (isShadowBonus(cat.position)) {
-        if (cat.shadowBonusPrimed) {
-          catchParts.push('+1 shadow');
-        } else {
-          catchParts.push('(shadow bonus lost this turn)');
-        }
-      }
     }
 
     const pangurShield = selectedCatId === 'baircne' && isBaircneShielded(context);

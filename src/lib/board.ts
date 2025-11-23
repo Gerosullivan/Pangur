@@ -171,6 +171,12 @@ export function isEntryCell(cellId: CellId): boolean {
   return entryDefinitionMap.has(cellId);
 }
 
+export function getWaveSize(defaultSize = 6): number {
+  const configured = getEntryCells().reduce((total, entry) => total + entry.incomingMice, 0);
+  if (configured <= 0) return defaultSize;
+  return Math.min(configured, defaultSize);
+}
+
 function validateLayout(map: Map<CellId, LayoutCell>): void {
   const expectedCells = columns.flatMap((column) => rows.map((row) => cellId(column, row)));
   expectedCells.forEach((id) => {

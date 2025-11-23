@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
 import { useGameStore } from '../state/gameStore';
 
-const MAX_WAVE_SIZE = 6;
-
 function IncomingQueueRow() {
   const deterPreview = useGameStore((state) => state.deterPreview);
+  const incomingQueue = useGameStore((state) => state.incomingQueue);
+  const queueSize = incomingQueue.length;
 
   const icons = useMemo(() => {
-    const scared = Math.min(deterPreview.meowge, MAX_WAVE_SIZE);
-    return Array.from({ length: MAX_WAVE_SIZE }, (_, index) => (index < scared ? '😱' : '🐭'));
-  }, [deterPreview.meowge]);
+    const scared = Math.min(deterPreview.meowge, queueSize);
+    return Array.from({ length: queueSize }, (_, index) => (index < scared ? '😱' : '🐭'));
+  }, [deterPreview.meowge, queueSize]);
 
   return (
     <div className="incoming-row">

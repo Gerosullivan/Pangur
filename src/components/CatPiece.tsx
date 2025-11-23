@@ -37,7 +37,8 @@ function CatPiece({
   const definition = catDefinitions[catId];
   const currentHearts = Math.max(cat.hearts, 0);
   const emptyHearts = Math.max(CAT_STARTING_HEARTS - currentHearts, 0);
-  const catchBonus = cat.position && cat.shadowBonusPrimed && isShadowBonus(cat.position) ? 1 : 0;
+  const catchBonus =
+    cat.shadowBonusActive || (cat.position && cat.shadowBonusPrimed && isShadowBonus(cat.position)) ? 1 : 0;
 
   const hearts = (
     <div className="piece-hearts" aria-hidden>

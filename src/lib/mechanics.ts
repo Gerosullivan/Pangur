@@ -1,5 +1,5 @@
 import { catDefinitions, CAT_STARTING_HEARTS } from './cats';
-import { columns, rows, isShadowBonus, buildInitialCells, isPerimeter, getNeighborCells, getMeowZone } from './board';
+import { columns, rows, isShadowBonus, buildInitialCells, isPerimeter, getNeighborCells, getMeowZone, getWaveSize } from './board';
 import type { CatId, GameState, MouseState, CellId, StepFrame, DeterrencePreview } from '../types';
 
 export type CatStatContext = Pick<GameState, 'cats' | 'cells'>;
@@ -26,7 +26,7 @@ export function createInitialGameState(): GameState {
     }
   }
 
-  const incomingQueue = Array.from({ length: 6 }, (_, index) => createMouse(`queue-${index + 1}`, 1));
+  const incomingQueue = Array.from({ length: getWaveSize() }, (_, index) => createMouse(`queue-${index + 1}`, 1));
 
   const baseState: GameState = {
     phase: 'setup',
@@ -71,7 +71,9 @@ export function getCatEffectiveCatch(state: CatStatContext, catId: CatId): numbe
   if (catId === 'baircne' && isBaircneShielded(state)) {
     total += 1;
   }
-  if (cat.shadowBonusPrimed && cat.position && isShadowBonus(cat.position)) {
+  if (cat.shadowBonusActive) {
+    total += 1;
+  } else if (cat.shadowBonusPrimed && cat.position && isShadowBonus(cat.position)) {
     total += 1;
   }
   return total;
@@ -109,6 +111,7 @@ export function resetCatTurnState(state: GameState): void {
     cat.movesRemaining = cat.id === 'pangur' ? 2 : 1;
     cat.attackCommitted = false;
     cat.turnEnded = false;
+    cat.shadowBonusActive = false;
     cat.shadowBonusPrimed = !!(cat.position && isShadowBonus(cat.position));
   }
 }
@@ -159,5 +162,6 @@ function createCatState(catId: CatId) {
     attackCommitted: false,
     turnEnded: false,
     shadowBonusPrimed: false,
+    shadowBonusActive: false,
   };
 }

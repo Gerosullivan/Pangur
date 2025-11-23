@@ -31,6 +31,7 @@ export interface CatState {
   attackCommitted: boolean;
   turnEnded: boolean;
   shadowBonusPrimed: boolean;
+  shadowBonusActive: boolean;
 }
 
 export interface MouseState {
