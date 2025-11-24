@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import './App.css';
 import { useGameStore } from './state/gameStore';
 import TopBar from './components/TopBar';
-import IncomingQueueRow from './components/IncomingQueueRow';
 import Board from './components/Board';
+import IncomingLane from './components/IncomingLane';
 import SidePanel from './components/SidePanel';
 import ActionArea from './components/ActionArea';
 
@@ -19,12 +19,17 @@ function App() {
   return (
     <div className={shellClass}>
       <TopBar grainLoss={grainLoss} wave={wave} deterPreview={deterPreview} phase={phase} status={status} />
-      <IncomingQueueRow />
-      <div className="board-region">
-        <Board />
+      <div className="play-area">
+        <div className="play-column">
+          <IncomingLane />
+          <Board />
+          <div className="cat-staging">
+            <span>Off-board cats staging (placeholder)</span>
+          </div>
+          <ActionArea />
+        </div>
         <SidePanel />
       </div>
-      <ActionArea />
     </div>
   );
 }

@@ -1,9 +1,17 @@
 :root {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color: #f2f2f2;
   background-color: #141820;
+  /* Board layout tuning knobs for pixel-perfect alignment. */
+  --board-width: 800px;
+  --board-height: 800px;
+  --board-bg-size: 840px;
+  --board-padding: 0px;
+  --incoming-height: 80px;
+  --incoming-bg-size: 840px;
 }
 
 * {

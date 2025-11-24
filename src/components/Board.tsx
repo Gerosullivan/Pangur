@@ -4,6 +4,7 @@ import CatPiece from './CatPiece';
 import MousePiece from './MousePiece';
 import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter } from '../lib/board';
 import { getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch } from '../lib/mechanics';
+import IncomingQueueRow from './IncomingQueueRow';
 import type { CatId, CellId, CellState } from '../types';
 
 function Board() {
@@ -147,32 +148,42 @@ function Board() {
             }}
             aria-label={`Cell ${id}`}
           >
-            {occupant?.type === 'cat' && cats[occupant.id] && (
-              <CatPiece
-                cat={cats[occupant.id]}
-                catId={occupant.id}
-                effectiveCatch={catStats.get(occupant.id)?.effectiveCatch ?? 0}
-                effectiveMeow={catStats.get(occupant.id)?.effectiveMeow ?? 0}
-                remainingCatch={catStats.get(occupant.id)?.remainingCatch ?? 0}
-                isSelected={isSelected}
-                onSelect={selectCat}
-                cellRef={id}
-                highlighted={attackHighlight?.catCell === id && attackHighlight.catId === occupant.id}
-              />
-            )}
-            {occupant?.type === 'mouse' && mice[occupant.id] && (
-              <MousePiece
-                mouse={mice[occupant.id]}
-                highlighted={attackHighlight?.mouseCell === id && attackHighlight.mouseId === occupant.id}
-              />
-            )}
-            {!occupant && <span style={{ position: 'absolute', bottom: 6, right: 8, fontSize: '0.65rem', opacity: 0.4 }}>{id}</span>}
+            <div className="cell-overlay" />
+            <div className="cell-content">
+              {occupant?.type === 'cat' && cats[occupant.id] && (
+                <CatPiece
+                  cat={cats[occupant.id]}
+                  catId={occupant.id}
+                  effectiveCatch={catStats.get(occupant.id)?.effectiveCatch ?? 0}
+                  effectiveMeow={catStats.get(occupant.id)?.effectiveMeow ?? 0}
+                  remainingCatch={catStats.get(occupant.id)?.remainingCatch ?? 0}
+                  isSelected={isSelected}
+                  onSelect={selectCat}
+                  cellRef={id}
+                  highlighted={attackHighlight?.catCell === id && attackHighlight.catId === occupant.id}
+                />
+              )}
+              {occupant?.type === 'mouse' && mice[occupant.id] && (
+                <MousePiece
+                  mouse={mice[occupant.id]}
+                  highlighted={attackHighlight?.mouseCell === id && attackHighlight.mouseId === occupant.id}
+                />
+              )}
+              {!occupant && <span className="cell-id-debug">{id}</span>}
+            </div>
           </div>
         );
       })
     );
 
-  return <div className="game-board">{boardCells}</div>;
+  return (
+    <div className="board-wrapper">
+      <div className="board-queue-overlay">
+        <IncomingQueueRow variant="overlay" />
+      </div>
+      <div className="board-grid game-board">{boardCells}</div>
+    </div>
+  );
 }
 
 function getQueenMoves(origin: CellId, cells: Record<CellId, CellState>): Set<CellId> {
