@@ -8,7 +8,7 @@
   /* Board layout tuning knobs for pixel-perfect alignment. */
   --board-width: 800px;
   --board-height: 800px;
-  --board-bg-size: 840px;
+  --board-bg-size: 800px;
   --board-padding: 0px;
   --incoming-height: 80px;
   --incoming-bg-size: 840px;
