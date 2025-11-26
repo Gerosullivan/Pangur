@@ -17,7 +17,7 @@ function IncomingLane() {
         {slots.map((slot, idx) => (
           <div key={idx} className="incoming-slot" aria-label={`Incoming slot ${idx + 1}`}>
             {slot.mouse && (
-              <div className="incoming-mouse-piece">
+              <div className={`incoming-mouse-piece ${slot.isDeterred ? 'deterred' : ''}`}>
                 <MousePiece mouse={slot.mouse} scared={slot.isDeterred} />
               </div>
             )}
