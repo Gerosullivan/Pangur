@@ -3,12 +3,14 @@ import type { MouseState } from '../types';
 interface MousePieceProps {
   mouse: MouseState;
   highlighted?: boolean;
+  scared?: boolean;
 }
 
-function MousePiece({ mouse, highlighted }: MousePieceProps) {
+function MousePiece({ mouse, highlighted, scared }: MousePieceProps) {
   const showStats = mouse.maxHearts > 1 || mouse.attack > 1;
 
   const imageSrc = (() => {
+    if (scared) return '/assets/mice/mouse_scared.png';
     if (mouse.stunned) return '/assets/mice/mouse_dizzy.png';
     if (mouse.attack > 1) return '/assets/mice/mouse_grain_fed.png';
     return '/assets/mice/mouse_normal.png';

@@ -1,12 +1,27 @@
-import IncomingQueueRow from './IncomingQueueRow';
+import { useGameStore } from '../state/gameStore';
+import MousePiece from './MousePiece';
 
 function IncomingLane() {
+  const incomingQueue = useGameStore((state) => state.incomingQueue);
+  const deterPreview = useGameStore((state) => state.deterPreview);
+
+  const slots = Array.from({ length: 6 }, (_, idx) => {
+    const mouse = incomingQueue[idx];
+    const isDeterred = idx < deterPreview.meowge;
+    return { mouse, isDeterred };
+  });
+
   return (
     <div className="incoming-lane">
-      <IncomingQueueRow variant="overlay" />
       <div className="incoming-slot-grid" aria-label="Incoming mice slots">
-        {Array.from({ length: 6 }).map((_, idx) => (
-          <div key={idx} className="incoming-slot" aria-label={`Incoming slot ${idx + 1}`} />
+        {slots.map((slot, idx) => (
+          <div key={idx} className="incoming-slot" aria-label={`Incoming slot ${idx + 1}`}>
+            {slot.mouse && (
+              <div className="incoming-mouse-piece">
+                <MousePiece mouse={slot.mouse} scared={slot.isDeterred} />
+              </div>
+            )}
+          </div>
         ))}
       </div>
     </div>
