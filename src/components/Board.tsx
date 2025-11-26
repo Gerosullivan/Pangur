@@ -4,7 +4,6 @@ import CatPiece from './CatPiece';
 import MousePiece from './MousePiece';
 import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter } from '../lib/board';
 import { getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch } from '../lib/mechanics';
-import IncomingQueueRow from './IncomingQueueRow';
 import type { CatId, CellId, CellState } from '../types';
 
 function Board() {
@@ -178,9 +177,6 @@ function Board() {
 
   return (
     <div className="board-wrapper">
-      <div className="board-queue-overlay">
-        <IncomingQueueRow variant="overlay" />
-      </div>
       <div className="board-grid game-board">{boardCells}</div>
     </div>
   );
