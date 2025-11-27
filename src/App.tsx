@@ -11,14 +11,12 @@ function App() {
   const phase = useGameStore((state) => state.phase);
   const grainLoss = useGameStore((state) => state.grainLoss);
   const wave = useGameStore((state) => state.wave);
-  const deterPreview = useGameStore((state) => state.deterPreview);
-  const status = useGameStore((state) => state.status);
 
   const shellClass = useMemo(() => `app-shell phase-${phase}`, [phase]);
 
   return (
     <div className={shellClass}>
-      <TopBar grainLoss={grainLoss} wave={wave} deterPreview={deterPreview} phase={phase} status={status} />
+      <TopBar grainLoss={grainLoss} wave={wave} phase={phase} />
       <div className="play-area">
         <div className="play-column">
           <IncomingLane />
