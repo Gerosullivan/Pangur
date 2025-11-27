@@ -21,9 +21,11 @@ function App() {
         <div className="play-column">
           <IncomingLane />
           <Board />
+        </div>
+        <div className="right-column">
+          <SidePanel />
           <ControlPanel />
         </div>
-        <SidePanel />
       </div>
     </div>
   );

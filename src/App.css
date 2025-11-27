@@ -138,6 +138,13 @@
   gap: 7px;
 }
 
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 300px;
+}
+
 .incoming-lane {
   position: relative;
   width: var(--board-width);
@@ -335,8 +342,13 @@
   cursor: grabbing;
 }
 
+.phase-setup .cat-staging-piece {
+  width: 120px;
+  height: 120px;
+}
+
 .control-panel {
-  width: var(--board-width);
+  width: 100%;
   background: rgba(20, 24, 32, 0.92);
   border-radius: 8px;
   padding: 16px;
@@ -344,6 +356,26 @@
   flex-direction: column;
   gap: 16px;
   min-height: 80px;
+}
+
+/* Setup phase - ControlPanel matches SidePanel styling */
+.phase-setup .control-panel {
+  width: 300px;
+  background: rgba(20, 24, 32, 0.75);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 24px;
+}
+
+/* Cat/Stepper phases - Compact below SidePanel */
+.phase-cat .control-panel,
+.phase-stepper .control-panel {
+  width: 300px;
+  background: rgba(20, 24, 32, 0.75);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 16px;
+  min-height: auto;
 }
 
 .panel-instruction {
@@ -356,6 +388,7 @@
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
+  justify-content: center;
   gap: 16px;
   padding: 10px;
   border: 1px dashed rgba(255, 255, 255, 0.15);
@@ -365,26 +398,26 @@
 
 .panel-actions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
 }
 
 .panel-info {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .panel-buttons {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 12px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  width: 100%;
+  align-items: stretch;
 }
 
 .piece {
@@ -549,6 +582,11 @@
   flex-direction: column;
   gap: 16px;
   border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Hide SidePanel during setup */
+.phase-setup .side-panel {
+  display: none;
 }
 
 .piece-portrait {
