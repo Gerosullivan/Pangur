@@ -77,6 +77,7 @@ After the one-time setup placement, each round repeats these phases in order:
 - **Phase 1 – Move or Attack**
   - Iterate every unstunned, on-board mouse in reading order (top row to bottom, left to right). A stunned mouse skips the entire phase.
   - Decision rule: if a mouse is **not on a shadow tile** and has a legal move that reaches one this turn, it will always choose to move instead of attacking, even when adjacent to a cat. Otherwise, if a cat occupies one of the eight adjacent cells (orthogonal or diagonal), the mouse attacks instead of moving, spending all of its attack points as 1-heart hits using the targeting priority below. If neither condition applies, it moves according to the heuristic.
+  - Cat meow reduces incoming mouse damage: total hits = `max(mouse attack − cat effective meow, 0)`.
   - Targeting priority (re-evaluate after each hit):
     1. Cat with base stat `1/3`.
     2. Any cat nearest to the gates (rows `5` then `4`), breaking ties left→right.

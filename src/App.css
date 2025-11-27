@@ -166,13 +166,27 @@
 }
 
 .incoming-mouse-piece {
-  width: 70px;
-  height: 70px;
+  width: 65px;
+  height: 65px;
 }
 
 .incoming-mouse-piece.deterred .piece {
   border-color: #0396a6;
   box-shadow: 0 0 8px rgba(3, 150, 166, 0.5);
+}
+
+.incoming-mouse-piece.deterred .piece::after {
+  content: "";
+  position: absolute;
+  inset: 5%;
+  top: 50%;
+  left: 50%;
+  width: 110%;
+  height: 3px;
+  background: #0396a6;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  pointer-events: none;
+  z-index: 10;
 }
 
 .incoming-row.overlay {
@@ -391,6 +405,10 @@
   height: 75%;
   border-radius: 50%;
   margin: auto;
+}
+.incoming-mouse-piece .piece {
+  width: 100%;
+  height: 100%;
 }
 
 .piece.mouse.stunned {

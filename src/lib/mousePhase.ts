@@ -42,7 +42,9 @@ export function buildMousePhaseFrames(state: GameState): StepFrame[] {
     if (adjacentCats.length > 0) {
       const targetId = pickMouseTarget(state, plannedPosition);
       if (targetId) {
-        for (let i = 0; i < mouse.attack; i += 1) {
+        const effectiveMeow = getCatEffectiveMeow(state, targetId);
+        const totalHits = Math.max(mouse.attack - effectiveMeow, 0);
+        for (let i = 0; i < totalHits; i += 1) {
           frames.push({
             id: `${mouse.id}-attack-${i + 1}`,
             phase: 'mouse-attack',
