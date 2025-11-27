@@ -39,6 +39,7 @@ After the one-time setup placement, each round repeats these phases in order:
    - Mice on the board attack based on priority rules and remaining attack points.
    - Surviving mice eat grain, potentially evolving.
    - Every meaningful state update (target selection, damage, eating, stat changes) pauses until the player advances with the stepper control.
+   - If a mouse attacks a cat who is currently “asleep”, the cat visually wakes (portrait returns to the normal cat piece) for the rest of the round; this does not restore actions.
 3. **Incoming Wave Phase**
    - Calculate Meowge from cats standing on gate cells only (§8). Apply it to the fixed six-slot `Next Wave` lane, flipping the leftmost icons to 😱 for deterred mice; the rest remain 🐭.
    - If Meowge ≥ six, the wave disperses instantly; otherwise, advance to placement.

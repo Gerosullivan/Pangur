@@ -60,7 +60,7 @@ function CatPiece({
   };
 
   const getPortrait = () => {
-    const asleep = cat.turnEnded || (cat.movesRemaining <= 0 && remainingCatch <= 0);
+    const asleep = !cat.wokenByAttack && (cat.turnEnded || (cat.movesRemaining <= 0 && remainingCatch <= 0));
     if (asleep) {
       switch (catId) {
         case 'pangur':

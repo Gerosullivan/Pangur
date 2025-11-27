@@ -112,6 +112,7 @@ export function resetCatTurnState(state: GameState): void {
     cat.movesRemaining = cat.id === 'pangur' ? 2 : 1;
     cat.attackCommitted = false;
     cat.turnEnded = false;
+    cat.wokenByAttack = false;
     resetShadowBonusForTurn(cat);
   }
 }
@@ -163,5 +164,6 @@ function createCatState(catId: CatId) {
     turnEnded: false,
     shadowBonusPrimed: false,
     shadowBonusActive: false,
+    wokenByAttack: false,
   };
 }

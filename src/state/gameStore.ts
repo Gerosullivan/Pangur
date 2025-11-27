@@ -147,11 +147,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
         delete draft.mice[mouseId];
         healCat(draftCat, 1);
       } else {
+        const wasStunned = draftMouse.stunned;
         draftMouse.stunned = true;
-        const retaliation = Math.max(draftMouse.attack - getCatEffectiveMeow(draft, catId), 0);
-        if (retaliation > 0) {
-          damageCat(draftCat, retaliation);
-          handleCatDefeat(draft, catId);
+        if (!wasStunned) {
+          const retaliation = Math.max(draftMouse.attack - getCatEffectiveMeow(draft, catId), 0);
+          if (retaliation > 0) {
+            damageCat(draftCat, retaliation);
+            handleCatDefeat(draft, catId);
+          }
         }
       }
       maybeFinalizeCatTurn(draft, catId);
@@ -267,6 +270,7 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
         const mouse = draft.mice[mouseId];
         const cat = draft.cats[targetId];
         if (!mouse?.position || !cat?.position) return;
+        cat.wokenByAttack = true;
         damageCat(cat, 1);
         if (cat.hearts <= 0) {
           draft.cells[cat.position].occupant = undefined;

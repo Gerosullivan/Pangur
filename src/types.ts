@@ -32,6 +32,7 @@ export interface CatState {
   turnEnded: boolean;
   shadowBonusPrimed: boolean;
   shadowBonusActive: boolean;
+  wokenByAttack?: boolean;
 }
 
 export interface MouseState {
