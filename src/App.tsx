@@ -6,6 +6,7 @@ import Board from './components/Board';
 import IncomingLane from './components/IncomingLane';
 import SidePanel from './components/SidePanel';
 import ActionArea from './components/ActionArea';
+import CatStagingArea from './components/CatStagingArea';
 
 function App() {
   const phase = useGameStore((state) => state.phase);
@@ -23,9 +24,7 @@ function App() {
         <div className="play-column">
           <IncomingLane />
           <Board />
-          <div className="cat-staging">
-            <span>Off-board cats staging (placeholder)</span>
-          </div>
+          <CatStagingArea />
           <ActionArea />
         </div>
         <SidePanel />

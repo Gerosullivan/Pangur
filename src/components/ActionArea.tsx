@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useGameStore } from '../state/gameStore';
 import { catDefinitions } from '../lib/cats';
-import CatPiece from './CatPiece';
 
 function ActionArea() {
   const phase = useGameStore((state) => state.phase);
@@ -26,30 +25,6 @@ function ActionArea() {
   if (phase === 'setup') {
     return (
       <div className="action-area">
-        <div className="cat-hand" aria-label="Cat hand">
-          {handCats.map((catId) => {
-            const definition = catDefinitions[catId];
-            const cat = cats[catId];
-            return (
-              <div key={catId} className="cat-hand-piece">
-                <CatPiece
-                  cat={cat}
-                  catId={catId}
-                  effectiveCatch={definition.baseCatch}
-                  effectiveMeow={definition.baseMeow}
-                  remainingCatch={definition.baseCatch}
-                  isSelected={false}
-                  cellRef={`hand-${catId}`}
-                  inHand
-                  draggable
-                  onDragStart={(event) => {
-                    event.dataTransfer.setData('text/plain', catId);
-                  }}
-                />
-              </div>
-            );
-          })}
-        </div>
         <div className="setup-hint">← Drag cats onto interior cells to plan your opening (rearrange freely until confirmed)</div>
         <button
           type="button"
