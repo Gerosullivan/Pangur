@@ -1,3 +1,4 @@
+import { useGameStore } from '../state/gameStore';
 import type { Phase, GameStatus, DeterrencePreview } from '../types';
 
 const MAX_GRAIN_LOSS = 32;
@@ -17,6 +18,7 @@ const phaseLabels: Record<Phase, string> = {
 };
 
 function TopBar({ grainLoss, wave, deterPreview, phase, status }: TopBarProps) {
+  const resetGame = useGameStore((state) => state.resetGame);
   const statusLabel =
     status.state === 'playing'
       ? 'In Progress'
@@ -45,6 +47,9 @@ function TopBar({ grainLoss, wave, deterPreview, phase, status }: TopBarProps) {
         <span>{status.state === 'won' ? '🏆' : status.state === 'lost' ? '☠️' : '🎲'}</span>
         <span>{statusLabel}</span>
       </div>
+      <button type="button" className="top-bar-restart" onClick={resetGame}>
+        Restart Game
+      </button>
     </header>
   );
 }

@@ -5,8 +5,7 @@ import TopBar from './components/TopBar';
 import Board from './components/Board';
 import IncomingLane from './components/IncomingLane';
 import SidePanel from './components/SidePanel';
-import ActionArea from './components/ActionArea';
-import CatStagingArea from './components/CatStagingArea';
+import ControlPanel from './components/ControlPanel';
 
 function App() {
   const phase = useGameStore((state) => state.phase);
@@ -24,8 +23,7 @@ function App() {
         <div className="play-column">
           <IncomingLane />
           <Board />
-          <CatStagingArea />
-          <ActionArea />
+          <ControlPanel />
         </div>
         <SidePanel />
       </div>
