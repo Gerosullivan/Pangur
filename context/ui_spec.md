@@ -99,6 +99,7 @@ Use responsive layout:
 - Hovering a dragged cat over a grid cell:
   - updates the deterrence readout in the top bar and live `Next Wave` icon mix (swap 🐭↔😱) in real time.
   - updates the cats attributes according to cell modifiers.
+- During the cat phase, dragging a placed cat onto a legal destination cell performs its queen move immediately (same drag UX as setup placement). Only cats with remaining moves should be draggable.
 - After pressing `End Turn`, freeze cat controls until mouse phase completes.
 - During resident mouse and incoming wave phases, dim non-active UI and focus on the Phase Stepper; each `Next` press should trigger one discrete state change so automated tests can assert the intermediate board states.
 

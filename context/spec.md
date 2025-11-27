@@ -67,7 +67,7 @@ After the one-time setup placement, each round repeats these phases in order:
 - **Movement**
   - All cats move like chess queens: any number of cells vertically, horizontally, or diagonally until blocked by a resident or board edge; they cannot pass through other residents.
   - Pangur alone may perform two independent queen moves per turn (see Ordering Rules); other cats still receive only one.
-  - Drop commits the move and updates deterrence + shadow/meow status immediately.
+  - Players move cats by dragging the piece onto any legal destination cell (same drag interaction used during setup placement). Drop commits the move and updates deterrence + shadow/meow status immediately.
 - **Turn End**
   - `End Turn` finalizes cat actions, triggers meow calculation, and hands off to the mouse phase.
   - No special sequencing UI is required now that Pangur’s double-move is automatic; end turn is always available once every cat has either acted or been skipped manually.

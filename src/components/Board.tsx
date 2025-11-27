@@ -17,6 +17,7 @@ function Board() {
   const moveCat = useGameStore((state) => state.moveCat);
   const attackMouse = useGameStore((state) => state.attackMouse);
   const stepper = useGameStore((state) => state.stepper);
+  const status = useGameStore((state) => state.status);
 
   const catStats = useMemo(() => {
     const context = { cats, cells };
@@ -93,19 +94,48 @@ function Board() {
     }
   };
 
+  const getMovableCells = (catId: CatId): Set<CellId> => {
+    const cat = cats[catId];
+    if (!cat || !cat.position || cat.turnEnded || cat.movesRemaining <= 0) return new Set<CellId>();
+    return getQueenMoves(cat.position, cells);
+  };
+
+  const canDropCat = (cell: CellState, draggedCatId?: string | CatId) => {
+    if (cell.occupant) return false;
+    if (phase === 'setup') {
+      return !isPerimeter(cell.id) && cell.terrain !== 'gate';
+    }
+    if (phase === 'cat' && status.state === 'playing' && draggedCatId) {
+      const movableCells = getMovableCells(draggedCatId as CatId);
+      return movableCells.has(cell.id);
+    }
+    return false;
+  };
+
+  const handleDragStart = (event: DragEvent<HTMLDivElement>, catId: CatId) => {
+    event.dataTransfer.setData('text/plain', catId);
+    event.dataTransfer.effectAllowed = 'move';
+    selectCat(catId);
+  };
+
   const handleDragOver = (event: DragEvent<HTMLDivElement>, cell: CellState) => {
-    if (phase !== 'setup') return;
-    if (cell.occupant) return;
+    const draggedCatId = (event.dataTransfer.getData('text/plain') as CatId) || undefined;
+    const draggedOrSelectedId = draggedCatId || selectedCatId;
+    if (!canDropCat(cell, draggedOrSelectedId)) return;
     event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
   };
 
   const handleDrop = (event: DragEvent<HTMLDivElement>, cell: CellState) => {
-    if (phase !== 'setup') return;
+    const draggedCatId = event.dataTransfer.getData('text/plain') as CatId;
+    if (!canDropCat(cell, draggedCatId)) return;
     event.preventDefault();
-    const transferred = event.dataTransfer.getData('text/plain') as CatId;
-    if (!transferred) return;
-    if (cell.occupant) return;
-    placeCat(transferred, cell.id);
+    if (phase === 'setup') {
+      placeCat(draggedCatId, cell.id);
+    } else if (phase === 'cat') {
+      moveCat(draggedCatId, cell.id);
+      selectCat(draggedCatId);
+    }
     event.dataTransfer.clearData();
   };
 
@@ -160,6 +190,8 @@ function Board() {
                   onSelect={selectCat}
                   cellRef={id}
                   highlighted={attackHighlight?.catCell === id && attackHighlight.catId === occupant.id}
+                  draggable={phase === 'setup' || (phase === 'cat' && status.state === 'playing' && !cats[occupant.id].turnEnded && cats[occupant.id].movesRemaining > 0)}
+                  onDragStart={(event) => handleDragStart(event, occupant.id)}
                 />
               )}
               {occupant?.type === 'mouse' && mice[occupant.id] && (
