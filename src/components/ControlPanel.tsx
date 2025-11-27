@@ -68,21 +68,45 @@ function ControlPanel() {
 
       {/* Action/info sub-area - always visible */}
       <div className="panel-actions">
-        {/* Setup phase: Confirm Formation button */}
-        {phase === 'setup' && (
-          <button
-            type="button"
-            className={`button-primary ${handCats.length > 0 ? 'button-disabled' : ''}`}
-            onClick={confirmFormation}
-            disabled={handCats.length > 0}
-          >
-            Confirm Formation
-          </button>
-        )}
+        <div className="panel-info">
+          {/* Stepper phase info */}
+          {phase === 'stepper' && stepper && (
+            <>
+              <span className="stepper-label">
+                {stepper.label} · {progressLabel}
+              </span>
+              <span className="deterrence-info">{currentDescription}</span>
+            </>
+          )}
 
-        {/* Stepper phase: Next button, stepper label, description */}
-        {phase === 'stepper' && stepper && (
-          <>
+          {/* Game over message */}
+          {status.state !== 'playing' && phase !== 'setup' && (
+            <div className="deterrence-info">
+              {status.state === 'won' ? 'Victory achieved!' : 'Defeat.'} {status.reason ?? ''}
+            </div>
+          )}
+
+          {/* Active cat info */}
+          {phase === 'cat' && status.state === 'playing' && selectedCatId && (
+            <div className="deterrence-info">Active: {catDefinitions[selectedCatId].name}</div>
+          )}
+        </div>
+
+        <div className="panel-buttons">
+          {/* Setup phase: Confirm Formation button */}
+          {phase === 'setup' && (
+            <button
+              type="button"
+              className={`button-primary ${handCats.length > 0 ? 'button-disabled' : ''}`}
+              onClick={confirmFormation}
+              disabled={handCats.length > 0}
+            >
+              Confirm Formation
+            </button>
+          )}
+
+          {/* Stepper phase: Next button */}
+          {phase === 'stepper' && stepper && (
             <button
               type="button"
               className={`button-primary ${stepper.index >= stepper.frames.length ? 'button-disabled' : ''}`}
@@ -91,31 +115,15 @@ function ControlPanel() {
             >
               Next
             </button>
-            <span className="stepper-label">
-              {stepper.label} · {progressLabel}
-            </span>
-            <span className="deterrence-info">{currentDescription}</span>
-          </>
-        )}
+          )}
 
-        {/* Game over message */}
-        {status.state !== 'playing' && phase !== 'setup' && (
-          <div className="deterrence-info">
-            {status.state === 'won' ? 'Victory achieved!' : 'Defeat.'} {status.reason ?? ''}
-          </div>
-        )}
-
-        {/* Cat phase (normal play): End Turn button and active cat info */}
-        {phase === 'cat' && status.state === 'playing' && (
-          <>
+          {/* Cat phase (normal play): End Turn button */}
+          {phase === 'cat' && status.state === 'playing' && (
             <button type="button" className="button-primary" onClick={endCatPhase}>
               End Turn
             </button>
-            {selectedCatId && (
-              <div className="deterrence-info">Active: {catDefinitions[selectedCatId].name}</div>
-            )}
-          </>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
