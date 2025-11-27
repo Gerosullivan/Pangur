@@ -4,10 +4,16 @@ import MousePiece from './MousePiece';
 function IncomingLane() {
   const incomingQueue = useGameStore((state) => state.incomingQueue);
   const deterPreview = useGameStore((state) => state.deterPreview);
+  const phase = useGameStore((state) => state.phase);
+  const stepper = useGameStore((state) => state.stepper);
+
+  const isResolvingIncomingWave =
+    phase === 'stepper' && stepper?.currentPhase === 'incoming-wave';
 
   const slots = Array.from({ length: 6 }, (_, idx) => {
     const mouse = incomingQueue[idx];
-    const isDeterred = idx < deterPreview.meowge;
+    // During incoming resolution, remaining mice should appear normal.
+    const isDeterred = isResolvingIncomingWave ? false : idx < deterPreview.deterred;
     return { mouse, isDeterred };
   });
 

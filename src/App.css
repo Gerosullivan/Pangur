@@ -665,6 +665,22 @@
   text-transform: uppercase;
 }
 
+.button-flash {
+  animation: button-flash 0.9s ease-in-out infinite alternate;
+  box-shadow: 0 0 0 rgba(217, 112, 20, 0.25);
+}
+
+@keyframes button-flash {
+  from {
+    background: #d97014;
+    box-shadow: 0 0 0 rgba(217, 112, 20, 0.25);
+  }
+  to {
+    background: #ffb347;
+    box-shadow: 0 0 16px rgba(255, 179, 71, 0.55);
+  }
+}
+
 .button-secondary {
   background: rgba(3, 150, 166, 0.3);
   color: #f2f2f2;

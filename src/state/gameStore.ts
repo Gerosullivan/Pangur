@@ -297,7 +297,8 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
       const { amount } = frame.payload;
       return produce(state, (draft) => {
         draft.incomingQueue.splice(0, amount);
-        applyDeterrence(draft);
+        // Remove deterred mice from the queue; remaining ones are about to enter so clear deter preview.
+        draft.deterPreview = { meowge: 0, deterred: 0, entering: draft.incomingQueue.length };
       });
     }
     case 'incoming-place': {

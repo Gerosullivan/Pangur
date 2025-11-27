@@ -1,6 +1,7 @@
 import { useMemo, type DragEvent } from 'react';
 import { useGameStore } from '../state/gameStore';
 import { catDefinitions } from '../lib/cats';
+import { getCatRemainingCatch } from '../lib/mechanics';
 import CatPiece from './CatPiece';
 import type { CatId } from '../types';
 
@@ -14,6 +15,16 @@ function ControlPanel() {
   const stepper = useGameStore((state) => state.stepper);
   const selectedCatId = useGameStore((state) => state.selectedCatId);
   const status = useGameStore((state) => state.status);
+  const allCatsLocked = useGameStore((state) => {
+    if (state.phase !== 'cat' || state.status.state !== 'playing') return false;
+    const activeCats = state.catOrder.filter((id) => state.cats[id].position);
+    if (activeCats.length === 0) return false;
+    return activeCats.every((id) => {
+      const cat = state.cats[id];
+      const remainingCatch = getCatRemainingCatch(state, id);
+      return cat.turnEnded || (cat.movesRemaining <= 0 && remainingCatch <= 0);
+    });
+  });
 
   const progressLabel = useMemo(() => {
     if (!stepper) return '';
@@ -119,7 +130,11 @@ function ControlPanel() {
 
           {/* Cat phase (normal play): End Turn button */}
           {phase === 'cat' && status.state === 'playing' && (
-            <button type="button" className="button-primary" onClick={endCatPhase}>
+            <button
+              type="button"
+              className={`button-primary ${allCatsLocked ? 'button-flash' : ''}`}
+              onClick={endCatPhase}
+            >
               End Turn
             </button>
           )}
