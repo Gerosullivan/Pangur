@@ -7,13 +7,24 @@ function IncomingLane() {
   const phase = useGameStore((state) => state.phase);
   const stepper = useGameStore((state) => state.stepper);
 
-  const isResolvingIncomingWave =
-    phase === 'stepper' && stepper?.currentPhase === 'incoming-wave';
+  const isIncomingSummaryFrame =
+    phase === 'stepper' &&
+    stepper?.currentPhase === 'incoming-wave' &&
+    stepper.frames[stepper.index]?.phase === 'incoming-summary';
+
+  // Use the summary frame payload when available so deterred count stays accurate during that step.
+  const summaryDeterred =
+    isIncomingSummaryFrame && stepper?.frames[stepper.index]?.phase === 'incoming-summary'
+      ? (stepper.frames[stepper.index].payload as { deterred: number }).deterred
+      : undefined;
 
   const slots = Array.from({ length: 6 }, (_, idx) => {
     const mouse = incomingQueue[idx];
-    // During incoming resolution, remaining mice should appear normal.
-    const isDeterred = isResolvingIncomingWave ? false : idx < deterPreview.deterred;
+    // Show deterred styling only in preview (cat phase) and the incoming summary frame.
+    const shouldShowDeterred =
+      phase !== 'stepper' || isIncomingSummaryFrame;
+    const deterredCount = summaryDeterred ?? deterPreview.deterred;
+    const isDeterred = shouldShowDeterred && idx < deterredCount;
     return { mouse, isDeterred };
   });
 

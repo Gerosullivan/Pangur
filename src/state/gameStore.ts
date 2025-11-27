@@ -170,6 +170,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const currentFrames = current === 'resident-mice' ? mouseFrames : buildIncomingPhaseFrames(state);
     set(
       produce<GameStore>((draft) => {
+        // Force all cats to end their turn, even if they have remaining actions.
+        Object.values(draft.cats).forEach((cat) => {
+          cat.turnEnded = true;
+          cat.movesRemaining = 0;
+          cat.catchSpent = getCatEffectiveCatch(draft, cat.id);
+        });
         draft.phase = 'stepper';
         draft.stepper = {
           frames: currentFrames,
