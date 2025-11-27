@@ -19,7 +19,7 @@ function SidePanel() {
     const effectiveMeow = getCatEffectiveMeow(context, selectedCatId);
     const remainingCatch = getCatRemainingCatch(context, selectedCatId);
     const catchParts = [`${definition.baseCatch} base`];
-    const meowParts = [`${definition.baseMeow} base`];
+    const spentCatch = cats[selectedCatId].catchSpent;
     let positionLabel = 'Off board';
     if (cat.shadowBonusActive) {
       catchParts.push('+1 shadow (active)');
@@ -34,9 +34,11 @@ function SidePanel() {
     if (pangurShield) {
       catchParts.push('+1 Pangur shield');
     }
+    if (spentCatch > 0) {
+      catchParts.push(`-${spentCatch} spent`);
+    }
 
     let catchBreakdown = catchParts.join(' ');
-    let meowBreakdown = meowParts.join(' ');
 
     const hearts = `${'❤️'.repeat(Math.max(cat.hearts, 0))}${'🤍'.repeat(
       Math.max(CAT_STARTING_HEARTS - Math.max(cat.hearts, 0), 0)
@@ -48,7 +50,6 @@ function SidePanel() {
       effectiveCatch,
       effectiveMeow,
       catchBreakdown,
-      meowBreakdown,
       positionLabel,
       remainingCatch,
       hearts,
@@ -69,28 +70,28 @@ function SidePanel() {
     <aside className="side-panel">
       <h2>{detail.definition.name}</h2>
       <span className="role">{detail.definition.role}</span>
-      <div className="piece-portrait" aria-hidden>
-        {detail.definition.portrait}
-      </div>
+      <img
+        className="piece-portrait"
+        src={detail.definition.portraitSrc}
+        alt={`${detail.definition.name} portrait`}
+      />
       <div className="piece-hearts" aria-label="Hearts">
         {detail.hearts}
       </div>
       <div>
-        <strong>Catch:</strong> {detail.effectiveCatch} ({detail.catchBreakdown})
+        <strong>Catch:</strong> {detail.remainingCatch} ({detail.catchBreakdown})
       </div>
       <div>
-        <strong>Meow:</strong> {detail.effectiveMeow} ({detail.meowBreakdown})
+        <strong>Meow:</strong> {detail.effectiveMeow}
       </div>
       <div>
-        <strong>Remaining Catch:</strong> {detail.remainingCatch}
+        <strong>Moves Remaining:</strong> {detail.cat.movesRemaining}
       </div>
       <div>
         <strong>Position:</strong> {detail.positionLabel}
       </div>
       <div className="badge-row">
-        {detail.cat.movesRemaining === 0 && <span className="badge secondary">Moves spent</span>}
         {detail.cat.turnEnded && <span className="badge">Turn Locked</span>}
-        {detail.remainingCatch === 0 && <span className="badge">Catch 0</span>}
         {detail.definition.id === 'baircne' && detail.pangurShield && <span className="badge secondary">Pangur’s Shield +1 Catch</span>}
       </div>
     </aside>

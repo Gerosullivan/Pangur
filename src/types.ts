@@ -17,7 +17,7 @@ export interface CatDefinition {
   role: string;
   baseCatch: number;
   baseMeow: number;
-  portrait: string;
+  portraitSrc: string;
 }
 
 export type CatId = 'pangur' | 'guardian' | 'baircne';

@@ -60,6 +60,19 @@ function CatPiece({
   };
 
   const getPortrait = () => {
+    const asleep = cat.turnEnded || (cat.movesRemaining <= 0 && remainingCatch <= 0);
+    if (asleep) {
+      switch (catId) {
+        case 'pangur':
+          return '/assets/cat_asleep/Pangur_asleep.png';
+        case 'baircne':
+          return '/assets/cat_asleep/Baircne_asleep.png';
+        case 'guardian':
+          return '/assets/cat_asleep/Breonne_asleep.png';
+        default:
+          return '/assets/cat_asleep/Pangur_asleep.png';
+      }
+    }
     switch (catId) {
       case 'pangur':
         return '/assets/Cruibne.png';
