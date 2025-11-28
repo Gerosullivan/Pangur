@@ -342,11 +342,6 @@
   cursor: grabbing;
 }
 
-.phase-setup .cat-staging-piece {
-  width: 120px;
-  height: 120px;
-}
-
 .control-panel {
   width: 100%;
   background: rgba(20, 24, 32, 0.92);
