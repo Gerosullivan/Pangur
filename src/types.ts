@@ -138,11 +138,25 @@ export interface GameState {
   incomingQueue: MouseState[];
   deterPreview: DeterrencePreview;
   stepper?: StepperState;
-  log: string[];
+  log: LogEvent[];
   status: GameStatus;
 }
 
 export interface GameStatus {
   state: 'playing' | 'lost' | 'won';
   reason?: string;
+}
+
+export interface LogEvent {
+  seq: number;
+  turn: number;
+  phase: Phase | StepPhase | 'setup';
+  action: string;
+  actorType?: 'cat' | 'mouse' | 'system';
+  actorId?: string;
+  from?: CellId;
+  to?: CellId;
+  targetId?: string;
+  payload?: Record<string, unknown>;
+  description?: string;
 }

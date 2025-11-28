@@ -25,3 +25,5 @@ This prototype intentionally leaves implementation details to the next developer
    - Placement searches orthogonal paths from each gate toward the nearest shadow perimeter (south/east/west) and prioritizes shadow cells. Excess entrants are discarded if no legal tiles remain.
 5. **Win/Loss**
    - Global checks monitor: grain loss reaching 32, any cat death, full board occupation by mice, and a mouse scaling to 7/7. Incoming overflow simply deletes extra mice instead of causing a loss.
+6. **Logging**
+   - Every game action (cat placement/move/attack, mouse frames, incoming placements, init) emits a structured event with an incrementing sequence, stamped to console and `state.log` for future replay/export use.

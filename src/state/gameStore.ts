@@ -15,10 +15,11 @@ import {
   resetMouseAfterTurn,
   upgradeMouse,
 } from '../lib/mechanics';
-import { getNeighborCells, getWaveSize, isPerimeter, isShadowBonus, pathCellsBetween } from '../lib/board';
+import { getNeighborCells, getWaveSize, isShadowBonus, pathCellsBetween } from '../lib/board';
 import { maybeActivateShadowBonus, updateShadowBonusOnMove } from '../lib/shadowBonus';
 import { buildMousePhaseFrames } from '../lib/mousePhase';
 import { buildIncomingPhaseFrames, replenishIncomingQueue } from '../lib/incomingWave';
+import { logEvent } from '../lib/logger';
 
 const DEFAULT_WAVE_SIZE = 6;
 const MAX_GRAIN_LOSS = 32;
@@ -79,6 +80,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
         draft.handCats = draft.handCats.filter((id) => id !== catId);
         draft.selectedCatId = catId;
         applyDeterrence(draft);
+        logEvent(draft, {
+          action: 'cat-place',
+          actorType: 'cat',
+          actorId: catId,
+          from: currentPos,
+          to: destination,
+          payload: { phase: 'setup' },
+        });
       })
     );
   },
@@ -93,6 +102,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
         resetCatTurnState(draft);
         draft.selectedCatId = draft.catOrder.find((id) => draft.cats[id].position);
         applyDeterrence(draft);
+        logEvent(draft, {
+          action: 'confirm-formation',
+          actorType: 'system',
+          payload: { catPositions: Object.fromEntries(Object.entries(draft.cats).map(([id, cat]) => [id, cat.position])) },
+        });
       })
     );
   },
@@ -110,6 +124,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set(
       produce<GameStore>((draft) => {
         const movingCat = draft.cats[catId];
+        const origin = movingCat.position!;
         draft.cells[movingCat.position!].occupant = undefined;
         movingCat.position = destination;
         movingCat.movesRemaining = Math.max(0, movingCat.movesRemaining - 1);
@@ -118,6 +133,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
         maybeFinalizeCatTurn(draft, catId);
         applyDeterrence(draft);
         checkInteriorFloodLoss(draft);
+        logEvent(draft, {
+          action: 'cat-move',
+          actorType: 'cat',
+          actorId: catId,
+          from: origin,
+          to: destination,
+        });
       })
     );
   },
@@ -129,6 +151,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!cat.position || cat.turnEnded) return;
     const mouse = state.mice[mouseId];
     if (!mouse?.position) return;
+    const origin = cat.position;
+    const targetCell = mouse.position;
     const adjacentCells = new Set(getNeighborCells(cat.position));
     if (!adjacentCells.has(mouse.position)) return;
     if (getCatRemainingCatch(state, catId) <= 0) return;
@@ -142,6 +166,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         draftCat.catchSpent += 1;
         draftCat.attackCommitted = true;
         damageMouse(draftMouse, 1);
+        const remainingHearts = draftMouse.hearts;
         if (draftMouse.hearts <= 0) {
         draft.cells[draftMouse.position].occupant = undefined;
         delete draft.mice[mouseId];
@@ -160,6 +185,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
       maybeFinalizeCatTurn(draft, catId);
       applyDeterrence(draft);
       checkInteriorFloodLoss(draft);
+      logEvent(draft, {
+        action: 'cat-attack',
+        actorType: 'cat',
+        actorId: catId,
+        from: origin,
+        targetId: mouseId,
+        to: targetCell,
+        payload: {
+          damage: 1,
+          mouseRemainingHearts: remainingHearts,
+          mouseDefeated: remainingHearts <= 0,
+        },
+      });
     })
   );
 },
@@ -187,6 +225,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
           currentPhase: current,
           remaining,
         };
+        logEvent(draft, {
+          action: 'end-cat-phase',
+          actorType: 'system',
+          payload: { frames: currentFrames.length, nextPhase: current },
+        });
       })
     );
   },
@@ -262,6 +305,14 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
         draft.cells[to].occupant = { type: 'mouse', id: mouseId };
         mouse.position = to;
         checkInteriorFloodLoss(draft);
+        logEvent(draft, {
+          action: 'mouse-move',
+          actorType: 'mouse',
+          actorId: mouseId,
+          from,
+          to,
+          phase: frame.phase,
+        });
       });
     }
     case 'mouse-attack': {
@@ -270,6 +321,7 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
         const mouse = draft.mice[mouseId];
         const cat = draft.cats[targetId];
         if (!mouse?.position || !cat?.position) return;
+        const targetPos = cat.position;
         cat.wokenByAttack = true;
         damageCat(cat, 1);
         if (cat.hearts <= 0) {
@@ -278,6 +330,15 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
           handleCatDefeat(draft, targetId);
         }
         checkInteriorFloodLoss(draft);
+        logEvent(draft, {
+          action: 'mouse-attack',
+          actorType: 'mouse',
+          actorId: mouseId,
+          to: targetPos,
+          targetId,
+          payload: { damage: 1, catHearts: cat.hearts },
+          phase: frame.phase,
+        });
       });
     }
     case 'mouse-feed': {
@@ -299,16 +360,42 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
         });
         applyDeterrence(draft);
         checkInteriorFloodLoss(draft);
+        logEvent(draft, {
+          action: 'mouse-feed',
+          actorType: 'mouse',
+          payload: {
+            eaters,
+            grainLoss: draft.grainLoss,
+            upgraded: eaters
+              .map((id) => draft.mice[id])
+              .filter((m) => m && m.hearts > 0)
+              .map((m) => ({ id: m!.id, tier: m!.tier })),
+          },
+          phase: frame.phase,
+        });
       });
     }
     case 'incoming-summary':
-      return state;
+      return produce(state, (draft) => {
+        logEvent(draft, {
+          action: 'incoming-summary',
+          actorType: 'system',
+          payload: frame.payload,
+          phase: frame.phase,
+        });
+      });
     case 'incoming-scare': {
       const { amount } = frame.payload;
       return produce(state, (draft) => {
         draft.incomingQueue.splice(0, amount);
         // Remove deterred mice from the queue; remaining ones are about to enter so clear deter preview.
         draft.deterPreview = { meowge: 0, deterred: 0, entering: draft.incomingQueue.length };
+        logEvent(draft, {
+          action: 'incoming-scare',
+          actorType: 'system',
+          payload: { amount, queueAfter: draft.incomingQueue.length },
+          phase: frame.phase,
+        });
       });
     }
     case 'incoming-place': {
@@ -324,6 +411,14 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
         draft.cells[cellId].occupant = { type: 'mouse', id: newId };
         applyDeterrence(draft);
         checkInteriorFloodLoss(draft);
+        logEvent(draft, {
+          action: 'incoming-place',
+          actorType: 'mouse',
+          actorId: newId,
+          to: cellId,
+          payload: { tier: entering.tier },
+          phase: frame.phase,
+        });
       });
     }
     case 'incoming-finish': {
@@ -338,6 +433,12 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
         }
         applyDeterrence(draft);
         checkInteriorFloodLoss(draft);
+        logEvent(draft, {
+          action: 'incoming-finish',
+          actorType: 'system',
+          payload: { wave: draft.wave, turn: draft.turn },
+          phase: frame.phase,
+        });
       });
     }
     default:

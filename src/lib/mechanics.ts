@@ -3,6 +3,7 @@ import { columns, rows, isShadowBonus, buildInitialCells, getNeighborCells, getM
 import { resetShadowBonusForTurn } from './shadowBonus';
 import type { CatId, GameState, MouseState, CellId, StepFrame, DeterrencePreview } from '../types';
 import initialMice from '../data/initialMice.json';
+import { logEvent, resetLogSequence } from './logger';
 
 export type CatStatContext = Pick<GameState, 'cats' | 'cells'>;
 
@@ -25,11 +26,15 @@ export function createInitialGameState(): GameState {
   const mice: Record<string, MouseState> = {};
   let mouseIdCounter = 0;
   const initialMiceConfig = parseInitialMiceConfig(initialMice as InitialMiceFile);
-  initialMiceConfig.forEach(({ cell, tier }) => {
-    const mouseId = `mouse-${++mouseIdCounter}`;
-    const mouse = createMouse(mouseId, tier, cell);
-    mice[mouseId] = mouse;
-    cells[cell].occupant = { type: 'mouse', id: mouseId };
+  const seededMice = initialMiceConfig.map(({ cell, tier }) => ({
+    cell,
+    tier,
+    id: `mouse-${++mouseIdCounter}`,
+  }));
+  seededMice.forEach(({ cell, tier, id }) => {
+    const mouse = createMouse(id, tier, cell);
+    mice[id] = mouse;
+    cells[cell].occupant = { type: 'mouse', id };
   });
 
   const incomingQueue = Array.from({ length: getWaveSize() }, (_, index) => createMouse(`queue-${index + 1}`, 1));
@@ -52,6 +57,26 @@ export function createInitialGameState(): GameState {
     log: [],
     status: { state: 'playing' },
   };
+
+  resetLogSequence();
+  logEvent(baseState, {
+    action: 'init-state',
+    actorType: 'system',
+    payload: {
+      catOrder: baseState.catOrder,
+      initialMice: seededMice.map(({ cell, tier, id }) => ({ cell, tier, id })),
+      incomingQueueSize: incomingQueue.length,
+    },
+  });
+  seededMice.forEach(({ cell, tier, id }) => {
+    logEvent(baseState, {
+      action: 'mouse-spawn',
+      actorType: 'mouse',
+      actorId: id,
+      to: cell,
+      payload: { tier },
+    });
+  });
 
   applyDeterrence(baseState);
   return baseState;
