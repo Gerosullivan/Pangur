@@ -11,9 +11,9 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 
 ## 2. Starting State
 
-- Board: 5x5 grid representing the building interior. All perimeter cells render as `shadow` terrain except the three open gates at `B5`, `C5`, `D5`. Every perimeter cell begins occupied by a `1/1` mouse (configurable per `src/data/boardLayout.json`). Designers can change which perimeter tiles spawn mice by editing that file, but the default layout fills the entire ring. Entry metadata still drives the shared queue described in §8.
+- Board: 5x5 grid representing the building interior. All perimeter cells render as `shadow` terrain except the three open gates at `B5`, `C5`, `D5`. Every perimeter cell begins occupied by a `1/1` mouse by default, driven by `src/data/initialMice.json`. Designers can change which tiles spawn resident mice—and their starting tiers (e.g., `3/3` mice)—by editing that file. Entry metadata still drives the shared queue described in §8.
 - Cat pieces: Three residents off-board at the bottom center, displayed side-by-side (same cat component as will be on board - see UI spec). Base stats use `catch/meow`: Pangur (aka Cruibne) `3/1`, Guardian `1/3`, Baircne `2/2`. Each cat begins with five hearts (health).
-- Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat piece from the off board onto any free interior cell (non-gate). During this phase players may rearrange cats without limit—pick a placed cat back up, drop it somewhere else, swap positions, etc.—until they choose to press `Confirm Formation`. Only after confirmation does the normal turn loop begin.
+- Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat piece from the off board onto any free cell (gate or otherwise). During this phase players may rearrange cats without limit—pick a placed cat back up, drop it somewhere else, swap positions, etc.—until they choose to press `Confirm Formation`. Only after confirmation does the normal turn loop begin.
 - Grain Loss Tracker: Start at `0` loss. Each grain eaten by mice increments the counter; reaching `32` loss triggers Game Over.
 - Incoming Wave: Six mouse pieces per wave, visualized as a `Next Wave` lane of six icons. As cats generate Meowge, the leftmost icons flip to 😱 to preview how many will be deterred; remaining icons stay 🐭.
 
@@ -110,10 +110,11 @@ After the one-time setup placement, each round repeats these phases in order:
 
 ## 8. Special Cells & Modifiers
 
-- **Board Layout JSON**
+- **Board + Initial Mice JSON**
   - `src/data/boardLayout.json` enumerates every cell with a `terrain` tag (`shadow`, `gate`, `interior`) and optional `entry` block. Entry metadata captures `direction` (`north`, `south`, `east`, `west`) and the number of mice queued outside that perimeter cell on turn 1.
-  - The loader validates that entry cells live on the perimeter and that their direction matches the side they touch; invalid layouts fail fast at build time.
-  - UI + gameplay both hydrate directly from this file: updating `incomingMice` immediately changes the shared queue sizing and gate-line placement targets with no code changes.
+  - `src/data/initialMice.json` lists resident mouse seeds with `cell` + optional `tier` (defaults to `1`). Each entry spawns a single mouse on that cell at game start; duplicate or invalid cells fail fast at load time. Use higher tiers (e.g., `3`) to pre-place upgraded `3/3` mice.
+  - The loaders validate that entry cells live on the perimeter and that their direction matches the side they touch; invalid layouts fail fast at build time.
+  - UI + gameplay both hydrate directly from these files: updating `incomingMice` changes queue sizing/placement, and editing `initialMice.json` changes resident spawns with no code changes.
 
 - **Meow Zones**
   - Only the open gates `B5`, `C5`, and `D5` emit meow. A cat must stand on one of these cells for its meow value to count toward Meowge.

@@ -62,7 +62,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const state = get();
     if (state.phase !== 'setup') return;
     const cell = state.cells[destination];
-    if (!cell || isPerimeter(destination) || cell.terrain === 'gate') return;
+    if (!cell) return;
 
     set(
       produce<GameStore>((draft) => {

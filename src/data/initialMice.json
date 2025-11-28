@@ -1,0 +1,14 @@
+{
+  "placements": [
+    { "cell": "C1", "tier": 1 },
+    { "cell": "E1", "tier": 2 },
+
+    { "cell": "A3", "tier": 3 },
+    { "cell": "E3", "tier": 3 },
+
+    { "cell": "B4", "tier": 1 },
+
+    { "cell": "B5", "tier": 1 },
+    { "cell": "D5", "tier": 1 }
+  ]
+}

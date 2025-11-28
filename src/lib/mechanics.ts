@@ -1,9 +1,17 @@
 import { catDefinitions, CAT_STARTING_HEARTS } from './cats';
-import { columns, rows, isShadowBonus, buildInitialCells, isPerimeter, getNeighborCells, getMeowZone, getWaveSize } from './board';
+import { columns, rows, isShadowBonus, buildInitialCells, getNeighborCells, getMeowZone, getWaveSize, parseCell } from './board';
 import { resetShadowBonusForTurn } from './shadowBonus';
 import type { CatId, GameState, MouseState, CellId, StepFrame, DeterrencePreview } from '../types';
+import initialMice from '../data/initialMice.json';
 
 export type CatStatContext = Pick<GameState, 'cats' | 'cells'>;
+
+type InitialMiceFile = {
+  placements: Array<{
+    cell: CellId;
+    tier?: number;
+  }>;
+};
 
 export function createInitialGameState(): GameState {
   const cells = buildInitialCells();
@@ -16,16 +24,13 @@ export function createInitialGameState(): GameState {
 
   const mice: Record<string, MouseState> = {};
   let mouseIdCounter = 0;
-  for (const column of columns) {
-    for (const row of rows) {
-      const id = `${column}${row}` as CellId;
-      if (!isPerimeter(id)) continue;
-      const mouseId = `mouse-${++mouseIdCounter}`;
-      const mouse = createMouse(mouseId, 1, id);
-      mice[mouseId] = mouse;
-      cells[id].occupant = { type: 'mouse', id: mouseId };
-    }
-  }
+  const initialMiceConfig = parseInitialMiceConfig(initialMice as InitialMiceFile);
+  initialMiceConfig.forEach(({ cell, tier }) => {
+    const mouseId = `mouse-${++mouseIdCounter}`;
+    const mouse = createMouse(mouseId, tier, cell);
+    mice[mouseId] = mouse;
+    cells[cell].occupant = { type: 'mouse', id: mouseId };
+  });
 
   const incomingQueue = Array.from({ length: getWaveSize() }, (_, index) => createMouse(`queue-${index + 1}`, 1));
 
@@ -50,6 +55,28 @@ export function createInitialGameState(): GameState {
 
   applyDeterrence(baseState);
   return baseState;
+}
+
+function parseInitialMiceConfig(config: InitialMiceFile): Array<{ cell: CellId; tier: number }> {
+  const placements = config?.placements ?? [];
+  const seen = new Set<CellId>();
+  return placements.map((entry, idx) => {
+    const cell = entry.cell;
+    const tier = entry.tier && entry.tier > 0 ? entry.tier : 1;
+    validateCell(cell, idx);
+    if (seen.has(cell)) {
+      throw new Error(`Initial mice config has duplicate cell ${cell}`);
+    }
+    seen.add(cell);
+    return { cell, tier };
+  });
+}
+
+function validateCell(cell: CellId, index: number): void {
+  const { column, row } = parseCell(cell);
+  if (!columns.includes(column) || !rows.includes(row)) {
+    throw new Error(`Initial mice config row ${index} references invalid cell ${cell}`);
+  }
 }
 
 export function applyDeterrence(state: GameState): void {

@@ -76,7 +76,7 @@ function Board() {
       return;
     }
     if (phase === 'setup' && selectedCatId) {
-      if (!occupant && !isPerimeter(cell.id)) {
+      if (!occupant) {
         placeCat(selectedCatId, cell.id);
       }
       return;
@@ -103,7 +103,7 @@ function Board() {
   const canDropCat = (cell: CellState, draggedCatId?: string | CatId) => {
     if (cell.occupant) return false;
     if (phase === 'setup') {
-      return !isPerimeter(cell.id) && cell.terrain !== 'gate';
+      return true;
     }
     if (phase === 'cat' && status.state === 'playing' && draggedCatId) {
       const movableCells = getMovableCells(draggedCatId as CatId);
