@@ -101,9 +101,9 @@
 
 .right-column {
   position: absolute;
-  top: 112px;
-  right: 72px;
-  width: 520px;
+  top: 252px;
+  right: 218px;
+  width: 320px;
   bottom: 40px;
   display: flex;
   flex-direction: column;

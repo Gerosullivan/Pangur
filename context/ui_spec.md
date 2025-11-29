@@ -18,7 +18,7 @@ Use a fixed canvas (no responsive scaling):
   - Incoming lane: 542px wide × 54px tall, absolutely positioned on the shell (detached from any column flow) with six fixed slots showing the 😱/🐭 preview.
   - Board: 542px × 542px board art; keep the 5×5 CSS grid aligned to that fixed pixel size.
 - Right parchment:
-  - Right column: 520px wide stack pinned to the right with internal scrolling between its top (≈112px) and bottom (≈40px) offsets so content stays visible inside the shell height.
+  - Right column: ~416px wide stack pinned to the right with internal scrolling between its top (≈182px) and bottom (≈40px) offsets so content stays visible inside the shell height.
 - Action/control UI lives inside the right column stack with tutorial + cat info instead of spanning a full-width bottom row. Phase label + restart are separate badges on the right edge (no top bar).
 
 - **Incoming Mice Row**
