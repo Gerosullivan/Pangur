@@ -1,7 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useTutorialStore } from '../state/tutorialStore';
-
-type HighlightRect = { top: number; left: number; width: number; height: number };
 
 const tokenSelectorMap: Record<string, string[]> = {
   'incoming-lane': ['.incoming-lane'],
@@ -51,58 +49,44 @@ function getElementsForToken(token: string): Element[] {
 }
 
 function TutorialHighlights() {
-  const step = useTutorialStore((state) => state.steps[state.index]);
+  const step = useTutorialStore((state) => (state.active ? state.steps[state.index] : undefined));
   const highlights = step?.highlights ?? [];
-  const [rects, setRects] = useState<HighlightRect[]>([]);
+  const prevElements = useRef<Element[]>([]);
 
   const tokens = useMemo(() => highlights, [highlights]);
 
-  const recompute = () => {
-    if (tokens.length === 0) {
-      setRects([]);
+  useEffect(() => {
+    // Remove old highlights
+    prevElements.current.forEach((el) => {
+      el.classList.remove('outline-pulse');
+    });
+
+    if (tokens.length === 0 || !step) {
+      prevElements.current = [];
       return;
     }
-    const nextRects: HighlightRect[] = [];
+
+    const nextElements: Element[] = [];
     tokens.forEach((token) => {
       const elements = getElementsForToken(token);
       elements.forEach((el) => {
-        const rect = el.getBoundingClientRect();
-        nextRects.push({
-          top: rect.top + window.scrollY,
-          left: rect.left + window.scrollX,
-          width: rect.width,
-          height: rect.height,
-        });
+        el.classList.add('outline-pulse');
+        nextElements.push(el);
       });
     });
-    setRects(nextRects);
-  };
+    prevElements.current = nextElements;
 
-  useEffect(recompute, [tokens]);
+    return () => {
+      nextElements.forEach((el) => el.classList.remove('outline-pulse'));
+    };
+  }, [tokens, step]);
 
-  useEffect(() => {
-    window.addEventListener('resize', recompute);
-    return () => window.removeEventListener('resize', recompute);
-  }, [tokens]);
+  // Note: In an earlier iteration we drew absolute-positioned overlay divs for highlights.
+  // If we ever need to revert to that approach (e.g., to ensure consistent sizing independent of target styles),
+  // we could reintroduce rendering a layer of <div className="tutorial-highlight"> elements sized to target rects.
+  // This direct-class approach keeps DOM simpler and avoids positioning logic.
 
-  if (!step) return null;
-
-  return (
-    <div className="tutorial-highlight-layer" aria-hidden>
-      {rects.map((rect, idx) => (
-        <div
-          key={`${rect.top}-${rect.left}-${idx}`}
-          className="tutorial-highlight"
-          style={{
-            top: rect.top,
-            left: rect.left,
-            width: rect.width,
-            height: rect.height,
-          }}
-        />
-      ))}
-    </div>
-  );
+  return null;
 }
 
 export default TutorialHighlights;
