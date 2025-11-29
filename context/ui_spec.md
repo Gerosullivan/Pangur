@@ -40,6 +40,7 @@ Use a fixed canvas (no responsive scaling):
 
   - Grid: 5×5 cells sized to the fixed 542px board.
   - Layout must use CSS Grid so each square maps cleanly to board coordinates (avoid flexbox positioning).
+  - A subtle lightened backdrop sits under the board footprint to lift the square off the background art.
   - Cell Styling:
     - Interior cells: grey.
     - Shadow bonus cells (outer ring minus gates): dark grey.

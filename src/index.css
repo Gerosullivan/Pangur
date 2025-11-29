@@ -11,8 +11,9 @@
   --board-bg-size: 542px;
   --board-padding: 0px;
   --board-cell-size: 108.4px;
-  --incoming-height: 54px;
-  --incoming-bg-size: 542px;
+  --incoming-height: 62px;
+  --incoming-width: 592px;
+  --incoming-bg-size: 592px;
 }
 
 * {

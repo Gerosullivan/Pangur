@@ -157,8 +157,8 @@
 .incoming-lane {
   position: absolute;
   top: 77px;
-  left: 130px;
-  width: var(--board-width);
+  left: 103px;
+  width: var(--incoming-width);
   height: var(--incoming-height);
   background-image: url("/assets/incoming_mice_bg.jpeg");
   background-size: var(--incoming-bg-size) var(--incoming-height);
@@ -221,6 +221,19 @@
   background-position: center center;
   overflow: hidden;
   border-radius: 3px;
+  z-index: 2;
+}
+
+.board-backdrop {
+  position: absolute;
+  top: 142px;
+  left: 103px;
+  width: var(--incoming-width);
+  height: var(--board-height);
+  background: rgba(0, 0, 0, 0.61);
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .board-grid {

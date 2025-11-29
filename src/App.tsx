@@ -23,6 +23,7 @@ function App() {
       <div className="play-area">
         <div className="play-column">
           <IncomingLane />
+          <div className="board-backdrop" aria-hidden />
           <Board />
         </div>
         <div className="right-column">
