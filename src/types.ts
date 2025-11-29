@@ -160,3 +160,22 @@ export interface LogEvent {
   payload?: Record<string, unknown>;
   description?: string;
 }
+
+export interface TutorialStep {
+  id: string;
+  order: number;
+  title: string;
+  highlights?: string[];
+  text: string;
+  instruction?: string;
+  showNext?: boolean;
+  logSeq?: number[];
+}
+
+export interface TutorialState {
+  active: boolean;
+  steps: TutorialStep[];
+  index: number;
+  locked: boolean;
+  completedStepIds: Set<string>;
+}

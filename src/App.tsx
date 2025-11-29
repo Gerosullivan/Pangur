@@ -6,6 +6,8 @@ import Board from './components/Board';
 import IncomingLane from './components/IncomingLane';
 import SidePanel from './components/SidePanel';
 import ControlPanel from './components/ControlPanel';
+import TutorialPanel from './components/TutorialPanel';
+import TutorialHighlights from './components/TutorialHighlights';
 
 function App() {
   const phase = useGameStore((state) => state.phase);
@@ -17,6 +19,7 @@ function App() {
   return (
     <div className={shellClass}>
       <TopBar grainLoss={grainLoss} wave={wave} phase={phase} />
+      <TutorialHighlights />
       <div className="play-area">
         <div className="play-column">
           <IncomingLane />
@@ -24,6 +27,7 @@ function App() {
         </div>
         <div className="right-column">
           <SidePanel />
+          <TutorialPanel />
           <ControlPanel />
         </div>
       </div>
