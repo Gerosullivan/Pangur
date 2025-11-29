@@ -2,7 +2,7 @@ import { useMemo, type DragEvent } from 'react';
 import { useGameStore } from '../state/gameStore';
 import CatPiece from './CatPiece';
 import MousePiece from './MousePiece';
-import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter } from '../lib/board';
+import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter, isGate } from '../lib/board';
 import { getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch } from '../lib/mechanics';
 import type { CatId, CellId, CellState } from '../types';
 
@@ -190,6 +190,7 @@ function Board() {
                   onSelect={selectCat}
                   cellRef={id}
                   highlighted={attackHighlight?.catCell === id && attackHighlight.catId === occupant.id}
+                  gateGlow={isGate(id)}
                   draggable={phase === 'setup' || (phase === 'cat' && status.state === 'playing' && !cats[occupant.id].turnEnded && cats[occupant.id].movesRemaining > 0)}
                   onDragStart={(event) => handleDragStart(event, occupant.id)}
                 />

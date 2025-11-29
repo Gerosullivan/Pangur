@@ -17,6 +17,7 @@ interface CatPieceProps {
   draggable?: boolean;
   onDragStart?: (event: DragEvent<HTMLDivElement>) => void;
   onDragEnd?: (event: DragEvent<HTMLDivElement>) => void;
+  gateGlow?: boolean;
 }
 
 function CatPiece({
@@ -33,6 +34,7 @@ function CatPiece({
   draggable,
   onDragStart,
   onDragEnd,
+  gateGlow,
 }: CatPieceProps) {
   const definition = catDefinitions[catId];
   const currentHearts = Math.max(cat.hearts, 0);
@@ -117,7 +119,7 @@ function CatPiece({
         <span className={`piece-catch ${catchBonus > 0 ? 'glow-red' : ''}`}>
           {remainingCatch}
         </span>
-        <span className="piece-meow">{definition.baseMeow}</span>
+        <span className={`piece-meow ${gateGlow ? 'glow-blue' : ''}`.trim()}>{definition.baseMeow}</span>
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ const tokenSelectorMap: Record<string, string[]> = {
 const catSelectorMap: Record<string, string[]> = {
   pangur: ['[aria-label^="Pangur"]'],
   baircne: ['[aria-label^="Baircne"]'],
-  guardian: ['[aria-label^="Breonne"]', '[aria-label^="Guardian"]'],
+  guardian: ['[aria-label^="Breoinne"]', '[aria-label^="Guardian"]'],
 };
 
 function getElementsForToken(token: string): Element[] {
