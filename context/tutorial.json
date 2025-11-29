@@ -270,7 +270,7 @@
       "highlights": ["mouse-4", "pangur"],
       "text": "During the mouse turn, adjacent mice attack before moving. Pangur takes two hits from the 3/3 mouse.",
       "instruction": "Advance the stepper to resolve the attacks.",
-      "showNext": true,
+      "showNext": false,
       "logSeq": [27, 28]
     },
     {
@@ -280,7 +280,7 @@
       "highlights": ["mouse-7", "mouse-4", "shadow-cells"],
       "text": "Feeding adds grain loss and upgrades mice on shadow tiles. Shadow placement matters for their growth.",
       "instruction": "Advance to finish feeding.",
-      "showNext": true,
+      "showNext": false,
       "logSeq": [29]
     },
     {
@@ -290,7 +290,7 @@
       "highlights": ["incoming-lane"],
       "text": "Meow from gate cats scares part of the wave. Scared mice leave the queue; the rest will try to enter.",
       "instruction": "Advance the stepper.",
-      "showNext": true,
+      "showNext": false,
       "logSeq": [30, 31]
     },
     {
@@ -300,7 +300,7 @@
       "highlights": ["gate-line"],
       "text": "Entering mice append to existing mouse lines if paths are open. Gate cats block entry on their cells.",
       "instruction": "Advance to place incoming mice.",
-      "showNext": true,
+      "showNext": false,
       "logSeq": [32, 33, 34]
     },
     {
@@ -360,7 +360,7 @@
       "highlights": ["button:End Turn"],
       "text": "Finish the cat phase; remaining mice feed and incoming placements repeat.",
       "instruction": "Advance through mouse feeding and incoming placement.",
-      "showNext": true,
+      "showNext": false,
       "logSeq": [46, 47, 48, 49, 50, 51, 52, 53]
     },
     {
@@ -380,7 +380,7 @@
       "highlights": ["incoming-lane"],
       "text": "Six meow on gates scares the entire wave; no mice enter when meowge meets the wave size.",
       "instruction": "Advance through the incoming summary.",
-      "showNext": true,
+      "showNext": false,
       "logSeq": [62, 63, 64, 65]
     },
     {
