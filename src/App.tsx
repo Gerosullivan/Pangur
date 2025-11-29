@@ -17,13 +17,16 @@ function App() {
   const handCats = useGameStore((state) => state.handCats);
   const catOrderLength = useGameStore((state) => state.catOrder.length);
 
-  const shellClass = useMemo(() => `app-shell phase-${phase}`, [phase]);
   const phaseLabels: Record<Phase, string> = {
     setup: 'Setup Phase',
     cat: 'Cat Phase',
     stepper: 'Resolving Phases',
   };
   const isOpeningScreen = phase === 'setup' && handCats.length === catOrderLength;
+  const shellClass = useMemo(
+    () => `app-shell phase-${phase}${isOpeningScreen ? ' opening' : ''}`,
+    [phase, isOpeningScreen]
+  );
 
   return (
     <div className={shellClass}>

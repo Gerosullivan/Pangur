@@ -20,6 +20,7 @@ Use a fixed canvas (no responsive scaling):
 - Right parchment:
   - Right column: ~416px wide stack pinned to the right with internal scrolling between its top (≈182px) and bottom (≈40px) offsets so content stays visible inside the shell height.
 - Action/control UI lives inside the right column stack with tutorial + cat info instead of spanning a full-width bottom row. Phase label + restart are separate badges on the right edge (no top bar).
+- Opening state: while all cats remain in hand during setup, the board appears empty (pieces hidden) with a hero trio overlay on the board and only the tutorial panel visible on the right.
 
 - **Incoming Mice Row**
 

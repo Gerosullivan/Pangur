@@ -210,6 +210,14 @@
   z-index: 3;
 }
 
+.app-shell.opening .game-board .piece,
+.app-shell.opening .game-board .piece-badge,
+.app-shell.opening .game-board .piece-hearts,
+.app-shell.opening .game-board .piece-stats,
+.app-shell.opening .game-board .cell-id-debug {
+  display: none;
+}
+
 .wave-badge,
 .grain-badge,
 .phase-badge,
