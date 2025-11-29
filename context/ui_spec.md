@@ -35,6 +35,9 @@ Use a fixed canvas (no responsive scaling):
   - Height: 54px, width: 542px, anchored to the shell (absolute) rather than consuming flow height.
   - Background: Barn lane art matching the new shell.
   - Left-justified label `Next Wave`, followed by a fixed row of six mouse slots that never changes length. Meow preview swaps slots to 😱 when Meowge would deter that mouse; remaining slots show 🐭.
+  - A separate `Wave N` pill sits just above this lane on the left, anchored to the same horizontal start as the lane.
+  - Grain tracker moves out of the top bar into its own pill beneath the board, aligned to the board’s left edge: `Grain Loss 0 / 32`.
+  - Phase text + Restart live on the right side of the shell as their own badges/buttons (no longer in the top bar).
 
 - **Central Board Region**
 
