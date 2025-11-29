@@ -12,6 +12,7 @@ function ControlPanel() {
   const confirmFormation = useGameStore((state) => state.confirmFormation);
   const endCatPhase = useGameStore((state) => state.endCatPhase);
   const advanceStepper = useGameStore((state) => state.advanceStepper);
+  const log = useGameStore((state) => state.log);
   const stepper = useGameStore((state) => state.stepper);
   const selectedCatId = useGameStore((state) => state.selectedCatId);
   const status = useGameStore((state) => state.status);
@@ -40,6 +41,17 @@ function ControlPanel() {
 
     // The browser will automatically use the dragged element as the drag preview
     // which includes the full piece (border, stats, hearts, and images)
+  };
+
+  const handleExportLog = () => {
+    if (!log || log.length === 0) return;
+    const blob = new Blob([JSON.stringify(log, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'pangur-log.json';
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -104,6 +116,16 @@ function ControlPanel() {
         </div>
 
         <div className="panel-buttons">
+          {/* Utility: Export log */}
+          <button
+            type="button"
+            className={`button-secondary ${log.length === 0 ? 'button-disabled' : ''}`}
+            onClick={handleExportLog}
+            disabled={log.length === 0}
+          >
+            Export Log
+          </button>
+
           {/* Setup phase: Confirm Formation button */}
           {phase === 'setup' && (
             <button

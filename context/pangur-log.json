@@ -1,0 +1,907 @@
+[
+  {
+    "seq": 1,
+    "turn": 1,
+    "phase": "setup",
+    "action": "init-state",
+    "actorType": "system",
+    "payload": {
+      "catOrder": [
+        "pangur",
+        "baircne",
+        "guardian"
+      ],
+      "initialMice": [
+        {
+          "cell": "C1",
+          "tier": 1,
+          "id": "mouse-1"
+        },
+        {
+          "cell": "E1",
+          "tier": 2,
+          "id": "mouse-2"
+        },
+        {
+          "cell": "A3",
+          "tier": 3,
+          "id": "mouse-3"
+        },
+        {
+          "cell": "E3",
+          "tier": 3,
+          "id": "mouse-4"
+        },
+        {
+          "cell": "B4",
+          "tier": 1,
+          "id": "mouse-5"
+        },
+        {
+          "cell": "B5",
+          "tier": 1,
+          "id": "mouse-6"
+        },
+        {
+          "cell": "D5",
+          "tier": 1,
+          "id": "mouse-7"
+        }
+      ],
+      "incomingQueueSize": 6
+    }
+  },
+  {
+    "seq": 2,
+    "turn": 1,
+    "phase": "setup",
+    "action": "mouse-spawn",
+    "actorType": "mouse",
+    "actorId": "mouse-1",
+    "to": "C1",
+    "payload": {
+      "tier": 1
+    }
+  },
+  {
+    "seq": 3,
+    "turn": 1,
+    "phase": "setup",
+    "action": "mouse-spawn",
+    "actorType": "mouse",
+    "actorId": "mouse-2",
+    "to": "E1",
+    "payload": {
+      "tier": 2
+    }
+  },
+  {
+    "seq": 4,
+    "turn": 1,
+    "phase": "setup",
+    "action": "mouse-spawn",
+    "actorType": "mouse",
+    "actorId": "mouse-3",
+    "to": "A3",
+    "payload": {
+      "tier": 3
+    }
+  },
+  {
+    "seq": 5,
+    "turn": 1,
+    "phase": "setup",
+    "action": "mouse-spawn",
+    "actorType": "mouse",
+    "actorId": "mouse-4",
+    "to": "E3",
+    "payload": {
+      "tier": 3
+    }
+  },
+  {
+    "seq": 6,
+    "turn": 1,
+    "phase": "setup",
+    "action": "mouse-spawn",
+    "actorType": "mouse",
+    "actorId": "mouse-5",
+    "to": "B4",
+    "payload": {
+      "tier": 1
+    }
+  },
+  {
+    "seq": 7,
+    "turn": 1,
+    "phase": "setup",
+    "action": "mouse-spawn",
+    "actorType": "mouse",
+    "actorId": "mouse-6",
+    "to": "B5",
+    "payload": {
+      "tier": 1
+    }
+  },
+  {
+    "seq": 8,
+    "turn": 1,
+    "phase": "setup",
+    "action": "mouse-spawn",
+    "actorType": "mouse",
+    "actorId": "mouse-7",
+    "to": "D5",
+    "payload": {
+      "tier": 1
+    }
+  },
+  {
+    "seq": 9,
+    "turn": 1,
+    "phase": "setup",
+    "action": "cat-place",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "to": "C4",
+    "payload": {
+      "phase": "setup"
+    }
+  },
+  {
+    "seq": 10,
+    "turn": 1,
+    "phase": "setup",
+    "action": "cat-place",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "C4",
+    "to": "C5",
+    "payload": {
+      "phase": "setup"
+    }
+  },
+  {
+    "seq": 11,
+    "turn": 1,
+    "phase": "setup",
+    "action": "cat-place",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "C5",
+    "to": "C4",
+    "payload": {
+      "phase": "setup"
+    }
+  },
+  {
+    "seq": 12,
+    "turn": 1,
+    "phase": "setup",
+    "action": "cat-place",
+    "actorType": "cat",
+    "actorId": "baircne",
+    "to": "B2",
+    "payload": {
+      "phase": "setup"
+    }
+  },
+  {
+    "seq": 13,
+    "turn": 1,
+    "phase": "setup",
+    "action": "cat-place",
+    "actorType": "cat",
+    "actorId": "guardian",
+    "to": "B3",
+    "payload": {
+      "phase": "setup"
+    }
+  },
+  {
+    "seq": 14,
+    "turn": 1,
+    "phase": "cat",
+    "action": "confirm-formation",
+    "actorType": "system",
+    "payload": {
+      "catPositions": {
+        "pangur": "C4",
+        "guardian": "B3",
+        "baircne": "B2"
+      }
+    }
+  },
+  {
+    "seq": 15,
+    "turn": 1,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "C4",
+    "targetId": "mouse-6",
+    "to": "B5",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 16,
+    "turn": 1,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "C4",
+    "targetId": "mouse-5",
+    "to": "B4",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 17,
+    "turn": 1,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "baircne",
+    "from": "B2",
+    "targetId": "mouse-3",
+    "to": "A3",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 2,
+      "mouseDefeated": false
+    }
+  },
+  {
+    "seq": 18,
+    "turn": 1,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "baircne",
+    "from": "B2",
+    "targetId": "mouse-3",
+    "to": "A3",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 1,
+      "mouseDefeated": false
+    }
+  },
+  {
+    "seq": 19,
+    "turn": 1,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "guardian",
+    "from": "B3",
+    "targetId": "mouse-3",
+    "to": "A3",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 20,
+    "turn": 1,
+    "phase": "cat",
+    "action": "cat-move",
+    "actorType": "cat",
+    "actorId": "guardian",
+    "from": "B3",
+    "to": "B5"
+  },
+  {
+    "seq": 21,
+    "turn": 1,
+    "phase": "cat",
+    "action": "cat-move",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "C4",
+    "to": "C2"
+  },
+  {
+    "seq": 22,
+    "turn": 1,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "baircne",
+    "from": "B2",
+    "targetId": "mouse-1",
+    "to": "C1",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 23,
+    "turn": 1,
+    "phase": "cat",
+    "action": "cat-move",
+    "actorType": "cat",
+    "actorId": "baircne",
+    "from": "B2",
+    "to": "E5"
+  },
+  {
+    "seq": 24,
+    "turn": 1,
+    "phase": "cat",
+    "action": "cat-move",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "C2",
+    "to": "E2"
+  },
+  {
+    "seq": 25,
+    "turn": 1,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "E2",
+    "targetId": "mouse-2",
+    "to": "E1",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 1,
+      "mouseDefeated": false
+    }
+  },
+  {
+    "seq": 26,
+    "turn": 1,
+    "phase": "stepper",
+    "action": "end-cat-phase",
+    "actorType": "system",
+    "payload": {
+      "frames": 3,
+      "nextPhase": "resident-mice"
+    }
+  },
+  {
+    "seq": 27,
+    "turn": 1,
+    "phase": "mouse-attack",
+    "action": "mouse-attack",
+    "actorType": "mouse",
+    "actorId": "mouse-4",
+    "to": "E2",
+    "targetId": "pangur",
+    "payload": {
+      "damage": 1,
+      "catHearts": 3
+    }
+  },
+  {
+    "seq": 28,
+    "turn": 1,
+    "phase": "mouse-attack",
+    "action": "mouse-attack",
+    "actorType": "mouse",
+    "actorId": "mouse-4",
+    "to": "E2",
+    "targetId": "pangur",
+    "payload": {
+      "damage": 1,
+      "catHearts": 2
+    }
+  },
+  {
+    "seq": 29,
+    "turn": 1,
+    "phase": "mouse-feed",
+    "action": "mouse-feed",
+    "actorType": "mouse",
+    "payload": {
+      "eaters": [
+        "mouse-7",
+        "mouse-4"
+      ],
+      "grainLoss": 4,
+      "upgraded": [
+        {
+          "id": "mouse-7",
+          "tier": 1
+        },
+        {
+          "id": "mouse-4",
+          "tier": 4
+        }
+      ]
+    }
+  },
+  {
+    "seq": 30,
+    "turn": 1,
+    "phase": "incoming-summary",
+    "action": "incoming-summary",
+    "actorType": "system",
+    "payload": {
+      "meowge": 3,
+      "deterred": 3,
+      "entering": 3
+    }
+  },
+  {
+    "seq": 31,
+    "turn": 1,
+    "phase": "incoming-scare",
+    "action": "incoming-scare",
+    "actorType": "system",
+    "payload": {
+      "amount": 3,
+      "queueAfter": 3
+    }
+  },
+  {
+    "seq": 32,
+    "turn": 1,
+    "phase": "incoming-place",
+    "action": "incoming-place",
+    "actorType": "mouse",
+    "actorId": "mouse-8",
+    "to": "C5",
+    "payload": {
+      "tier": 1
+    }
+  },
+  {
+    "seq": 33,
+    "turn": 1,
+    "phase": "incoming-place",
+    "action": "incoming-place",
+    "actorType": "mouse",
+    "actorId": "mouse-9",
+    "to": "C4",
+    "payload": {
+      "tier": 1
+    }
+  },
+  {
+    "seq": 34,
+    "turn": 1,
+    "phase": "incoming-place",
+    "action": "incoming-place",
+    "actorType": "mouse",
+    "actorId": "mouse-10",
+    "to": "B4",
+    "payload": {
+      "tier": 1
+    }
+  },
+  {
+    "seq": 35,
+    "turn": 2,
+    "phase": "incoming-finish",
+    "action": "incoming-finish",
+    "actorType": "system",
+    "payload": {
+      "wave": 2,
+      "turn": 2
+    }
+  },
+  {
+    "seq": 36,
+    "turn": 2,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "baircne",
+    "from": "E5",
+    "targetId": "mouse-7",
+    "to": "D5",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 37,
+    "turn": 2,
+    "phase": "cat",
+    "action": "cat-move",
+    "actorType": "cat",
+    "actorId": "baircne",
+    "from": "E5",
+    "to": "E4"
+  },
+  {
+    "seq": 38,
+    "turn": 2,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "baircne",
+    "from": "E4",
+    "targetId": "mouse-4",
+    "to": "E3",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 3,
+      "mouseDefeated": false
+    }
+  },
+  {
+    "seq": 39,
+    "turn": 2,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "baircne",
+    "from": "E4",
+    "targetId": "mouse-4",
+    "to": "E3",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 2,
+      "mouseDefeated": false
+    }
+  },
+  {
+    "seq": 40,
+    "turn": 2,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "E2",
+    "targetId": "mouse-4",
+    "to": "E3",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 1,
+      "mouseDefeated": false
+    }
+  },
+  {
+    "seq": 41,
+    "turn": 2,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "E2",
+    "targetId": "mouse-4",
+    "to": "E3",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 42,
+    "turn": 2,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "E2",
+    "targetId": "mouse-2",
+    "to": "E1",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 1,
+      "mouseDefeated": false
+    }
+  },
+  {
+    "seq": 43,
+    "turn": 2,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "E2",
+    "targetId": "mouse-2",
+    "to": "E1",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 44,
+    "turn": 2,
+    "phase": "cat",
+    "action": "cat-move",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "E2",
+    "to": "A2"
+  },
+  {
+    "seq": 45,
+    "turn": 2,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "guardian",
+    "from": "B5",
+    "targetId": "mouse-10",
+    "to": "B4",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 46,
+    "turn": 2,
+    "phase": "stepper",
+    "action": "end-cat-phase",
+    "actorType": "system",
+    "payload": {
+      "frames": 1,
+      "nextPhase": "resident-mice"
+    }
+  },
+  {
+    "seq": 47,
+    "turn": 2,
+    "phase": "mouse-feed",
+    "action": "mouse-feed",
+    "actorType": "mouse",
+    "payload": {
+      "eaters": [
+        "mouse-8",
+        "mouse-9"
+      ],
+      "grainLoss": 6,
+      "upgraded": [
+        {
+          "id": "mouse-8",
+          "tier": 1
+        },
+        {
+          "id": "mouse-9",
+          "tier": 1
+        }
+      ]
+    }
+  },
+  {
+    "seq": 48,
+    "turn": 2,
+    "phase": "incoming-summary",
+    "action": "incoming-summary",
+    "actorType": "system",
+    "payload": {
+      "meowge": 3,
+      "deterred": 3,
+      "entering": 3
+    }
+  },
+  {
+    "seq": 49,
+    "turn": 2,
+    "phase": "incoming-scare",
+    "action": "incoming-scare",
+    "actorType": "system",
+    "payload": {
+      "amount": 3,
+      "queueAfter": 3
+    }
+  },
+  {
+    "seq": 50,
+    "turn": 2,
+    "phase": "incoming-place",
+    "action": "incoming-place",
+    "actorType": "mouse",
+    "actorId": "mouse-11",
+    "to": "D5",
+    "payload": {
+      "tier": 1
+    }
+  },
+  {
+    "seq": 51,
+    "turn": 2,
+    "phase": "incoming-place",
+    "action": "incoming-place",
+    "actorType": "mouse",
+    "actorId": "mouse-12",
+    "to": "E5",
+    "payload": {
+      "tier": 1
+    }
+  },
+  {
+    "seq": 52,
+    "turn": 2,
+    "phase": "incoming-place",
+    "action": "incoming-place",
+    "actorType": "mouse",
+    "actorId": "mouse-13",
+    "to": "B4",
+    "payload": {
+      "tier": 1
+    }
+  },
+  {
+    "seq": 53,
+    "turn": 3,
+    "phase": "incoming-finish",
+    "action": "incoming-finish",
+    "actorType": "system",
+    "payload": {
+      "wave": 3,
+      "turn": 3
+    }
+  },
+  {
+    "seq": 54,
+    "turn": 3,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "guardian",
+    "from": "B5",
+    "targetId": "mouse-9",
+    "to": "C4",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 55,
+    "turn": 3,
+    "phase": "cat",
+    "action": "cat-move",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "A2",
+    "to": "C4"
+  },
+  {
+    "seq": 56,
+    "turn": 3,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "baircne",
+    "from": "E4",
+    "targetId": "mouse-12",
+    "to": "E5",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 57,
+    "turn": 3,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "baircne",
+    "from": "E4",
+    "targetId": "mouse-11",
+    "to": "D5",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 58,
+    "turn": 3,
+    "phase": "cat",
+    "action": "cat-move",
+    "actorType": "cat",
+    "actorId": "baircne",
+    "from": "E4",
+    "to": "D5"
+  },
+  {
+    "seq": 59,
+    "turn": 3,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "C4",
+    "targetId": "mouse-13",
+    "to": "B4",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 60,
+    "turn": 3,
+    "phase": "cat",
+    "action": "cat-attack",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "C4",
+    "targetId": "mouse-8",
+    "to": "C5",
+    "payload": {
+      "damage": 1,
+      "mouseRemainingHearts": 0,
+      "mouseDefeated": true
+    }
+  },
+  {
+    "seq": 61,
+    "turn": 3,
+    "phase": "cat",
+    "action": "cat-move",
+    "actorType": "cat",
+    "actorId": "pangur",
+    "from": "C4",
+    "to": "C5"
+  },
+  {
+    "seq": 62,
+    "turn": 3,
+    "phase": "stepper",
+    "action": "end-cat-phase",
+    "actorType": "system",
+    "payload": {
+      "frames": 3,
+      "nextPhase": "incoming-wave"
+    }
+  },
+  {
+    "seq": 63,
+    "turn": 3,
+    "phase": "incoming-summary",
+    "action": "incoming-summary",
+    "actorType": "system",
+    "payload": {
+      "meowge": 6,
+      "deterred": 6,
+      "entering": 0
+    }
+  },
+  {
+    "seq": 64,
+    "turn": 3,
+    "phase": "incoming-scare",
+    "action": "incoming-scare",
+    "actorType": "system",
+    "payload": {
+      "amount": 6,
+      "queueAfter": 0
+    }
+  },
+  {
+    "seq": 65,
+    "turn": 4,
+    "phase": "incoming-finish",
+    "action": "incoming-finish",
+    "actorType": "system",
+    "payload": {
+      "wave": 4,
+      "turn": 4
+    }
+  }
+]
