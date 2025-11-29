@@ -14,6 +14,8 @@ function App() {
   const grainLoss = useGameStore((state) => state.grainLoss);
   const wave = useGameStore((state) => state.wave);
   const resetGame = useGameStore((state) => state.resetGame);
+  const handCats = useGameStore((state) => state.handCats);
+  const catOrderLength = useGameStore((state) => state.catOrder.length);
 
   const shellClass = useMemo(() => `app-shell phase-${phase}`, [phase]);
   const phaseLabels: Record<Phase, string> = {
@@ -21,6 +23,7 @@ function App() {
     cat: 'Cat Phase',
     stepper: 'Resolving Phases',
   };
+  const isOpeningScreen = phase === 'setup' && handCats.length === catOrderLength;
 
   return (
     <div className={shellClass}>
@@ -33,12 +36,19 @@ function App() {
         <div className="play-column">
           <IncomingLane />
           <div className="board-backdrop" aria-hidden />
+          {isOpeningScreen && <div className="hero-overlay" aria-hidden />}
           <Board />
         </div>
         <div className="right-column">
-          <SidePanel />
-          <TutorialPanel />
-          <ControlPanel />
+          {isOpeningScreen ? (
+            <TutorialPanel />
+          ) : (
+            <>
+              <SidePanel />
+              <TutorialPanel />
+              <ControlPanel />
+            </>
+          )}
         </div>
       </div>
     </div>

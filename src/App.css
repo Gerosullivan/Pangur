@@ -196,6 +196,20 @@
   z-index: 1;
 }
 
+.hero-overlay {
+  position: absolute;
+  top: 142px;
+  left: 130px;
+  width: var(--board-width);
+  height: var(--board-height);
+  background-image: url("/assets/heros.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 480px 480px;
+  pointer-events: none;
+  z-index: 3;
+}
+
 .wave-badge,
 .grain-badge,
 .phase-badge,
@@ -214,12 +228,12 @@
 
 .wave-badge {
   top: 26px;
-  left: 130px;
+  left: 310px;
 }
 
 .grain-badge {
   top: calc(142px + var(--board-height) + 14px);
-  left: 130px;
+  left: 307px;
 }
 
 .phase-badge {
@@ -229,7 +243,7 @@
 
 .restart-floating {
   bottom: 24px;
-  right: 72px;
+  right: 352px;
   transform: none;
   cursor: pointer;
   border: none;
