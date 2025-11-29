@@ -10,35 +10,6 @@
   overflow: hidden;
 }
 
-.top-bar {
-  position: absolute;
-  top: 24px;
-  right: 72px;
-  width: 220px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 0 16px;
-  background: rgba(20, 24, 32, 0.82);
-  border-radius: 12px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
-}
-
-.top-bar-title {
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: 1px;
-}
-
-.top-bar-metric {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-}
-
 .incoming-row {
   display: flex;
   flex-direction: column;
@@ -257,9 +228,9 @@
 }
 
 .restart-floating {
-  top: 24px;
+  bottom: 24px;
   right: 72px;
-  transform: translateY(64px);
+  transform: none;
   cursor: pointer;
   border: none;
   font-size: 16px;

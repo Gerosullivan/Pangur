@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import './App.css';
 import { useGameStore } from './state/gameStore';
-import TopBar from './components/TopBar';
 import Board from './components/Board';
 import IncomingLane from './components/IncomingLane';
 import SidePanel from './components/SidePanel';
@@ -25,7 +24,6 @@ function App() {
 
   return (
     <div className={shellClass}>
-      <TopBar />
       <div className="wave-badge">Wave {wave}</div>
       <div className="grain-badge">Grain Loss {grainLoss} / 32</div>
       <div className="phase-badge">{phaseLabels[phase]}</div>

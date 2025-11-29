@@ -10,7 +10,7 @@ const tokenSelectorMap: Record<string, string[]> = {
   'resident-mice': ['.board-cell .mouse'],
   'shadow-cells': ['.board-cell.shadow'],
   'gate-line': ['.board-cell.gate'],
-  'top-bar-metric': ['.top-bar-metric'],
+  'top-bar-metric': ['.phase-badge'],
 };
 
 const catSelectorMap: Record<string, string[]> = {

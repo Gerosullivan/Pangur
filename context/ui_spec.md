@@ -18,17 +18,8 @@ Use a fixed canvas (no responsive scaling):
   - Incoming lane: 542px wide × 54px tall, absolutely positioned on the shell (detached from any column flow) with six fixed slots showing the 😱/🐭 preview.
   - Board: 542px × 542px board art; keep the 5×5 CSS grid aligned to that fixed pixel size.
 - Right parchment:
-  - Metrics bar: 520px wide × 56px tall near the top-right of the parchment zone.
   - Right column: 520px wide stack pinned to the right with internal scrolling between its top (≈112px) and bottom (≈40px) offsets so content stays visible inside the shell height.
-- Action/control UI lives inside the right column stack with tutorial + cat info instead of spanning a full-width bottom row.
-
-- **Top Metrics Bar**
-
-  - Height: 56px, width 520px.
-  - Background: Semi-opaque charcoal (`rgba(20, 24, 32, 0.82)`).
-  - Content order (left → right):
-    1. Title block `Pangur` with current wave (`Wave 3`).
-    2. Grain loss tracker (icon 🌾 + numeric total, e.g., `Grain Loss 12 / 32`). Phase label + restart stay on the same line.
+- Action/control UI lives inside the right column stack with tutorial + cat info instead of spanning a full-width bottom row. Phase label + restart are separate badges on the right edge (no top bar).
 
 - **Incoming Mice Row**
 
