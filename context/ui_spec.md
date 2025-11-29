@@ -11,33 +11,34 @@ main colour pallet:
 
 ## 1. Screen Layout
 
-Use responsive layout:
+Use a fixed canvas (no responsive scaling):
 
-- outer grid, 4 flex rows:
-
-  - row 1: top-bar div, fixed height (80px)
-  - row 2: incoming-mice-row div, fixed height (80px)
-  - row 3: Central Board Region, fills the leftover height
-  - row 4: action-area div, fixed height (140px)
+- Canvas: `.app-shell` locked to 1376px × 768px with `/assets/background.jpeg` as the backdrop. Layout uses pixel units everywhere.
+- Left cluster:
+  - Incoming lane: 542px wide × 54px tall, absolutely positioned on the shell (detached from any column flow) with six fixed slots showing the 😱/🐭 preview.
+  - Board: 542px × 542px board art; keep the 5×5 CSS grid aligned to that fixed pixel size.
+- Right parchment:
+  - Metrics bar: 520px wide × 56px tall near the top-right of the parchment zone.
+  - Right column: 520px wide stack pinned to the right with internal scrolling between its top (≈112px) and bottom (≈40px) offsets so content stays visible inside the shell height.
+- Action/control UI lives inside the right column stack with tutorial + cat info instead of spanning a full-width bottom row.
 
 - **Top Metrics Bar**
 
-  - Height: 80px, full width.
-  - Background: Semi-opaque charcoal (`rgba(20, 24, 32, 0.9)`).
+  - Height: 56px, width 520px.
+  - Background: Semi-opaque charcoal (`rgba(20, 24, 32, 0.82)`).
   - Content order (left → right):
     1. Title block `Pangur` with current wave (`Wave 3`).
-    2. Grain loss tracker (icon 🌾 + numeric total, e.g., `Grain Loss 12 / 32`).
+    2. Grain loss tracker (icon 🌾 + numeric total, e.g., `Grain Loss 12 / 32`). Phase label + restart stay on the same line.
 
 - **Incoming Mice Row**
 
-  - Height: 80px, full width.
-  - Background: Semi-opaque charcoal (`rgba(20, 24, 32, 0.9)`).
-  - Left-justified label `Next Wave`, followed by a fixed row of six mouse slots that never changes length.
-  - Meow preview swaps slots to 😱 when Meowge would deter that mouse; remaining slots show 🐭.
+  - Height: 54px, width: 542px, anchored to the shell (absolute) rather than consuming flow height.
+  - Background: Barn lane art matching the new shell.
+  - Left-justified label `Next Wave`, followed by a fixed row of six mouse slots that never changes length. Meow preview swaps slots to 😱 when Meowge would deter that mouse; remaining slots show 🐭.
 
 - **Central Board Region**
 
-  - Grid: 5×5 cells with responsive/flexible sizing to fill available space
+  - Grid: 5×5 cells sized to the fixed 542px board.
   - Layout must use CSS Grid so each square maps cleanly to board coordinates (avoid flexbox positioning).
   - Cell Styling:
     - Interior cells: grey.
@@ -46,7 +47,8 @@ Use responsive layout:
   - Setup begins with perimeter cells pre-populated by `1/1` mice (per layout config) while interior cells are empty and cats start in hand.
 
   - **Right Side Panel (active when cat selected)**
-  - 300px wide information panel showing:
+  - Uses the 520px parchment column; scrolls if stacked panels exceed the vertical space.
+  - Information panel showing:
     - Selected cat portrait + stats.
       - Portrait Area: Full cat art
       - Role Ribbon: Bottom overlay showing role (e.g., `Guardian`) in small capitals.
@@ -60,20 +62,13 @@ Use responsive layout:
       - Pangur-specific callout: show a `Moves 2/2` badge that decrements after each queen move so players track his remaining mobility at a glance.
       - Baircne passive indicator: when the `2/2` cat sits next to Pangur, show a `Pangur’s Shield +1 Catch` badge on Baircne’s panel (not Pangur’s). His meow stat always stays 2 regardless of this passive.
 
-- **Bottom Action Area**
+- **Action / Control Stack**
 
-  - Height: 140px, full width
-  - Contains cat-hand div at beginning of game (centered)
-  - Cat pieces in hand: 98px × 98px
-  - Setup message appears to the right of cat pieces with left arrow: "← Drag cats onto the board to start (avoid perimeter cells)"
-  - Players may drag already-placed cats back into the hand (or onto new cells) freely during setup; no limit until `Confirm Formation` is pressed.
-  - Once all cats are placed, show a primary `Confirm Formation` button; the main turn loop only begins after the player clicks it.
-  - After confirmation, replace the setup UI with action button(s), center middle
-    - `End Turn` button (primary CTA; ends cat phase and starts mouse phase).
-    - other buttons like `Restart game` and `Undo move` (TBC)
-  - When `End Turn` is pressed, swap the action button group for a `Phase Stepper` control rail: `Next` primary button, disabled `Previous` stub (future-proofed), and textual label describing the current frame (e.g., `Resident Mouse Attack 1/5`).
-  - Stepper behavior: resident attacks still advance one frame per hit, but incoming deterrence now uses **one combined frame** for all scared mice leaving before individual placement frames.
-  - Phase Stepper persists through all sub-phases until the incoming wave phase concludes, then hand control back to the action buttons for the next cat phase.
+  - Lives under the tutorial panel in the right column (no separate bottom row).
+  - Cat-hand remains 98px × 98px per piece during setup.
+  - Setup message still prompts placement; `Confirm Formation` gating unchanged.
+  - Post-setup buttons (`End Turn`, `Next` during stepper, restart/export) remain, centered within the column stack.
+  - Stepper behavior: resident attacks still advance one frame per hit, but incoming deterrence now uses **one combined frame** for all scared mice leaving before individual placement frames. Stepper persists through all sub-phases until the incoming wave phase concludes, then hands control back to the cat phase.
 
 ## 2. Key Visual Components
 

@@ -6,12 +6,13 @@
   color: #f2f2f2;
   background-color: #141820;
   /* Board layout tuning knobs for pixel-perfect alignment. */
-  --board-width: 800px;
-  --board-height: 800px;
-  --board-bg-size: 800px;
+  --board-width: 542px;
+  --board-height: 542px;
+  --board-bg-size: 542px;
   --board-padding: 0px;
-  --incoming-height: 80px;
-  --incoming-bg-size: 840px;
+  --board-cell-size: 108.4px;
+  --incoming-height: 54px;
+  --incoming-bg-size: 542px;
 }
 
 * {
@@ -21,6 +22,10 @@
 body {
   margin: 0;
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: #0f1015;
 }
 
 button {
@@ -31,4 +36,7 @@ button {
 
 #root {
   min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
