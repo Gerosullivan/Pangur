@@ -8,6 +8,7 @@ import SidePanel from "./components/SidePanel";
 import ControlPanel from "./components/ControlPanel";
 import TutorialHighlights from "./components/TutorialHighlights";
 import PanelActions from "./components/PanelActions";
+import TutorialPanel from "./components/TutorialPanel";
 import coverStart from "../assets/cover_start_screen.jpeg";
 import type { Phase } from "./types";
 
@@ -24,6 +25,7 @@ function App() {
   const updateSettings = useGameStore((state) => state.updateSettings);
   const tutorialStart = useTutorialStore((state) => state.start);
   const tutorialExit = useTutorialStore((state) => state.exit);
+  const tutorialActive = useTutorialStore((state) => state.active);
 
   const phaseLabels: Record<Phase, string> = {
     setup: "Setup Phase",
@@ -83,6 +85,15 @@ function App() {
           >
             Restart
           </button>
+          {tutorialActive && (
+            <button
+              type="button"
+              className="restart-floating exit"
+              onClick={() => startMode("start")}
+            >
+              Exit Tutorial
+            </button>
+          )}
           <TutorialHighlights />
         </>
       )}
@@ -103,6 +114,11 @@ function App() {
             </>
           )}
         </div>
+        {tutorialActive && !isStartScreen && (
+          <div className="tutorial-float">
+            <TutorialPanel />
+          </div>
+        )}
         <div className="right-column">
           {isStartScreen ? (
             <div className="start-panel-stack">

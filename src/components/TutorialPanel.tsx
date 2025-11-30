@@ -11,8 +11,6 @@ function TutorialPanel() {
     locked,
     start,
     next,
-    prev,
-    exit,
     syncWithLog,
   } = useTutorialStore();
 
@@ -50,32 +48,25 @@ function TutorialPanel() {
   return (
     <div className="tutorial-panel">
       <div className="tutorial-header">
-        <div>
+        <div className="tutorial-title-row">
           <div className="tutorial-title">{step?.title ?? 'Tutorial'}</div>
           <div className="tutorial-subtitle">
             Step {index + 1} / {steps.length}
           </div>
         </div>
-        <button type="button" className="button-quiet" onClick={exit}>
-          Exit
-        </button>
       </div>
 
-      <div className="tutorial-body">
-        <p className="tutorial-text">{step?.text}</p>
-        {step?.instruction && <p className="tutorial-instruction">{step.instruction}</p>}
-      </div>
-
-      <div className="tutorial-footer">
-        <button type="button" className="button-secondary" onClick={prev} disabled={atStart}>
-          Back
-        </button>
-        {showNext ? (
-          <button type="button" className="button-primary" onClick={next} disabled={locked || atEnd}>
-            Next
-          </button>
-        ) : (
-          <span className="tutorial-note">Follow the in-game prompt to advance.</span>
+      <div className="tutorial-body with-action">
+        <div className="tutorial-copy">
+          <p className="tutorial-text">{step?.text}</p>
+          {step?.instruction && <p className="tutorial-instruction">{step.instruction}</p>}
+        </div>
+        {showNext && (
+          <div className="tutorial-footer next-only">
+            <button type="button" className="button-primary" onClick={next} disabled={locked || atEnd}>
+              Next
+            </button>
+          </div>
         )}
       </div>
     </div>

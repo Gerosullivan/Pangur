@@ -63,19 +63,6 @@ export const useTutorialStore = create<TutorialStore>((set, get) => ({
     });
   },
 
-  prev: () => {
-    set((state) => {
-      const prevIndex = Math.max(state.index - 1, 0);
-      const prevStep = state.steps[prevIndex];
-      const log = state.latestLog;
-      return {
-        ...state,
-        index: prevIndex,
-        locked: !isStepComplete(prevStep, log),
-      };
-    });
-  },
-
   exit: () => {
     set(() => ({
       ...initialState,

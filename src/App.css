@@ -123,6 +123,16 @@
   overflow: hidden;
 }
 
+.tutorial-float {
+  position: absolute;
+  top: 98px;
+  right: 107px;
+  width: 550px;
+  max-height: 540px;
+  overflow: auto;
+  z-index: 4;
+}
+
 .incoming-lane {
   position: absolute;
   top: 77px;
@@ -233,13 +243,12 @@
 .restart-floating {
   position: absolute;
   padding: 8px 16px;
-  background: rgba(20, 24, 32, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
+
   font-size: 16px;
   letter-spacing: 1px;
-
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  font-size: 24px;
+  color: #ffeaa7;
+  text-shadow: 0 0 6px black;
   z-index: 3;
 }
 
@@ -813,8 +822,8 @@
 }
 
 .tutorial-panel {
-  background: rgba(18, 24, 38, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(18, 24, 38, 1);
+  border: 2px solid rgba(0, 130, 206, 1);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
@@ -831,24 +840,52 @@
 .tutorial-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 8px;
 }
 
 .tutorial-title {
   font-weight: 700;
   letter-spacing: 0.2px;
+  margin-right: 6px;
+}
+
+.tutorial-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
 }
 
 .tutorial-subtitle {
   font-size: 14px;
   color: rgba(242, 242, 242, 0.7);
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.tutorial-title {
+  flex: 1;
 }
 
 .tutorial-body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.tutorial-body.with-action {
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tutorial-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
 }
 
 .tutorial-text {
@@ -858,15 +895,20 @@
 
 .tutorial-instruction {
   margin: 0;
-  color: #ffb347;
+  color: rgba(0, 130, 206, 0.85);
   line-height: 1.4;
 }
 
 .tutorial-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 8px;
+}
+
+.tutorial-footer .button-primary {
+  background: rgba(0, 130, 206, 0.9);
+  box-shadow: 0 0 10px rgba(0, 130, 206, 0.35);
 }
 
 .tutorial-note {
