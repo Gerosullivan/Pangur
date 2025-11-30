@@ -56,28 +56,35 @@ function TutorialHighlights() {
   const tokens = useMemo(() => highlights, [highlights]);
 
   useEffect(() => {
-    // Remove old highlights
-    prevElements.current.forEach((el) => {
-      el.classList.remove('outline-pulse');
-    });
-
-    if (tokens.length === 0 || !step) {
-      prevElements.current = [];
-      return;
-    }
-
-    const nextElements: Element[] = [];
-    tokens.forEach((token) => {
-      const elements = getElementsForToken(token);
-      elements.forEach((el) => {
-        el.classList.add('outline-pulse');
-        nextElements.push(el);
+    const refreshHighlights = () => {
+      prevElements.current.forEach((el) => {
+        el.classList.remove('outline-pulse');
       });
-    });
-    prevElements.current = nextElements;
+
+      if (tokens.length === 0 || !step) {
+        prevElements.current = [];
+        return;
+      }
+
+      const nextElements: Element[] = [];
+      tokens.forEach((token) => {
+        const elements = getElementsForToken(token);
+        elements.forEach((el) => {
+          el.classList.add('outline-pulse');
+          nextElements.push(el);
+        });
+      });
+      prevElements.current = nextElements;
+    };
+
+    const observer = new MutationObserver(() => refreshHighlights());
+    refreshHighlights();
+    observer.observe(document.body, { childList: true, subtree: true });
 
     return () => {
-      nextElements.forEach((el) => el.classList.remove('outline-pulse'));
+      observer.disconnect();
+      prevElements.current.forEach((el) => el.classList.remove('outline-pulse'));
+      prevElements.current = [];
     };
   }, [tokens, step]);
 

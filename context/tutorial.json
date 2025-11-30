@@ -171,7 +171,7 @@
       "id": "selection-basics",
       "order": 14,
       "title": "Selecting Cats",
-      "highlights": ["cats-on-board"],
+      "highlights": [],
       "text": "Selecting a cat highlights green move targets and red attack targets. Cats move any distance in straight lines\u2014horizontal, vertical, or diagonal\u2014until blocked.",
       "instruction": "Select Next to continue.",
       "showNext": true,
@@ -182,7 +182,7 @@
       "order": 15,
       "title": "Turn Order",
       "highlights": [".top-bar-metric"],
-      "text": "Cats act first, then resident mice, then incoming mice enter from the gates.",
+      "text": "Cats act first, then resident mice, then incoming mice enter from the entrance squares.",
       "instruction": "Select Next to continue.",
       "showNext": true,
       "lockBoard": true
@@ -208,7 +208,7 @@
       "order": 17,
       "title": "Sweep the Shadow Mouse",
       "highlights": ["pangur", "mouse-5", "B4"],
-      "text": "Use Pangur's remaining catch to clear the shadow mouse. Notice how Pangur's attack value is reduced.",
+      "text": "Use another of Pangur's catch points to clear the shadow mouse. Notice how Pangur's attack value is reduced.",
       "instruction": "Attack the shadow mouse.",
       "showNext": false,
       "completeOn": [
@@ -224,8 +224,8 @@
       "order": 18,
       "title": "Meow Shields from Retaliation",
       "highlights": ["baircne", "mouse-3", "A3"],
-      "text": "Grain fed mice retaliate when attacked. Meow reduces retaliation damage: the 3/3 mouse deals 3 damage, but Baircne's 2 meow shields against 2, so Baircne only takes 1 damage.",
-      "instruction": "Attack the 3/3 mouse once.",
+      "text": "Grain fed mice retaliate when attacked. Meow (blue number) reduces retaliation damage: the 3/3 mouse deals 3 damage, but Baircne's 2 meow shields against 2, so Baircne only takes 1 damage.",
+      "instruction": "Attack the 3/3 mouse once with the 2/2 cat.",
       "showNext": false,
       "completeOn": [
         {
@@ -259,7 +259,7 @@
       "title": "Finish the Big Mouse",
       "highlights": ["guardian", "mouse-3", "A3"],
       "text": "Finish the wounded mouse; killing heals the cat by 1.",
-      "instruction": "Deliver the killing blow.",
+      "instruction": "Deliver the killing blow with the 1/3 cat.",
       "showNext": false,
       "completeOn": [
         {
@@ -386,8 +386,8 @@
       "order": 28,
       "title": "Mouse Retaliation",
       "highlights": ["mouse-4", "pangur"],
-      "text": "During the mouse turn, adjacent mice attack before moving. Pangur takes two hits from the 3/3 mouse.",
-      "instruction": "Advance the stepper to resolve the attacks.",
+      "text": "During the mouse turn, adjacent mice attack instead of moving. Pangur takes two hits from the 3/3 mouse.",
+      "instruction": "Advance the Next button to resolve the attacks.",
       "showNext": false,
       "completeOn": [
         {
@@ -402,7 +402,7 @@
       "order": 29,
       "title": "Mice Feed and Grow",
       "highlights": ["mouse-7", "mouse-4", "shadow-cells"],
-      "text": "Feeding increases grain loss and upgrades (non-stunned) mice on shadow tiles. Shadow placement matters for their growth.",
+      "text": "Feeding increases grain loss and upgrades (non-stunned) mice on shadow tiles. Shadow placement matters for their growth. Note: the 3/3 mouse will grow to 4/4.",
       "instruction": "Advance to finish feeding.",
       "showNext": false,
       "completeOn": [
@@ -439,6 +439,10 @@
         {
           "action": "incoming-place",
           "count": 3
+        },
+        {
+          "action": "incoming-finish",
+          "count": 1
         }
       ]
     },
@@ -564,7 +568,7 @@
       "order": 38,
       "title": "New Wave, Same Plan",
       "highlights": ["cats-on-board", "incoming-lane"],
-      "text": "With new entrants on the board, repeat the pattern: pick priority targets, hold gates, and park on shadows.",
+      "text": "With new entrants on the board, repeat the pattern: pick priority targets, hold entrances, and park on shadows.",
       "instruction": "Proceed with cat actions.",
       "showNext": true,
       "completeOn": [
