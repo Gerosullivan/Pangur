@@ -174,6 +174,16 @@ export interface LogEvent {
   description?: string;
 }
 
+export interface TutorialAction {
+  action: LogEvent['action'];
+  actorId?: string;
+  targetId?: string;
+  from?: CellId;
+  to?: CellId;
+  phase?: EventPhase;
+  count?: number;
+}
+
 export interface TutorialStep {
   id: string;
   order: number;
@@ -182,7 +192,8 @@ export interface TutorialStep {
   text: string;
   instruction?: string;
   showNext?: boolean;
-  logSeq?: number[];
+  lockBoard?: boolean;
+  completeOn?: TutorialAction | TutorialAction[];
 }
 
 export interface TutorialState {
@@ -191,6 +202,7 @@ export interface TutorialState {
   index: number;
   locked: boolean;
   completedStepIds: Set<string>;
+  guardMessage?: string;
 }
 
 export type InitialMiceConfig = {

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import tutorialData from '../../context/tutorial.json';
-import type { LogEvent, TutorialState, TutorialStep } from '../types';
+import type { LogEvent, TutorialAction, TutorialState, TutorialStep } from '../types';
 
 type TutorialStore = TutorialState & {
   latestLog: LogEvent[];
@@ -9,6 +9,8 @@ type TutorialStore = TutorialState & {
   exit: () => void;
   markCompleted: (stepId: string) => void;
   syncWithLog: (log: LogEvent[]) => void;
+  canPerformAction: (action: TutorialAction) => boolean;
+  clearGuard: () => void;
 };
 
 interface TutorialFile {
@@ -26,13 +28,33 @@ const initialState: TutorialState = {
   index: 0,
   locked: false,
   completedStepIds: new Set<string>(),
+  guardMessage: undefined,
 };
+
+function toActionList(step: TutorialStep | undefined): TutorialAction[] {
+  if (!step?.completeOn) return [];
+  return Array.isArray(step.completeOn) ? step.completeOn : [step.completeOn];
+}
+
+function matchesAction(event: TutorialAction, trigger: TutorialAction): boolean {
+  if (event.action !== trigger.action) return false;
+  if (trigger.actorId && event.actorId !== trigger.actorId) return false;
+  if (trigger.targetId && event.targetId !== trigger.targetId) return false;
+  if (trigger.from && event.from !== trigger.from) return false;
+  if (trigger.to && event.to !== trigger.to) return false;
+  if (trigger.phase && event.phase !== trigger.phase) return false;
+  return true;
+}
 
 function isStepComplete(step: TutorialStep | undefined, log: LogEvent[]): boolean {
   if (!step) return true;
-  if (!step.logSeq || step.logSeq.length === 0) return true;
-  const seqSet = new Set(log.map((entry) => entry.seq));
-  return step.logSeq.every((seq) => seqSet.has(seq));
+  const triggers = toActionList(step);
+  if (triggers.length === 0) return true;
+  return triggers.every((trigger) => {
+    const required = trigger.count ?? 1;
+    const hits = log.filter((entry) => matchesAction(entry, trigger)).length;
+    return hits >= required;
+  });
 }
 
 export const useTutorialStore = create<TutorialStore>((set, get) => ({
@@ -46,6 +68,7 @@ export const useTutorialStore = create<TutorialStore>((set, get) => ({
       active: true,
       latestLog: log,
       locked: !isStepComplete(sortedSteps[0], log),
+      guardMessage: undefined,
     }));
   },
 
@@ -58,6 +81,7 @@ export const useTutorialStore = create<TutorialStore>((set, get) => ({
         ...state,
         index: nextIndex,
         locked: !isStepComplete(nextStep, log),
+        guardMessage: undefined,
       };
     });
   },
@@ -72,7 +96,7 @@ export const useTutorialStore = create<TutorialStore>((set, get) => ({
     set((state) => {
       const completedStepIds = new Set(state.completedStepIds);
       completedStepIds.add(stepId);
-      return { ...state, completedStepIds, locked: false };
+      return { ...state, completedStepIds, locked: false, guardMessage: undefined };
     });
   },
 
@@ -92,11 +116,38 @@ export const useTutorialStore = create<TutorialStore>((set, get) => ({
       if (step.showNext === false && state.index < state.steps.length - 1) {
         index = state.index + 1;
       }
-      set({ completedStepIds, locked, index, latestLog });
+      set({ completedStepIds, locked, index, latestLog, guardMessage: undefined });
     } else if (state.locked !== !complete) {
-      set({ locked: !complete, latestLog });
+      set({ locked: !complete, latestLog, guardMessage: undefined });
     } else {
       set({ latestLog });
     }
   },
+
+  canPerformAction: (action) => {
+    const state = get();
+    if (!state.active) return true;
+    const step = state.steps[state.index];
+    if (!step) return true;
+
+    if (step.lockBoard) {
+      if (state.guardMessage !== step.instruction) {
+        set({ guardMessage: step.instruction ?? 'Follow the current tutorial step.' });
+      }
+      return false;
+    }
+
+    const triggers = toActionList(step);
+    if (triggers.length === 0) return true;
+
+    const allowed = triggers.some((trigger) => matchesAction(action, trigger));
+    if (!allowed) {
+      set({ guardMessage: step.instruction ?? 'Follow the highlighted action.' });
+    } else if (state.guardMessage) {
+      set({ guardMessage: undefined });
+    }
+    return allowed;
+  },
+
+  clearGuard: () => set({ guardMessage: undefined }),
 }));

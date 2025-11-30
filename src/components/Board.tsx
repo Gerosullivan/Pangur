@@ -4,6 +4,7 @@ import CatPiece from './CatPiece';
 import MousePiece from './MousePiece';
 import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter, isGate } from '../lib/board';
 import { getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch } from '../lib/mechanics';
+import { useTutorialStore } from '../state/tutorialStore';
 import type { CatId, CellId, CellState } from '../types';
 
 function Board() {
@@ -68,6 +69,10 @@ function Board() {
       catCell: cats[targetId]?.position,
     };
   }, [phase, stepper, mice, cats]);
+
+  const tutorialLocked = useTutorialStore(
+    (state) => state.active && Boolean(state.steps[state.index]?.lockBoard)
+  );
 
   const handleCellClick = (cell: CellState) => {
     const occupant = cell.occupant;
@@ -209,7 +214,10 @@ function Board() {
     );
 
   return (
-    <div className="board-wrapper">
+    <div
+      className="board-wrapper"
+      style={tutorialLocked ? { pointerEvents: 'none' } : undefined}
+    >
       <div className="board-grid game-board">{boardCells}</div>
     </div>
   );

@@ -9,6 +9,7 @@ function TutorialPanel() {
     index,
     steps,
     locked,
+    guardMessage,
     start,
     next,
     syncWithLog,
@@ -60,6 +61,9 @@ function TutorialPanel() {
         <div className="tutorial-copy">
           <p className="tutorial-text">{step?.text}</p>
           {step?.instruction && <p className="tutorial-instruction">{step.instruction}</p>}
+          {guardMessage && guardMessage !== step?.instruction && (
+            <p className="tutorial-note">{guardMessage}</p>
+          )}
         </div>
         {showNext && (
           <div className="tutorial-footer next-only">

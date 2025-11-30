@@ -33,6 +33,7 @@ import { maybeActivateShadowBonus, updateShadowBonusOnMove } from '../lib/shadow
 import { buildMousePhaseFrames } from '../lib/mousePhase';
 import { buildIncomingPhaseFrames, replenishIncomingQueue } from '../lib/incomingWave';
 import { logEvent } from '../lib/logger';
+import { useTutorialStore } from './tutorialStore';
 
 const MAX_GRAIN_LOSS = 32;
 const SCOREBOARD_STORAGE_KEY = 'pangur-scoreboard';
@@ -166,6 +167,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (state.phase !== 'setup') return;
     const cell = state.cells[destination];
     if (!cell) return;
+    const currentPos = state.cats[catId].position;
+    const tutorial = useTutorialStore.getState();
+    if (!tutorial.canPerformAction({ action: 'cat-place', actorId: catId, from: currentPos, to: destination })) return;
 
     set(
       produce<GameStore>((draft) => {
@@ -199,6 +203,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const state = get();
     if (state.phase !== 'setup') return;
     if (state.handCats.length > 0) return;
+    const tutorial = useTutorialStore.getState();
+    if (!tutorial.canPerformAction({ action: 'confirm-formation' })) return;
     set(
       produce<GameStore>((draft) => {
         draft.phase = 'cat';
@@ -223,6 +229,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const destCell = state.cells[destination];
     if (!destCell || destCell.occupant) return;
     if (!validateQueenMove(cat.position, destination, state)) return;
+    const tutorial = useTutorialStore.getState();
+    if (!tutorial.canPerformAction({ action: 'cat-move', actorId: catId, from: cat.position, to: destination })) return;
 
     set(
       produce<GameStore>((draft) => {
@@ -259,6 +267,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const adjacentCells = new Set(getNeighborCells(cat.position));
     if (!adjacentCells.has(mouse.position)) return;
     if (getCatRemainingCatch(state, catId) <= 0) return;
+    const tutorial = useTutorialStore.getState();
+    if (!tutorial.canPerformAction({ action: 'cat-attack', actorId: catId, targetId: mouseId, from: cat.position, to: targetCell })) return;
 
     set(
       produce<GameStore>((draft) => {
@@ -308,6 +318,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   endCatPhase: () => {
     const state = get();
     if (state.phase !== 'cat' || state.status.state !== 'playing') return;
+    const tutorial = useTutorialStore.getState();
+    if (!tutorial.canPerformAction({ action: 'end-cat-phase' })) return;
     const mouseFrames = buildMousePhaseFrames(state);
     const frames: StepPhase[] = mouseFrames.length > 0 ? ['resident-mice', 'incoming-wave'] : ['incoming-wave'];
     const [current, ...remaining] = frames;
