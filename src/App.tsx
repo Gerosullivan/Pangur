@@ -7,6 +7,7 @@ import IncomingLane from "./components/IncomingLane";
 import SidePanel from "./components/SidePanel";
 import ControlPanel from "./components/ControlPanel";
 import TutorialHighlights from "./components/TutorialHighlights";
+import PanelActions from "./components/PanelActions";
 import coverStart from "../assets/cover_start_screen.jpeg";
 import type { Phase } from "./types";
 
@@ -214,8 +215,11 @@ function App() {
             </div>
           ) : (
             <>
-              <SidePanel />
-              <ControlPanel />
+              <div className="panel">
+                <SidePanel />
+                <ControlPanel />
+              </div>
+              <PanelActions />
             </>
           )}
         </div>

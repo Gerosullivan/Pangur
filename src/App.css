@@ -103,13 +103,24 @@
   top: 206px;
   right: 167px;
   width: 423px;
-  bottom: 90px;
+  height: 470px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 8px;
+  overflow: hidden;
+  color: #5a3009;
+}
+
+.panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  overflow-y: auto;
-  padding-right: 6px;
-  color: #653810;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.panel .control-panel {
+  flex: 1;
+  overflow: hidden;
 }
 
 .incoming-lane {
@@ -388,7 +399,6 @@
 
 .control-panel {
   width: 100%;
-  background: rgba(20, 24, 32, 0.92);
   border-radius: 8px;
   padding: 16px;
   display: flex;
@@ -400,7 +410,6 @@
 /* Setup phase - ControlPanel matches SidePanel styling */
 .phase-setup .control-panel {
   width: 100%;
-  background: rgba(20, 24, 32, 0.75);
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   padding: 24px;
@@ -418,8 +427,6 @@
 }
 
 .panel-instruction {
-  font-size: 14px;
-  color: rgba(242, 242, 242, 0.65);
   text-align: center;
 }
 
@@ -429,10 +436,8 @@
   align-content: flex-start;
   justify-content: center;
   gap: 16px;
-  padding: 10px;
   border: 1px dashed rgba(255, 255, 255, 0.15);
   border-radius: 8px;
-  background: rgb(211 195 167);
 }
 
 .panel-actions {
@@ -457,6 +462,11 @@
   gap: 12px;
   width: 100%;
   align-items: stretch;
+}
+
+.panel-buttons.single {
+  justify-content: flex-end;
+  flex: 1;
 }
 
 .piece {
