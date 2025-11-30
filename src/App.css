@@ -3,7 +3,7 @@
   width: 1376px;
   height: 768px;
   margin: 0 auto;
-  background-image: url("/assets/background.jpeg");
+  background-image: url("../background.jpeg");
   background-repeat: no-repeat;
   background-size: 1376px 768px;
   color: #f2f2f2;
@@ -118,7 +118,7 @@
   left: 103px;
   width: var(--incoming-width);
   height: var(--incoming-height);
-  background-image: url("/assets/incoming_mice_bg.jpeg");
+  background-image: url("../incoming_mice_bg.jpeg");
   background-size: var(--incoming-bg-size) var(--incoming-height);
   background-repeat: no-repeat;
   background-position: center center;
@@ -173,7 +173,7 @@
   left: 130px;
   width: var(--board-width);
   height: var(--board-height);
-  background-image: url("/assets/board.jpeg");
+  background-image: url("../board.jpeg");
   background-size: var(--board-bg-size) var(--board-bg-size);
   background-repeat: no-repeat;
   background-position: center center;
@@ -200,7 +200,7 @@
   left: 130px;
   width: var(--board-width);
   height: var(--board-height);
-  background-image: url("/assets/heros.png");
+  background-image: url("../heros.png");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 480px 480px;

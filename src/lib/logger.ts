@@ -1,12 +1,10 @@
-import type { GameState, LogEvent, Phase, StepPhase } from '../types';
+import type { GameState, LogEvent, EventPhase } from '../types';
 
 let sequence = 0;
 
 export function resetLogSequence(): void {
   sequence = 0;
 }
-
-type EventPhase = Phase | StepPhase | 'setup';
 
 export function logEvent(state: GameState, event: Omit<LogEvent, 'seq' | 'turn' | 'phase'> & { phase?: EventPhase; turn?: number }): void {
   const full: LogEvent = {

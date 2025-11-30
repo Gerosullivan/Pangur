@@ -7,7 +7,7 @@ export const catDefinitions: Record<CatId, CatDefinition> = {
     role: 'Strongpaw',
     baseCatch: 3,
     baseMeow: 1,
-    portraitSrc: '/assets/cat_detail/Pangur_detail.png',
+    portraitSrc: './cat_detail/Pangur_detail.png',
   },
   guardian: {
     id: 'guardian',
@@ -15,7 +15,7 @@ export const catDefinitions: Record<CatId, CatDefinition> = {
     role: 'Guardian',
     baseCatch: 1,
     baseMeow: 3,
-    portraitSrc: '/assets/cat_detail/Breonne_detail.png',
+    portraitSrc: './cat_detail/Breonne_detail.png',
   },
   baircne: {
     id: 'baircne',
@@ -23,7 +23,7 @@ export const catDefinitions: Record<CatId, CatDefinition> = {
     role: 'Domestic Cat',
     baseCatch: 2,
     baseMeow: 2,
-    portraitSrc: '/assets/cat_detail/Baircne_detail.png',
+    portraitSrc: './cat_detail/Baircne_detail.png',
   },
 };
 

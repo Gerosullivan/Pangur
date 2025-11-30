@@ -49,7 +49,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   startHardGame: () => {
-    set(() => ({ ...createInitialGameState(hardInitialMice, { openingOverlay: false }) }));
+    set(() => ({ ...createInitialGameState(hardInitialMice as { placements: Array<{ cell: CellId; tier?: number }> }, { openingOverlay: false }) }));
   },
 
   selectCat: (catId) => {

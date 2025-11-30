@@ -5,7 +5,7 @@ export type EntryDirection = 'north' | 'south' | 'east' | 'west';
 
 export type Phase = 'setup' | 'cat' | 'stepper';
 
-export interface DeterrencePreview {
+export interface DeterrencePreview extends Record<string, unknown> {
   meowge: number;
   deterred: number;
   entering: number;
@@ -148,10 +148,12 @@ export interface GameStatus {
   reason?: string;
 }
 
+export type EventPhase = Phase | StepPhase | 'setup' | StepFrame['phase'];
+
 export interface LogEvent {
   seq: number;
   turn: number;
-  phase: Phase | StepPhase | 'setup';
+  phase: EventPhase;
   action: string;
   actorType?: 'cat' | 'mouse' | 'system';
   actorId?: string;

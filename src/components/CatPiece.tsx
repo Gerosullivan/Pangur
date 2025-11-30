@@ -66,24 +66,24 @@ function CatPiece({
     if (asleep) {
       switch (catId) {
         case 'pangur':
-          return '/assets/cat_asleep/Pangur_asleep.png';
+          return './cat_asleep/Pangur_asleep.png';
         case 'baircne':
-          return '/assets/cat_asleep/Baircne_asleep.png';
+          return './cat_asleep/Baircne_asleep.png';
         case 'guardian':
-          return '/assets/cat_asleep/Breonne_asleep.png';
+          return './cat_asleep/Breonne_asleep.png';
         default:
-          return '/assets/cat_asleep/Pangur_asleep.png';
+          return './cat_asleep/Pangur_asleep.png';
       }
     }
     switch (catId) {
       case 'pangur':
-        return '/assets/Cruibne.png';
+        return './Cruibne.png';
       case 'baircne':
-        return '/assets/Baircne.png';
+        return './Baircne.png';
       case 'guardian':
-        return '/assets/Breonne.png';
+        return './Breonne.png';
       default:
-        return '/assets/Cruibne.png';
+        return './Cruibne.png';
     }
   };
 

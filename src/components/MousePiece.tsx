@@ -10,10 +10,10 @@ function MousePiece({ mouse, highlighted, scared }: MousePieceProps) {
   const showStats = mouse.maxHearts > 1 || mouse.attack > 1;
 
   const imageSrc = (() => {
-    if (scared) return '/assets/mice/mouse_scared.png';
-    if (mouse.stunned) return '/assets/mice/mouse_dizzy.png';
-    if (mouse.attack > 1) return '/assets/mice/mouse_grain_fed.png';
-    return '/assets/mice/mouse_normal.png';
+    if (scared) return './mice/mouse_scared.png';
+    if (mouse.stunned) return './mice/mouse_dizzy.png';
+    if (mouse.attack > 1) return './mice/mouse_grain_fed.png';
+    return './mice/mouse_normal.png';
   })();
 
   const className = ['piece', 'mouse', mouse.stunned ? 'stunned' : undefined, highlighted ? 'highlighted' : undefined]
