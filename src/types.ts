@@ -2,6 +2,8 @@ export type Column = 'A' | 'B' | 'C' | 'D' | 'E';
 export type Row = 1 | 2 | 3 | 4 | 5;
 export type CellId = `${Column}${Row}`;
 export type EntryDirection = 'north' | 'south' | 'east' | 'west';
+export type Screen = 'start' | 'tutorial' | 'game';
+export type ModeId = 'tutorial' | 'hard' | 'classic';
 
 export type Phase = 'setup' | 'cat' | 'stepper';
 
@@ -124,6 +126,7 @@ export interface StepperState {
 export type StepPhase = 'resident-mice' | 'incoming-wave';
 
 export interface GameState {
+  modeId: ModeId;
   phase: Phase;
   turn: number;
   grainLoss: number;
@@ -141,11 +144,18 @@ export interface GameState {
   stepper?: StepperState;
   log: LogEvent[];
   status: GameStatus;
+  outcomeRecorded: boolean;
 }
 
 export interface GameStatus {
   state: 'playing' | 'lost' | 'won';
   reason?: string;
+}
+
+export interface AppState extends GameState {
+  screen: Screen;
+  scoreboard: ScoreEntry[];
+  settings: SettingsState;
 }
 
 export type EventPhase = Phase | StepPhase | 'setup' | StepFrame['phase'];
@@ -181,4 +191,26 @@ export interface TutorialState {
   index: number;
   locked: boolean;
   completedStepIds: Set<string>;
+}
+
+export type InitialMiceConfig = {
+  placements: Array<{
+    cell: CellId;
+    tier?: number;
+  }>;
+};
+
+export interface ScoreEntry {
+  modeId: ModeId;
+  result: 'win' | 'loss';
+  grainLoss: number;
+  wave: number;
+  catsLost: number;
+  reason?: string;
+  timestamp: number;
+}
+
+export interface SettingsState {
+  muted: boolean;
+  musicVolume: number;
 }

@@ -9,9 +9,18 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 - Orientation: Row `5` (top) is the building entrance; row `1` (bottom) is the back wall.
 - Goal: Survive by eliminating resident mice and deterring the incoming queue before grain or cats are lost.
 
+## 1b. Screen Flow
+
+- Start screen: Left side shows the cover image; right side lists modes (`Tutorial`, `Hard`). Clicking a mode starts the run on the shared 5×5 board; modes differ only by the initial mice file they load.
+- Tutorial screen: Dedicated view of the tutorial panel with a “Start Tutorial Game” button that begins a run using the tutorial/base `initialMice.json`.
+- Game screen: Existing board + panels. Restart keeps the currently selected mode.
+- Scoreboard: Runs append to a local list (max 10) with fields `{ modeId, result (win/loss), wave, grainLoss, catsLost, reason, timestamp }`, shown on the start screen. Copy/Clear controls manage it client-side only.
+- Settings: Simple mute toggle and music volume slider persisted locally; apply to background music when added.
+
 ## 2. Starting State
 
 - Board: 5x5 grid representing the building interior. All perimeter cells render as `shadow` terrain except the three open gates at `B5`, `C5`, `D5`. Every perimeter cell begins occupied by a `1/1` mouse by default, driven by `src/data/initialMice.json`. Designers can change which tiles spawn resident mice—and their starting tiers (e.g., `3/3` mice)—by editing that file. Entry metadata still drives the shared queue described in §8.
+- Modes share this board layout for the current release. Only the `initialMice` file changes between modes (`initialMice.json` for tutorial/classic, `initialMice.hard.json` for the hard perimeter start).
 - Cat pieces: Three residents off-board at the bottom center, displayed side-by-side (same cat component as will be on board - see UI spec). Base stats use `catch/meow`: Pangur (aka Cruibne) `3/1`, Guardian `1/3`, Baircne `2/2`. Each cat begins with five hearts (health).
 - Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat piece from the off board onto any free cell (gate or otherwise). During this phase players may rearrange cats without limit—pick a placed cat back up, drop it somewhere else, swap positions, etc.—until they choose to press `Confirm Formation`. Only after confirmation does the normal turn loop begin.
 - Grain Loss Tracker: Start at `0` loss. Each grain eaten by mice increments the counter; reaching `32` loss triggers Game Over.

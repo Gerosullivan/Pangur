@@ -1,22 +1,24 @@
 import { catDefinitions, CAT_STARTING_HEARTS } from './cats';
 import { columns, rows, isShadowBonus, buildInitialCells, getNeighborCells, getMeowZone, getWaveSize, parseCell } from './board';
 import { resetShadowBonusForTurn } from './shadowBonus';
-import type { CatId, GameState, MouseState, CellId, StepFrame, DeterrencePreview } from '../types';
+import type {
+  CatId,
+  GameState,
+  MouseState,
+  CellId,
+  StepFrame,
+  DeterrencePreview,
+  InitialMiceConfig,
+  ModeId,
+} from '../types';
 import initialMice from '../data/initialMice.json';
 import { logEvent, resetLogSequence } from './logger';
 
 export type CatStatContext = Pick<GameState, 'cats' | 'cells'>;
 
-type InitialMiceFile = {
-  placements: Array<{
-    cell: CellId;
-    tier?: number;
-  }>;
-};
-
 export function createInitialGameState(
-  initialMiceFile: InitialMiceFile = initialMice as InitialMiceFile,
-  options?: { openingOverlay?: boolean }
+  initialMiceFile: InitialMiceConfig = initialMice as InitialMiceConfig,
+  options?: { openingOverlay?: boolean; modeId?: ModeId }
 ): GameState {
   const cells = buildInitialCells();
 
@@ -60,6 +62,8 @@ export function createInitialGameState(
     stepper: undefined,
     log: [],
     status: { state: 'playing' },
+    modeId: options?.modeId ?? 'tutorial',
+    outcomeRecorded: false,
   };
 
   resetLogSequence();
@@ -86,7 +90,7 @@ export function createInitialGameState(
   return baseState;
 }
 
-function parseInitialMiceConfig(config: InitialMiceFile): Array<{ cell: CellId; tier: number }> {
+function parseInitialMiceConfig(config: InitialMiceConfig): Array<{ cell: CellId; tier: number }> {
   const placements = config?.placements ?? [];
   const seen = new Set<CellId>();
   return placements.map((entry, idx) => {

@@ -1,7 +1,19 @@
 import { create } from 'zustand';
 import { produce } from 'immer';
-import type { CatId, CellId, CatState, GameState, StepFrame, StepPhase } from '../types';
-import hardInitialMice from '../data/initialMice.hard.json';
+import type {
+  AppState,
+  CatId,
+  CellId,
+  CatState,
+  GameState,
+  ModeId,
+  ScoreEntry,
+  Screen,
+  SettingsState,
+  StepFrame,
+  StepPhase,
+} from '../types';
+import { getModeConfig } from '../data/modes';
 import {
   applyDeterrence,
   createInitialGameState,
@@ -16,19 +28,24 @@ import {
   resetMouseAfterTurn,
   upgradeMouse,
 } from '../lib/mechanics';
-import { getNeighborCells, getWaveSize, isShadowBonus, pathCellsBetween } from '../lib/board';
+import { getNeighborCells, isShadowBonus, pathCellsBetween } from '../lib/board';
 import { maybeActivateShadowBonus, updateShadowBonusOnMove } from '../lib/shadowBonus';
 import { buildMousePhaseFrames } from '../lib/mousePhase';
 import { buildIncomingPhaseFrames, replenishIncomingQueue } from '../lib/incomingWave';
 import { logEvent } from '../lib/logger';
 
-const DEFAULT_WAVE_SIZE = 6;
 const MAX_GRAIN_LOSS = 32;
-const WAVE_SIZE = getWaveSize(DEFAULT_WAVE_SIZE);
+const SCOREBOARD_STORAGE_KEY = 'pangur-scoreboard';
+const SETTINGS_STORAGE_KEY = 'pangur-settings';
+const DEFAULT_SETTINGS: SettingsState = { muted: false, musicVolume: 0.7 };
+const DEFAULT_MODE: ModeId = 'tutorial';
 
 interface GameActions {
   resetGame: () => void;
-  startHardGame: () => void;
+  startMode: (modeId: ModeId) => void;
+  setScreen: (screen: Screen) => void;
+  updateSettings: (settings: Partial<SettingsState>) => void;
+  clearScoreboard: () => void;
   selectCat: (catId?: CatId) => void;
   placeCat: (catId: CatId, destination: CellId) => void;
   confirmFormation: () => void;
@@ -39,17 +56,96 @@ interface GameActions {
   focusNextCat: () => void;
 }
 
-export type GameStore = GameState & GameActions;
+export type GameStore = AppState & GameActions;
+
+function loadScoreboard(): ScoreEntry[] {
+  if (typeof localStorage === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(SCOREBOARD_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as ScoreEntry[]) : [];
+  } catch (err) {
+    console.warn('Failed to load scoreboard', err);
+    return [];
+  }
+}
+
+function persistScoreboard(entries: ScoreEntry[]): void {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(SCOREBOARD_STORAGE_KEY, JSON.stringify(entries));
+  } catch (err) {
+    console.warn('Failed to persist scoreboard', err);
+  }
+}
+
+function loadSettings(): SettingsState {
+  if (typeof localStorage === 'undefined') return DEFAULT_SETTINGS;
+  try {
+    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    return raw ? { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as SettingsState) } : DEFAULT_SETTINGS;
+  } catch (err) {
+    console.warn('Failed to load settings', err);
+    return DEFAULT_SETTINGS;
+  }
+}
+
+function persistSettings(settings: SettingsState): void {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+  } catch (err) {
+    console.warn('Failed to persist settings', err);
+  }
+}
+
+function createRunState(modeId: ModeId, openingOverlay = false): GameState {
+  const mode = getModeConfig(modeId);
+  return createInitialGameState(mode.initialMice, { openingOverlay, modeId });
+}
+
+const initialRunState = createRunState(DEFAULT_MODE, false);
+const initialScoreboard = loadScoreboard();
+const initialSettings = loadSettings();
 
 export const useGameStore = create<GameStore>((set, get) => ({
-  ...createInitialGameState(),
+  ...initialRunState,
+  screen: 'start',
+  scoreboard: initialScoreboard,
+  settings: initialSettings,
 
   resetGame: () => {
-    set(() => ({ ...createInitialGameState() }));
+    set((state) => ({
+      ...state,
+      ...createRunState(state.modeId, false),
+      outcomeRecorded: false,
+    }));
   },
 
-  startHardGame: () => {
-    set(() => ({ ...createInitialGameState(hardInitialMice as { placements: Array<{ cell: CellId; tier?: number }> }, { openingOverlay: false }) }));
+  startMode: (modeId) => {
+    set((state) => ({
+      ...state,
+      ...createRunState(modeId, false),
+      modeId,
+      screen: 'game',
+      outcomeRecorded: false,
+    }));
+  },
+
+  setScreen: (screen) => {
+    set((state) => ({ ...state, screen }));
+  },
+
+  updateSettings: (partial) => {
+    set((state) => {
+      const settings = { ...state.settings, ...partial };
+      persistSettings(settings);
+      return { ...state, settings };
+    });
+  },
+
+  clearScoreboard: () => {
+    persistScoreboard([]);
+    set((state) => ({ ...state, scoreboard: [] }));
   },
 
   selectCat: (catId) => {
@@ -504,3 +600,22 @@ function checkInteriorFloodLoss(state: GameState): void {
     state.status = { state: 'lost', reason: 'Interior overrun' };
   }
 }
+
+useGameStore.subscribe((state, prev) => {
+  if (!prev) return;
+  if (prev.status.state === 'playing' && state.status.state !== 'playing' && !state.outcomeRecorded) {
+    const catsLost = Object.values(state.cats).filter((cat) => cat.hearts <= 0).length;
+    const entry: ScoreEntry = {
+      modeId: state.modeId,
+      result: state.status.state === 'won' ? 'win' : 'loss',
+      grainLoss: state.grainLoss,
+      wave: state.wave,
+      catsLost,
+      reason: state.status.reason,
+      timestamp: Date.now(),
+    };
+    const nextScoreboard = [entry, ...state.scoreboard].slice(0, 10);
+    persistScoreboard(nextScoreboard);
+    useGameStore.setState({ scoreboard: nextScoreboard, outcomeRecorded: true });
+  }
+});
