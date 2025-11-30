@@ -158,7 +158,7 @@
       "order": 13,
       "title": "Confirm Formation",
       "highlights": ["button:Confirm Formation"],
-      "text": "Rearrange freely until ready, then lock in your formation.",
+      "text": "In a real game you can rearrange freely until ready, then lock in your formation.",
       "instruction": "Select Confirm Formation.",
       "showNext": false,
       "completeOn": [
@@ -192,7 +192,7 @@
       "order": 16,
       "title": "Attack the Entrance Mouse",
       "highlights": ["pangur", "mouse-6", "B5"],
-      "text": "Spend Pangur's catch to remove the entrance mouse.",
+      "text": "Spend one of Pangur's three catch to remove the entrance mouse.",
       "instruction": "Make sure Pangur is selected, then select the mouse to attack.",
       "showNext": false,
       "completeOn": [
@@ -224,7 +224,7 @@
       "order": 18,
       "title": "Meow Shields from Retaliation",
       "highlights": ["baircne", "mouse-3", "A3"],
-      "text": "Multi-heart mice retaliate when attacked. Meow reduces retaliation damage: the 3/3 mouse deals 3 damage, but Baircne's 2 meow shields against 2, so Baircne only takes 1 damage.",
+      "text": "Grain fed mice retaliate when attacked. Meow reduces retaliation damage: the 3/3 mouse deals 3 damage, but Baircne's 2 meow shields against 2, so Baircne only takes 1 damage.",
       "instruction": "Attack the 3/3 mouse once.",
       "showNext": false,
       "completeOn": [
@@ -402,7 +402,7 @@
       "order": 29,
       "title": "Mice Feed and Grow",
       "highlights": ["mouse-7", "mouse-4", "shadow-cells"],
-      "text": "Feeding adds grain loss and upgrades mice on shadow tiles. Shadow placement matters for their growth.",
+      "text": "Feeding increases grain loss and upgrades (non-stunned) mice on shadow tiles. Shadow placement matters for their growth.",
       "instruction": "Advance to finish feeding.",
       "showNext": false,
       "completeOn": [
@@ -447,8 +447,8 @@
       "order": 32,
       "title": "Next Cat Turn",
       "highlights": ["cats-on-board"],
-      "text": "Once placement finishes, the next cat turn begins. Rearrange, attack, or hold entrances as needed.",
-      "instruction": "Proceed with cat actions.",
+      "text": "Once placement finishes, the next cat turn begins.",
+      "instruction": "Select Next to continue.",
       "showNext": true,
       "lockBoard": true,
       "completeOn": [
@@ -462,7 +462,7 @@
       "id": "turn2-baircne-picks-off",
       "order": 33,
       "title": "Pick Off Entrance Mice",
-      "highlights": ["baircne", "mouse-7", "D5"],
+      "highlights": ["baircne", "mouse-7", "D5", "E4"],
       "text": "Use Baircne to remove entrance threats and reposition toward shadows.",
       "instruction": "Attack and move as shown.",
       "showNext": true,
@@ -484,7 +484,7 @@
       "order": 34,
       "title": "Chip the 4/4 Mouse",
       "highlights": ["baircne", "pangur", "mouse-4", "E3"],
-      "text": "Work together to grind down the upgraded mouse on the shadow tile.",
+      "text": "Work together to grind down the upgraded mouse. Attack with the 2/2 cat first! Or else Pangur will die to the mouses retalliation damage.",
       "instruction": "Attack in sequence to finish it.",
       "showNext": true,
       "completeOn": [
@@ -545,7 +545,7 @@
       "order": 37,
       "title": "End Turn, Resolve Mice",
       "highlights": ["button:End Turn"],
-      "text": "Finish the cat phase; remaining mice feed and incoming placements repeat.",
+      "text": "Finish the cat phase; incoming placements repeat.",
       "instruction": "Advance through mouse feeding and incoming placement.",
       "showNext": false,
       "completeOn": [
