@@ -29,9 +29,9 @@ function App() {
   const tutorialActive = useTutorialStore((state) => state.active);
 
   const phaseLabels: Record<Phase, string> = {
-    setup: "Setup Phase",
-    cat: "Cat Phase",
-    stepper: "Resolving Phases",
+    setup: "Setup turn",
+    cat: "Cat turn",
+    stepper: "Mouse turn",
   };
 
   const shellClass = useMemo(
@@ -76,20 +76,28 @@ function App() {
     <div className={shellClass}>
       {!isStartScreen && (
         <>
-          <div className="wave-badge">Wave {wave}</div>
+          <div className="wave-badge">Wave {wave} - {phaseLabels[phase]}</div>
           <div className="grain-badge">Grain Loss {grainLoss} / 32</div>
-          <button
-            type="button"
-            className="restart-floating"
-            onClick={resetGame}
-          >
-            Restart
-          </button>
-          <div className="phase-badge">{phaseLabels[phase]}</div>
+          <div className="session-actions">
+            <button
+              type="button"
+              className="session-button"
+              onClick={resetGame}
+            >
+              Restart
+            </button>
+            <button
+              type="button"
+              className="session-button quit"
+              onClick={() => setScreen("start")}
+            >
+              Quit
+            </button>
+          </div>
           {tutorialActive && (
             <button
               type="button"
-              className="restart-floating exit"
+              className="session-button exit"
               onClick={() => {
                 tutorialExit();
                 setScreen("start");
