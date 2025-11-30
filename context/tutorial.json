@@ -6,7 +6,9 @@
       "id": "board-overview",
       "order": 1,
       "title": "Board",
-      "highlights": [".board-wrapper"],
+      "highlights": [
+        ".board-wrapper"
+      ],
       "text": "This is the barn: a 5x5 grid where the entire fight takes place.",
       "instruction": "Select Next to continue.",
       "showNext": true,
@@ -16,7 +18,9 @@
       "id": "incoming-lane",
       "order": 2,
       "title": "Incoming Mice",
-      "highlights": ["incoming-lane"],
+      "highlights": [
+        "incoming-lane"
+      ],
       "text": "Mice in the queue wait outside until both cat and mouse turns resolve.",
       "instruction": "Select Next to continue.",
       "showNext": true,
@@ -26,7 +30,9 @@
       "id": "cell-occupancy",
       "order": 3,
       "title": "Cell Basics",
-      "highlights": ["board-all-cells"],
+      "highlights": [
+        "board-all-cells"
+      ],
       "text": "Cats and mice can be placed on the board, but only one piece fits on any cell.",
       "instruction": "Select Next to continue.",
       "showNext": true,
@@ -36,7 +42,11 @@
       "id": "gate-cells",
       "order": 4,
       "title": "Entrance Squares",
-      "highlights": ["B5", "C5", "D5"],
+      "highlights": [
+        "B5",
+        "C5",
+        "D5"
+      ],
       "text": "Entrance cells are where incoming mice try to enter the barn.",
       "instruction": "Select Next to continue.",
       "showNext": true,
@@ -46,7 +56,9 @@
       "id": "shadow-cells",
       "order": 5,
       "title": "Shadow Squares",
-      "highlights": ["shadow-cells"],
+      "highlights": [
+        "shadow-cells"
+      ],
       "text": "Shadow tiles boost both sides: cats can prime Shadow Strike, and mice that feed here grow stronger.",
       "instruction": "Select Next to continue.",
       "showNext": true,
@@ -56,7 +68,9 @@
       "id": "resident-mice",
       "order": 6,
       "title": "Resident Mice",
-      "highlights": ["resident-mice"],
+      "highlights": [
+        "resident-mice"
+      ],
       "text": "Several mice already occupy the barn. We need to clear them out.",
       "instruction": "Select Next to continue.",
       "showNext": true,
@@ -66,7 +80,9 @@
       "id": "cats-hand",
       "order": 7,
       "title": "Cats Ready",
-      "highlights": ["cats-staging"],
+      "highlights": [
+        "cats-staging"
+      ],
       "text": "Your cats are waiting off-board. Place them to begin the defense.",
       "instruction": "Select Next to place them to begin the defense.",
       "showNext": true,
@@ -76,7 +92,10 @@
       "id": "place-pangur",
       "order": 8,
       "title": "Place Pangur",
-      "highlights": ["pangur", "C4"],
+      "highlights": [
+        "pangur",
+        "C4"
+      ],
       "text": "Bring Pangur onto the barn.",
       "instruction": "Drag Pangur to the highlighted cell.",
       "showNext": false,
@@ -92,7 +111,10 @@
       "id": "pangur-gate",
       "order": 9,
       "title": "Test Meow at Entrance",
-      "highlights": ["pangur", "C5"],
+      "highlights": [
+        "pangur",
+        "C5"
+      ],
       "text": "Move Pangur to an entrance. His meow can deter incoming mice; filling all entrances with cats scares an entire wave.",
       "instruction": "Drag Pangur to the entrance.",
       "showNext": false,
@@ -108,7 +130,10 @@
       "id": "pangur-return",
       "order": 10,
       "title": "Reset Pangur",
-      "highlights": ["pangur", "C4"],
+      "highlights": [
+        "pangur",
+        "C4"
+      ],
       "text": "Note: 1 incoming mouse is deterred due to Pangur's Meow attribute.",
       "instruction": "Drag Pangur back to the highlighted cell to continue setup.",
       "showNext": false,
@@ -125,7 +150,10 @@
       "id": "place-baircne",
       "order": 11,
       "title": "Place Baircne",
-      "highlights": ["baircne", "B2"],
+      "highlights": [
+        "baircne",
+        "B2"
+      ],
       "text": "Bring Baircne into the barn.",
       "instruction": "Drag Baircne to the highlighted cell.",
       "showNext": false,
@@ -141,7 +169,10 @@
       "id": "place-guardian",
       "order": 12,
       "title": "Place Guardian",
-      "highlights": ["guardian", "B3"],
+      "highlights": [
+        "guardian",
+        "B3"
+      ],
       "text": "Place the Guardian cat on the board.",
       "instruction": "Drag Guardian to the highlighted cell.",
       "showNext": false,
@@ -157,7 +188,9 @@
       "id": "confirm-formation",
       "order": 13,
       "title": "Confirm Formation",
-      "highlights": ["button:Confirm Formation"],
+      "highlights": [
+        "button:Confirm Formation"
+      ],
       "text": "In a real game you can rearrange freely until ready, then lock in your formation.",
       "instruction": "Select Confirm Formation.",
       "showNext": false,
@@ -181,7 +214,9 @@
       "id": "turn-sequence",
       "order": 15,
       "title": "Turn Order",
-      "highlights": [".top-bar-metric"],
+      "highlights": [
+        ".top-bar-metric"
+      ],
       "text": "Cats act first, then resident mice, then incoming mice enter from the entrance squares.",
       "instruction": "Select Next to continue.",
       "showNext": true,
@@ -191,7 +226,11 @@
       "id": "pangur-clears-gate-mouse",
       "order": 16,
       "title": "Attack the Entrance Mouse",
-      "highlights": ["pangur", "mouse-6", "B5"],
+      "highlights": [
+        "pangur",
+        "mouse-6",
+        "B5"
+      ],
       "text": "Spend one of Pangur's three catch to remove the entrance mouse.",
       "instruction": "Make sure Pangur is selected, then select the mouse to attack.",
       "showNext": false,
@@ -207,7 +246,11 @@
       "id": "pangur-clears-b4",
       "order": 17,
       "title": "Sweep the Shadow Mouse",
-      "highlights": ["pangur", "mouse-5", "B4"],
+      "highlights": [
+        "pangur",
+        "mouse-5",
+        "B4"
+      ],
       "text": "Use another of Pangur's catch points to clear the shadow mouse. Notice how Pangur's attack value is reduced.",
       "instruction": "Attack the shadow mouse.",
       "showNext": false,
@@ -223,7 +266,11 @@
       "id": "baircne-strike-1",
       "order": 18,
       "title": "Meow Shields from Retaliation",
-      "highlights": ["baircne", "mouse-3", "A3"],
+      "highlights": [
+        "baircne",
+        "mouse-3",
+        "A3"
+      ],
       "text": "Grain fed mice retaliate when attacked. Meow (blue number) reduces retaliation damage: the 3/3 mouse deals 3 damage, but Baircne's 2 meow shields against 2, so Baircne only takes 1 damage.",
       "instruction": "Attack the 3/3 mouse once with the 2/2 cat.",
       "showNext": false,
@@ -240,7 +287,11 @@
       "id": "baircne-strike-2",
       "order": 19,
       "title": "Chip Again",
-      "highlights": ["baircne", "mouse-3", "A3"],
+      "highlights": [
+        "baircne",
+        "mouse-3",
+        "A3"
+      ],
       "text": "Spend another catch to drop the mouse to 1 heart. Notice: the cat has no more attack points left.",
       "instruction": "Attack the 3/3 mouse again.",
       "showNext": false,
@@ -257,7 +308,11 @@
       "id": "guardian-finisher",
       "order": 20,
       "title": "Finish the Big Mouse",
-      "highlights": ["guardian", "mouse-3", "A3"],
+      "highlights": [
+        "guardian",
+        "mouse-3",
+        "A3"
+      ],
       "text": "Finish the wounded mouse; killing heals the cat by 1.",
       "instruction": "Deliver the killing blow with the 1/3 cat.",
       "showNext": false,
@@ -273,7 +328,10 @@
       "id": "guardian-to-gate",
       "order": 21,
       "title": "Stack Meow at the Entrance",
-      "highlights": ["guardian", "B5"],
+      "highlights": [
+        "guardian",
+        "B5"
+      ],
       "text": "Move Guardian onto the entrance to add meow and deter the next wave.",
       "instruction": "Move Guardian to the entrance.",
       "showNext": false,
@@ -289,7 +347,11 @@
       "id": "pangur-reposition-c2",
       "order": 22,
       "title": "Position Pangur for Baircne",
-      "highlights": ["pangur", "C2", "baircne"],
+      "highlights": [
+        "pangur",
+        "C2",
+        "baircne"
+      ],
       "text": "Move Pangur adjacent to Baircne so his shield passive boosts Baircne's catch.",
       "instruction": "Move Pangur to the highlighted cell.",
       "showNext": false,
@@ -305,7 +367,11 @@
       "id": "baircne-clears-c1",
       "order": 23,
       "title": "Clean Up the Corner Mouse",
-      "highlights": ["baircne", "mouse-1", "C1"],
+      "highlights": [
+        "baircne",
+        "mouse-1",
+        "C1"
+      ],
       "text": "Use the boosted catch to finish the corner mouse.",
       "instruction": "Attack the corner mouse.",
       "showNext": false,
@@ -321,7 +387,10 @@
       "id": "baircne-shadow-parking",
       "order": 24,
       "title": "Park on Shadow",
-      "highlights": ["baircne", "E5"],
+      "highlights": [
+        "baircne",
+        "E5"
+      ],
       "text": "Move Baircne onto a shadow tile to prime Shadow Strike for next turn.",
       "instruction": "Move Baircne to the highlighted shadow cell.",
       "showNext": false,
@@ -337,7 +406,10 @@
       "id": "pangur-double-move",
       "order": 25,
       "title": "Show Pangur's Double Move",
-      "highlights": ["pangur", "E2"],
+      "highlights": [
+        "pangur",
+        "E2"
+      ],
       "text": "Pangur can move twice per turn. Reposition him toward the remaining threats.",
       "instruction": "Move Pangur to the highlighted cell.",
       "showNext": false,
@@ -353,7 +425,11 @@
       "id": "pangur-stun-e1",
       "order": 26,
       "title": "Stun the Strong Mouse",
-      "highlights": ["pangur", "mouse-2", "E1"],
+      "highlights": [
+        "pangur",
+        "mouse-2",
+        "E1"
+      ],
       "text": "Attack the 2/2 mouse to stun it; stunned mice cannot grow this turn.",
       "instruction": "Attack the 2/2 mouse.",
       "showNext": false,
@@ -370,7 +446,9 @@
       "id": "end-cat-phase",
       "order": 27,
       "title": "Cats End Turn",
-      "highlights": ["button:End Turn"],
+      "highlights": [
+        "button:End Turn"
+      ],
       "text": "Once all cats have acted, end the cat phase. Next, mice take their turn: they move or attack first, then feed (shadow mice grow), then new mice enter.",
       "instruction": "Select End Turn.",
       "showNext": false,
@@ -385,7 +463,10 @@
       "id": "mouse-attacks",
       "order": 28,
       "title": "Mouse Retaliation",
-      "highlights": ["mouse-4", "pangur"],
+      "highlights": [
+        "mouse-4",
+        "pangur"
+      ],
       "text": "During the mouse turn, adjacent mice attack instead of moving. Pangur takes two hits from the 3/3 mouse.",
       "instruction": "Advance the Next button to resolve the attacks.",
       "showNext": false,
@@ -401,7 +482,11 @@
       "id": "mouse-feed-upgrade",
       "order": 29,
       "title": "Mice Feed and Grow",
-      "highlights": ["mouse-7", "mouse-4", "shadow-cells"],
+      "highlights": [
+        "mouse-7",
+        "mouse-4",
+        "shadow-cells"
+      ],
       "text": "Feeding increases grain loss and upgrades (non-stunned) mice on shadow tiles. Shadow placement matters for their growth. Note: the 3/3 mouse will grow to 4/4.",
       "instruction": "Advance to finish feeding.",
       "showNext": false,
@@ -416,7 +501,9 @@
       "id": "incoming-summary",
       "order": 30,
       "title": "Incoming Wave Preview",
-      "highlights": ["incoming-lane"],
+      "highlights": [
+        "incoming-lane"
+      ],
       "text": "Meow from entrance cats scares part of the wave. Scared mice leave the queue; the rest will try to enter.",
       "instruction": "Advance the Next button stepper.",
       "showNext": false,
@@ -431,7 +518,9 @@
       "id": "incoming-placement",
       "order": 31,
       "title": "Incoming Placement",
-      "highlights": ["gate-line"],
+      "highlights": [
+        "gate-line"
+      ],
       "text": "Entering mice append to existing mouse lines if paths are open. Entrance cats block entry on their cells.",
       "instruction": "Advance to place incoming mice.",
       "showNext": false,
@@ -450,7 +539,9 @@
       "id": "next-cat-turn",
       "order": 32,
       "title": "Next Cat Turn",
-      "highlights": ["cats-on-board"],
+      "highlights": [
+        "cats-on-board"
+      ],
       "text": "Once placement finishes, the next cat turn begins.",
       "instruction": "Select Next to continue.",
       "showNext": true,
@@ -465,7 +556,11 @@
     {
       "id": "turn2-baircne-picks-off",
       "title": "Pick Off Entrance Mice",
-      "highlights": ["baircne", "mouse-7", "D5"],
+      "highlights": [
+        "baircne",
+        "mouse-7",
+        "D5"
+      ],
       "text": "Use Baircne to remove the entrance threat.",
       "instruction": "Attack the gate mouse.",
       "showNext": false,
@@ -481,7 +576,10 @@
     {
       "id": "turn2-baircne-move-e4",
       "title": "Reposition Baircne",
-      "highlights": ["baircne", "E4"],
+      "highlights": [
+        "baircne",
+        "E4"
+      ],
       "text": "Reposition Baircne toward the shadow line.",
       "instruction": "Move Baircne to the highlighted cell.",
       "showNext": false,
@@ -495,55 +593,96 @@
       "order": 34
     },
     {
-      "id": "turn2-chip-boss",
-      "order": 35,
+      "id": "turn2-chip-boss-baircne",
       "title": "Chip the 4/4 Mouse",
-      "highlights": ["baircne", "pangur", "mouse-4", "E3"],
-      "text": "Work together to grind down the upgraded mouse on the shadow tile.",
-      "instruction": "Attack in sequence to finish it.",
-      "showNext": true,
+      "highlights": [
+        "baircne",
+        "mouse-4",
+        "E3"
+      ],
+      "text": "Open with Baircne to safely chip the upgraded mouse on the shadow tile.",
+      "instruction": "Attack the 4/4 mouse twice with Baircne.",
+      "showNext": false,
       "completeOn": [
         {
           "action": "cat-attack",
           "actorId": "baircne",
           "targetId": "mouse-4",
           "count": 2
-        },
+        }
+      ],
+      "order": 35
+    },
+    {
+      "id": "turn2-chip-boss-pangur",
+      "title": "Finish the 4/4 Mouse",
+      "highlights": [
+        "pangur",
+        "mouse-4",
+        "E3"
+      ],
+      "text": "Let Pangur finish the weakened mouse.",
+      "instruction": "Attack the same mouse twice with Pangur.",
+      "showNext": false,
+      "completeOn": [
         {
           "action": "cat-attack",
           "actorId": "pangur",
           "targetId": "mouse-4",
           "count": 2
         }
-      ]
+      ],
+      "order": 36
     },
     {
-      "id": "turn2-cleanup",
-      "order": 36,
-      "title": "Clean Remaining Threats",
-      "highlights": ["pangur", "mouse-2", "E1", "A2"],
-      "text": "Finish the 2/2 mouse and reposition Pangur across the board for future turns.",
-      "instruction": "Attack, then move to cover another lane.",
-      "showNext": true,
+      "id": "turn2-cleanup-attack",
+      "title": "Finish the Corner Mouse",
+      "highlights": [
+        "pangur",
+        "mouse-2",
+        "E1"
+      ],
+      "text": "Clear the remaining 2/2 mouse.",
+      "instruction": "Attack the 2/2 mouse with Pangur.",
+      "showNext": false,
       "completeOn": [
         {
           "action": "cat-attack",
           "actorId": "pangur",
           "targetId": "mouse-2",
           "count": 3
-        },
+        }
+      ],
+      "order": 37
+    },
+    {
+      "id": "turn2-cleanup-move",
+      "title": "Reposition Pangur",
+      "highlights": [
+        "pangur",
+        "A2"
+      ],
+      "text": "Reposition Pangur across the board for future turns.",
+      "instruction": "Move Pangur to the highlighted cell.",
+      "showNext": false,
+      "completeOn": [
         {
           "action": "cat-move",
           "actorId": "pangur",
           "to": "A2"
         }
-      ]
+      ],
+      "order": 38
     },
     {
       "id": "turn2-guardian-finish",
-      "order": 37,
+      "order": 39,
       "title": "Guardian Cleanup",
-      "highlights": ["guardian", "mouse-10", "B4"],
+      "highlights": [
+        "guardian",
+        "mouse-10",
+        "B4"
+      ],
       "text": "Guardian removes the last resident from this wave.",
       "instruction": "Attack the remaining mouse.",
       "showNext": true,
@@ -557,9 +696,11 @@
     },
     {
       "id": "turn2-end-and-mice",
-      "order": 38,
+      "order": 40,
       "title": "End Turn, Resolve Mice",
-      "highlights": ["button:End Turn"],
+      "highlights": [
+        "button:End Turn"
+      ],
       "text": "Finish the cat phase; incoming placements repeat.",
       "instruction": "Advance through mouse feeding and incoming placement.",
       "showNext": false,
@@ -576,9 +717,12 @@
     },
     {
       "id": "turn3-clean-slate",
-      "order": 39,
+      "order": 41,
       "title": "New Wave, Same Plan",
-      "highlights": ["cats-on-board", "incoming-lane"],
+      "highlights": [
+        "cats-on-board",
+        "incoming-lane"
+      ],
       "text": "With new entrants on the board, repeat the pattern: pick priority targets, hold entrances, and park on shadows.",
       "instruction": "Proceed with cat actions.",
       "showNext": true,
@@ -627,9 +771,11 @@
     },
     {
       "id": "incoming-scare-win",
-      "order": 40,
+      "order": 42,
       "title": "Full Deterrence",
-      "highlights": ["incoming-lane"],
+      "highlights": [
+        "incoming-lane"
+      ],
       "text": "Six meow on entrances scares the entire wave; no mice enter when meowge meets the wave size.",
       "instruction": "Advance through the incoming summary.",
       "showNext": false,
@@ -646,9 +792,11 @@
     },
     {
       "id": "win-condition",
-      "order": 41,
+      "order": 43,
       "title": "Win the Game",
-      "highlights": ["board-wrapper"],
+      "highlights": [
+        "board-wrapper"
+      ],
       "text": "Cats win when all resident mice are gone and the incoming queue is fully deterred. Keep entrances covered to seal the victory.",
       "instruction": "Finish deterring or defeating all mice.",
       "showNext": true
