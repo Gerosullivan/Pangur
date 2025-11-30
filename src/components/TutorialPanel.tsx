@@ -12,6 +12,7 @@ function TutorialPanel() {
     guardMessage,
     start,
     next,
+    close,
     syncWithLog,
   } = useTutorialStore();
 
@@ -69,6 +70,17 @@ function TutorialPanel() {
           <div className="tutorial-footer next-only">
             <button type="button" className="button-primary" onClick={next} disabled={locked || atEnd}>
               Next
+            </button>
+          </div>
+        )}
+        {!showNext && atEnd && (
+          <div className="tutorial-footer next-only">
+            <button
+              type="button"
+              className="button-primary"
+              onClick={close}
+            >
+              Close
             </button>
           </div>
         )}

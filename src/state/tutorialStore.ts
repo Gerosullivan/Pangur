@@ -6,6 +6,7 @@ type TutorialStore = TutorialState & {
   latestLog: LogEvent[];
   start: () => void;
   next: () => void;
+  close: () => void;
   exit: () => void;
   markCompleted: (stepId: string) => void;
   syncWithLog: (log: LogEvent[]) => void;
@@ -84,6 +85,12 @@ export const useTutorialStore = create<TutorialStore>((set, get) => ({
         guardMessage: undefined,
       };
     });
+  },
+
+  close: () => {
+    set(() => ({
+      ...initialState,
+    }));
   },
 
   exit: () => {

@@ -716,62 +716,165 @@
       ]
     },
     {
-      "id": "turn3-clean-slate",
-      "order": 41,
-      "title": "New Wave, Same Plan",
+      "id": "turn3-guardian-clears-c4",
+      "title": "Guard the Line",
       "highlights": [
-        "cats-on-board",
-        "incoming-lane"
+        "guardian",
+        "mouse-9",
+        "C4"
       ],
-      "text": "With new entrants on the board, repeat the pattern: pick priority targets, hold entrances, and park on shadows.",
-      "instruction": "Proceed with cat actions.",
-      "showNext": true,
+      "text": "Guardian tidies the lane. Clearing this mouse keeps the path open.",
+      "instruction": "Attack the mouse on C4 with Guardian.",
+      "showNext": false,
       "completeOn": [
         {
           "action": "cat-attack",
           "actorId": "guardian",
           "targetId": "mouse-9"
-        },
+        }
+      ],
+      "order": 41
+    },
+    {
+      "id": "turn3-pangur-center",
+      "title": "Center Pangur",
+      "highlights": [
+        "pangur",
+        "C4"
+      ],
+      "text": "Center Pangur so he can pivot to any gate next wave.",
+      "instruction": "Move Pangur to the highlighted cell.",
+      "showNext": false,
+      "completeOn": [
         {
           "action": "cat-move",
           "actorId": "pangur",
           "to": "C4"
-        },
+        }
+      ],
+      "order": 42
+    },
+    {
+      "id": "turn3-baircne-clears-e5",
+      "title": "Shadow Cleanup",
+      "highlights": [
+        "baircne",
+        "mouse-12",
+        "E5"
+      ],
+      "text": "Use Baircne to remove the shadow mouse before it grows.",
+      "instruction": "Attack the mouse on E5.",
+      "showNext": false,
+      "completeOn": [
         {
           "action": "cat-attack",
           "actorId": "baircne",
           "targetId": "mouse-12"
-        },
+        }
+      ],
+      "order": 43
+    },
+    {
+      "id": "turn3-baircne-clears-d5",
+      "title": "Gate Relief",
+      "highlights": [
+        "baircne",
+        "mouse-11",
+        "D5"
+      ],
+      "text": "Clear the second gate mouse to free the entrance.",
+      "instruction": "Attack the mouse on D5.",
+      "showNext": false,
+      "completeOn": [
         {
           "action": "cat-attack",
           "actorId": "baircne",
           "targetId": "mouse-11"
-        },
+        }
+      ],
+      "order": 44
+    },
+    {
+      "id": "turn3-baircne-move-d5",
+      "title": "Hold the Gate",
+      "highlights": [
+        "baircne",
+        "D5"
+      ],
+      "text": "Park Baircne on the gate to stack meow.",
+      "instruction": "Move Baircne to the highlighted cell.",
+      "showNext": false,
+      "completeOn": [
         {
           "action": "cat-move",
           "actorId": "baircne",
           "to": "D5"
-        },
+        }
+      ],
+      "order": 45
+    },
+    {
+      "id": "turn3-pangur-clears-b4",
+      "title": "Finish the Straggler",
+      "highlights": [
+        "pangur",
+        "mouse-13",
+        "B4"
+      ],
+      "text": "Clean up the remaining mouse on the left lane.",
+      "instruction": "Attack the mouse on B4 with Pangur.",
+      "showNext": false,
+      "completeOn": [
         {
           "action": "cat-attack",
           "actorId": "pangur",
           "targetId": "mouse-13"
-        },
+        }
+      ],
+      "order": 46
+    },
+    {
+      "id": "turn3-pangur-clears-c5",
+      "title": "Secure the Gate",
+      "highlights": [
+        "pangur",
+        "mouse-8",
+        "C5"
+      ],
+      "text": "Secure the center gate by removing the queued mouse.",
+      "instruction": "Attack the mouse on C5 with Pangur.",
+      "showNext": false,
+      "completeOn": [
         {
           "action": "cat-attack",
           "actorId": "pangur",
           "targetId": "mouse-8"
-        },
+        }
+      ],
+      "order": 47
+    },
+    {
+      "id": "turn3-pangur-move-c5",
+      "title": "Park on Center Gate",
+      "highlights": [
+        "pangur",
+        "C5"
+      ],
+      "text": "Park Pangur on the center gate to add meow for the next wave.",
+      "instruction": "Move Pangur to the highlighted cell.",
+      "showNext": false,
+      "completeOn": [
         {
           "action": "cat-move",
           "actorId": "pangur",
           "to": "C5"
         }
-      ]
+      ],
+      "order": 48
     },
     {
       "id": "incoming-scare-win",
-      "order": 42,
+      "order": 49,
       "title": "Full Deterrence",
       "highlights": [
         "incoming-lane"
@@ -792,14 +895,15 @@
     },
     {
       "id": "win-condition",
-      "order": 43,
+      "order": 50,
       "title": "Win the Game",
       "highlights": [
-        "board-wrapper"
+        "button:Restart",
+        "button:Quit"
       ],
       "text": "Cats win when all resident mice are gone and the incoming queue is fully deterred. Keep entrances covered to seal the victory.",
-      "instruction": "Finish deterring or defeating all mice.",
-      "showNext": true
+      "instruction": "Replay this board without instructions, or Quit to menu.",
+      "showNext": false
     }
   ]
 }
