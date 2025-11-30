@@ -418,7 +418,7 @@
       "title": "Incoming Wave Preview",
       "highlights": ["incoming-lane"],
       "text": "Meow from entrance cats scares part of the wave. Scared mice leave the queue; the rest will try to enter.",
-      "instruction": "Advance the stepper.",
+      "instruction": "Advance the Next button stepper.",
       "showNext": false,
       "completeOn": [
         {
@@ -464,31 +464,42 @@
     },
     {
       "id": "turn2-baircne-picks-off",
-      "order": 33,
       "title": "Pick Off Entrance Mice",
-      "highlights": ["baircne", "mouse-7", "D5", "E4"],
-      "text": "Use Baircne to remove entrance threats and reposition toward shadows.",
-      "instruction": "Attack and move as shown.",
-      "showNext": true,
+      "highlights": ["baircne", "mouse-7", "D5"],
+      "text": "Use Baircne to remove the entrance threat.",
+      "instruction": "Attack the gate mouse.",
+      "showNext": false,
       "completeOn": [
         {
           "action": "cat-attack",
           "actorId": "baircne",
           "targetId": "mouse-7"
-        },
+        }
+      ],
+      "order": 33
+    },
+    {
+      "id": "turn2-baircne-move-e4",
+      "title": "Reposition Baircne",
+      "highlights": ["baircne", "E4"],
+      "text": "Reposition Baircne toward the shadow line.",
+      "instruction": "Move Baircne to the highlighted cell.",
+      "showNext": false,
+      "completeOn": [
         {
           "action": "cat-move",
           "actorId": "baircne",
           "to": "E4"
         }
-      ]
+      ],
+      "order": 34
     },
     {
       "id": "turn2-chip-boss",
-      "order": 34,
+      "order": 35,
       "title": "Chip the 4/4 Mouse",
       "highlights": ["baircne", "pangur", "mouse-4", "E3"],
-      "text": "Work together to grind down the upgraded mouse. Attack with the 2/2 cat first! Or else Pangur will die to the mouses retalliation damage.",
+      "text": "Work together to grind down the upgraded mouse on the shadow tile.",
       "instruction": "Attack in sequence to finish it.",
       "showNext": true,
       "completeOn": [
@@ -508,7 +519,7 @@
     },
     {
       "id": "turn2-cleanup",
-      "order": 35,
+      "order": 36,
       "title": "Clean Remaining Threats",
       "highlights": ["pangur", "mouse-2", "E1", "A2"],
       "text": "Finish the 2/2 mouse and reposition Pangur across the board for future turns.",
@@ -530,7 +541,7 @@
     },
     {
       "id": "turn2-guardian-finish",
-      "order": 36,
+      "order": 37,
       "title": "Guardian Cleanup",
       "highlights": ["guardian", "mouse-10", "B4"],
       "text": "Guardian removes the last resident from this wave.",
@@ -546,7 +557,7 @@
     },
     {
       "id": "turn2-end-and-mice",
-      "order": 37,
+      "order": 38,
       "title": "End Turn, Resolve Mice",
       "highlights": ["button:End Turn"],
       "text": "Finish the cat phase; incoming placements repeat.",
@@ -565,7 +576,7 @@
     },
     {
       "id": "turn3-clean-slate",
-      "order": 38,
+      "order": 39,
       "title": "New Wave, Same Plan",
       "highlights": ["cats-on-board", "incoming-lane"],
       "text": "With new entrants on the board, repeat the pattern: pick priority targets, hold entrances, and park on shadows.",
@@ -616,7 +627,7 @@
     },
     {
       "id": "incoming-scare-win",
-      "order": 39,
+      "order": 40,
       "title": "Full Deterrence",
       "highlights": ["incoming-lane"],
       "text": "Six meow on entrances scares the entire wave; no mice enter when meowge meets the wave size.",
@@ -635,7 +646,7 @@
     },
     {
       "id": "win-condition",
-      "order": 40,
+      "order": 41,
       "title": "Win the Game",
       "highlights": ["board-wrapper"],
       "text": "Cats win when all resident mice are gone and the incoming queue is fully deterred. Keep entrances covered to seal the victory.",
