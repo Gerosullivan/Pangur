@@ -61,8 +61,8 @@
       "order": 7,
       "title": "Cats Ready",
       "highlights": ["cats-staging"],
-      "text": "Your cats are waiting off-board. Place them to begin the defense.",
-      "instruction": "Select Next to continue.",
+      "text": "Your cats are waiting off-board.",
+      "instruction": "Select Next to place them to begin the defense.",
       "showNext": true
     },
     {
@@ -90,8 +90,8 @@
       "order": 10,
       "title": "Reset Pangur",
       "highlights": ["pangur", "C4"],
-      "text": "Return Pangur to the interior square to continue setup.",
-      "instruction": "Drag Pangur back to the highlighted cell.",
+      "text": "Note: 1 mouse is deterred due to Pangur's Meow attribute.",
+      "instruction": "Drag Pangur back to the highlighted cell to continue setup..",
       "showNext": false,
       "logSeq": [11]
     },
@@ -130,7 +130,7 @@
       "order": 14,
       "title": "Selecting Cats",
       "highlights": ["cats-on-board"],
-      "text": "Selecting a cat highlights green move targets and red attack targets. Cats move like queens.",
+      "text": "Selecting a cat highlights green move targets and red attack targets. Cats move any distance in straight lines—horizontal, vertical, or diagonal—until blocked.",
       "instruction": "Select Next to continue.",
       "showNext": true
     },
