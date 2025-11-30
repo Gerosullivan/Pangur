@@ -19,6 +19,7 @@ function App() {
   const wave = useGameStore((state) => state.wave);
   const resetGame = useGameStore((state) => state.resetGame);
   const startMode = useGameStore((state) => state.startMode);
+  const setScreen = useGameStore((state) => state.setScreen);
   const scoreboard = useGameStore((state) => state.scoreboard);
   const clearScoreboard = useGameStore((state) => state.clearScoreboard);
   const settings = useGameStore((state) => state.settings);
@@ -77,7 +78,6 @@ function App() {
         <>
           <div className="wave-badge">Wave {wave}</div>
           <div className="grain-badge">Grain Loss {grainLoss} / 32</div>
-          <div className="phase-badge">{phaseLabels[phase]}</div>
           <button
             type="button"
             className="restart-floating"
@@ -85,11 +85,15 @@ function App() {
           >
             Restart
           </button>
+          <div className="phase-badge">{phaseLabels[phase]}</div>
           {tutorialActive && (
             <button
               type="button"
               className="restart-floating exit"
-              onClick={() => startMode("start")}
+              onClick={() => {
+                tutorialExit();
+                setScreen("start");
+              }}
             >
               Exit Tutorial
             </button>

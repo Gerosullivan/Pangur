@@ -103,11 +103,11 @@
   top: 206px;
   right: 167px;
   width: 423px;
-  height: 470px;
+  height: 460px;
   display: grid;
   grid-template-rows: 1fr auto;
   gap: 8px;
-  overflow: hidden;
+  /* overflow: hidden; */
   color: #5a3009;
 }
 
@@ -116,6 +116,7 @@
   flex-direction: column;
   gap: 8px;
   overflow: hidden;
+  padding: 0px 32px;
 }
 
 .panel .control-panel {
@@ -272,10 +273,13 @@
   right: 352px;
   transform: none;
   cursor: pointer;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(20, 24, 32, 0.75);
   font-size: 16px;
   color: #f2f2f2;
   letter-spacing: 1px;
+  padding: 10px 18px;
+  border-radius: 12px;
 }
 
 .start-panel {
@@ -389,8 +393,8 @@
 }
 
 .cat-staging-piece {
-  width: 160px;
-  height: 160px;
+  width: 145px;
+  height: 145px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -428,7 +432,6 @@
 .phase-cat .control-panel,
 .phase-stepper .control-panel {
   width: 100%;
-  background: rgba(20, 24, 32, 0.75);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   padding: 16px;
@@ -469,8 +472,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 100%;
-  align-items: stretch;
+  align-items: center;
 }
 
 .panel-buttons.single {
@@ -558,14 +560,13 @@
   display: flex;
   justify-content: space-between;
   font-size: 16px;
-  font-weight: 800;
 }
 
 .piece-catch,
 .piece-meow {
   width: 25%;
   text-align: center;
-  padding: 4px 0;
+  padding: 0;
   border-radius: 6px;
   background: rgba(0, 0, 0, 0.75);
 }
@@ -618,7 +619,7 @@
 }
 
 .piece-hearts {
-  font-size: 14px;
+  font-size: 10px;
   display: flex;
   gap: 2px;
 }
@@ -634,10 +635,9 @@
 .side-panel {
   width: 100%;
   border-radius: 16px;
-  padding: 0 9px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -665,6 +665,25 @@
   font-size: 14px;
   letter-spacing: 3px;
   text-align: center;
+  margin-top: -6px;
+}
+
+.side-panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.side-panel-left img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.side-panel-right {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .badge-row {
@@ -676,8 +695,8 @@
 .badge {
   border-radius: 999px;
   padding: 4px 10px;
-  font-size: 12px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(90 48 9);
+  color: #fff7bc;
 }
 
 .badge.secondary {
@@ -748,10 +767,10 @@
 .button-primary {
   background: #d97014;
   color: #f2f2f2;
-  padding: 12px 28px;
+  padding: 9px 24px;
   border-radius: 999px;
-  font-weight: 600;
   letter-spacing: 1px;
+  font-size: 20px;
 }
 
 .button-flash {
@@ -807,13 +826,13 @@
 }
 
 .stepper-label {
-  font-size: 15px;
-  color: rgba(242, 242, 242, 0.7);
+  /* font-size: 15px; */
+  /* color: rgba(242, 242, 242, 0.7); */
 }
 
 .deterrence-info {
-  font-size: 14px;
-  color: rgba(242, 242, 242, 0.7);
+  /* font-size: 14px; */
+  /* color: rgba(242, 242, 242, 0.7); */
 }
 
 .setup-hint {
@@ -848,6 +867,8 @@
   font-weight: 700;
   letter-spacing: 0.2px;
   margin-right: 6px;
+  font-size: 19px;
+  border-bottom: 1px solid #ffffff52;
 }
 
 .tutorial-title-row {

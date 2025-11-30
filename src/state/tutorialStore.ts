@@ -6,7 +6,6 @@ type TutorialStore = TutorialState & {
   latestLog: LogEvent[];
   start: () => void;
   next: () => void;
-  prev: () => void;
   exit: () => void;
   markCompleted: (stepId: string) => void;
   syncWithLog: (log: LogEvent[]) => void;

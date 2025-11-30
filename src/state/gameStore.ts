@@ -122,10 +122,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   startMode: (modeId) => {
-    if (modeId === 'start') {
-      set((state) => ({ ...state, screen: 'start' }));
-      return;
-    }
     set((state) => ({
       ...state,
       ...createRunState(modeId, false),

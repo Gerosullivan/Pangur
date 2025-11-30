@@ -70,29 +70,35 @@ function SidePanel() {
     <aside className="side-panel">
       <h2>{detail.definition.name}</h2>
       <span className="role">{detail.definition.role}</span>
-      <img
-        className="piece-portrait"
-        src={detail.definition.portraitSrc}
-        alt={`${detail.definition.name} portrait`}
-      />
-      <div className="piece-hearts" aria-label="Hearts">
-        {detail.hearts}
-      </div>
-      <div>
-        <strong>Catch:</strong> {detail.remainingCatch} ({detail.catchBreakdown})
-      </div>
-      <div>
-        <strong>Meow:</strong> {detail.effectiveMeow}
-      </div>
-      <div>
-        <strong>Moves Remaining:</strong> {detail.cat.movesRemaining}
-      </div>
-      <div>
-        <strong>Position:</strong> {detail.positionLabel}
-      </div>
-      <div className="badge-row">
-        {detail.cat.turnEnded && <span className="badge">Turn Locked</span>}
-        {detail.definition.id === 'baircne' && detail.pangurShield && <span className="badge secondary">Pangur’s Shield +1 Catch</span>}
+      <div className="side-panel-grid">
+        <div className="side-panel-left">
+          <img
+            className="piece-portrait"
+            src={detail.definition.portraitSrc}
+            alt={`${detail.definition.name} portrait`}
+          />
+        </div>
+        <div className="side-panel-right">
+          <div className="piece-hearts" aria-label="Hearts">
+            {detail.hearts}
+          </div>
+          <div>
+            <strong>Catch:</strong> {detail.remainingCatch} ({detail.catchBreakdown})
+          </div>
+          <div>
+            <strong>Meow:</strong> {detail.effectiveMeow}
+          </div>
+          <div>
+            <strong>Moves Remaining:</strong> {detail.cat.movesRemaining}
+          </div>
+          <div>
+            <strong>Position:</strong> {detail.positionLabel}
+          </div>
+          <div className="badge-row">
+            {detail.cat.turnEnded && <span className="badge">Turn Locked</span>}
+            {detail.definition.id === 'baircne' && detail.pangurShield && <span className="badge secondary">Pangur’s Shield +1 Catch</span>}
+          </div>
+        </div>
       </div>
     </aside>
   );
