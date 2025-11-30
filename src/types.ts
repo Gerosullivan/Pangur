@@ -128,6 +128,7 @@ export interface GameState {
   turn: number;
   grainLoss: number;
   wave: number;
+  showOpeningOverlay: boolean;
   nextMouseId: number;
   cells: Record<CellId, CellState>;
   cats: Record<CatId, CatState>;

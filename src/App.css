@@ -188,10 +188,8 @@
   left: 103px;
   width: var(--incoming-width);
   height: var(--board-height);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(0 0 0 / 44%);
   border-radius: 6px;
-  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.04);
-  mix-blend-mode: screen;
   pointer-events: none;
   z-index: 1;
 }
@@ -258,6 +256,27 @@
   font-size: 16px;
   color: #f2f2f2;
   letter-spacing: 1px;
+}
+
+.start-panel {
+  background: rgba(20, 24, 32, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.start-panel h3 {
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.start-panel p {
+  margin: 0;
+  color: rgba(242, 242, 242, 0.8);
+  font-size: 14px;
 }
 
 .board-grid {

@@ -14,7 +14,10 @@ type InitialMiceFile = {
   }>;
 };
 
-export function createInitialGameState(): GameState {
+export function createInitialGameState(
+  initialMiceFile: InitialMiceFile = initialMice as InitialMiceFile,
+  options?: { openingOverlay?: boolean }
+): GameState {
   const cells = buildInitialCells();
 
   const cats: GameState['cats'] = {
@@ -25,7 +28,7 @@ export function createInitialGameState(): GameState {
 
   const mice: Record<string, MouseState> = {};
   let mouseIdCounter = 0;
-  const initialMiceConfig = parseInitialMiceConfig(initialMice as InitialMiceFile);
+  const initialMiceConfig = parseInitialMiceConfig(initialMiceFile);
   const seededMice = initialMiceConfig.map(({ cell, tier }) => ({
     cell,
     tier,
@@ -44,6 +47,7 @@ export function createInitialGameState(): GameState {
     turn: 1,
     wave: 1,
     grainLoss: 0,
+    showOpeningOverlay: options?.openingOverlay ?? true,
     nextMouseId: mouseIdCounter + 1,
     cells,
     cats,

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { produce } from 'immer';
 import type { CatId, CellId, CatState, GameState, StepFrame, StepPhase } from '../types';
+import hardInitialMice from '../data/initialMice.hard.json';
 import {
   applyDeterrence,
   createInitialGameState,
@@ -27,6 +28,7 @@ const WAVE_SIZE = getWaveSize(DEFAULT_WAVE_SIZE);
 
 interface GameActions {
   resetGame: () => void;
+  startHardGame: () => void;
   selectCat: (catId?: CatId) => void;
   placeCat: (catId: CatId, destination: CellId) => void;
   confirmFormation: () => void;
@@ -44,6 +46,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   resetGame: () => {
     set(() => ({ ...createInitialGameState() }));
+  },
+
+  startHardGame: () => {
+    set(() => ({ ...createInitialGameState(hardInitialMice, { openingOverlay: false }) }));
   },
 
   selectCat: (catId) => {
@@ -78,6 +84,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         draft.cats[catId].position = destination;
         draft.cells[destination].occupant = { type: 'cat', id: catId };
         draft.handCats = draft.handCats.filter((id) => id !== catId);
+        draft.showOpeningOverlay = false;
         draft.selectedCatId = catId;
         applyDeterrence(draft);
         logEvent(draft, {
