@@ -34,7 +34,7 @@
       "order": 4,
       "title": "Entrance Squares",
       "highlights": ["B5", "C5", "D5"],
-      "text": "Gate cells are where incoming mice try to enter the barn.",
+      "text": "Entrance cells are where incoming mice try to enter the barn.",
       "instruction": "Select Next to continue.",
       "showNext": true
     },
@@ -78,10 +78,10 @@
     {
       "id": "pangur-gate",
       "order": 9,
-      "title": "Test Meow at Gate",
+      "title": "Test Meow at Entrance",
       "highlights": ["pangur", "C5"],
-      "text": "Move Pangur to a gate. His meow can deter incoming mice; filling all gates with cats scares an entire wave.",
-      "instruction": "Drag Pangur to the gate.",
+      "text": "Move Pangur to an entrance. His meow can deter incoming mice; filling all entrances with cats scares an entire wave.",
+      "instruction": "Drag Pangur to the entrance.",
       "showNext": false,
       "logSeq": [10]
     },
@@ -146,9 +146,9 @@
     {
       "id": "pangur-clears-gate-mouse",
       "order": 16,
-      "title": "Attack the Gate Mouse",
+      "title": "Attack the Entrance Mouse",
       "highlights": ["pangur", "mouse-6", "B5"],
-      "text": "Spend Pangur's catch to remove the gate mouse.",
+      "text": "Spend Pangur's catch to remove the entrance mouse.",
       "instruction": "Make sure Pangur is selected, then select the mouse to attack.",
       "showNext": false,
       "logSeq": [15]
@@ -196,10 +196,10 @@
     {
       "id": "guardian-to-gate",
       "order": 21,
-      "title": "Stack Meow at the Gate",
+      "title": "Stack Meow at the Entrance",
       "highlights": ["guardian", "B5"],
-      "text": "Move Guardian onto the gate to add meow and deter the next wave.",
-      "instruction": "Move Guardian to the gate.",
+      "text": "Move Guardian onto the entrance to add meow and deter the next wave.",
+      "instruction": "Move Guardian to the entrance.",
       "showNext": false,
       "logSeq": [20]
     },
@@ -288,7 +288,7 @@
       "order": 30,
       "title": "Incoming Wave Preview",
       "highlights": ["incoming-lane"],
-      "text": "Meow from gate cats scares part of the wave. Scared mice leave the queue; the rest will try to enter.",
+      "text": "Meow from entrance cats scares part of the wave. Scared mice leave the queue; the rest will try to enter.",
       "instruction": "Advance the stepper.",
       "showNext": false,
       "logSeq": [30, 31]
@@ -298,7 +298,7 @@
       "order": 31,
       "title": "Incoming Placement",
       "highlights": ["gate-line"],
-      "text": "Entering mice append to existing mouse lines if paths are open. Gate cats block entry on their cells.",
+      "text": "Entering mice append to existing mouse lines if paths are open. Entrance cats block entry on their cells.",
       "instruction": "Advance to place incoming mice.",
       "showNext": false,
       "logSeq": [32, 33, 34]
@@ -308,7 +308,7 @@
       "order": 32,
       "title": "Next Cat Turn",
       "highlights": ["cats-on-board"],
-      "text": "Once placement finishes, the next cat turn begins. Rearrange, attack, or hold gates as needed.",
+      "text": "Once placement finishes, the next cat turn begins. Rearrange, attack, or hold entrances as needed.",
       "instruction": "Proceed with cat actions.",
       "showNext": true,
       "logSeq": [35]
@@ -316,9 +316,9 @@
     {
       "id": "turn2-baircne-picks-off",
       "order": 33,
-      "title": "Pick Off Gate Mice",
+      "title": "Pick Off Entrance Mice",
       "highlights": ["baircne", "mouse-7", "D5"],
-      "text": "Use Baircne to remove gate threats and reposition toward shadows.",
+      "text": "Use Baircne to remove entrance threats and reposition toward shadows.",
       "instruction": "Attack and move as shown.",
       "showNext": true,
       "logSeq": [36, 37]
@@ -378,7 +378,7 @@
       "order": 39,
       "title": "Full Deterrence",
       "highlights": ["incoming-lane"],
-      "text": "Six meow on gates scares the entire wave; no mice enter when meowge meets the wave size.",
+      "text": "Six meow on entrances scares the entire wave; no mice enter when meowge meets the wave size.",
       "instruction": "Advance through the incoming summary.",
       "showNext": false,
       "logSeq": [62, 63, 64, 65]
@@ -388,7 +388,7 @@
       "order": 40,
       "title": "Win the Game",
       "highlights": ["board-wrapper"],
-      "text": "Cats win when all resident mice are gone and the incoming queue is fully deterred. Keep gates covered to seal the victory.",
+      "text": "Cats win when all resident mice are gone and the incoming queue is fully deterred. Keep entrances covered to seal the victory.",
       "instruction": "Finish deterring or defeating all mice.",
       "showNext": true
     }
