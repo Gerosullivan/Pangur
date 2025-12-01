@@ -14,7 +14,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
  - Start screen: Left side shows the cover image; right side lists modes (`Tutorial`, `Easy`, `Hard`). Clicking a mode starts the run on the shared 5×5 board; modes differ only by the initial mice file they load (easy uses a lighter perimeter ring, hard keeps the full perimeter).
 - Tutorial screen: Dedicated view of the tutorial panel with a “Start Tutorial Game” button that begins a run using the tutorial/base `initialMice.json`.
   - Tutorial steps are script-locked: only the prompted action for the current step is accepted, and descriptive steps lock the board until the player advances.
-- Game screen: Existing board + panels. Restart keeps the currently selected mode.
+- Game screen: Existing board + panels. Restart keeps the currently selected mode. A bottom-right 🏅 badge shows the top recorded run for the current mode (wave reached + grain loss).
 - Scoreboard: Runs append to a local list (max 10) with fields `{ modeId, result (win/loss), score?, finishWave?, grainSaved?, grainLoss, catsLost, catsFullHealth?, reason, timestamp }`, shown on the start screen. Copy/Clear controls manage it client-side only. Wins also surface an immediate score + breakdown in the in-game panel after victory.
 - Settings: Simple mute toggle and music volume slider persisted locally; apply to background music when added.
 - Scoring (prototype): Only awarded on a win. Score factors in finishing wave (fewer waves is better via an inverse weight), grain saved (32 - grain loss), and a small bonus per cat at full health. Cat death is an instant loss with no score. Scoreboard entries store score + finish wave as vanity metrics.

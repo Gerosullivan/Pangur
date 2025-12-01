@@ -243,6 +243,7 @@
 .wave-badge,
 .grain-badge,
 .phase-badge,
+.best-badge,
 .restart-floating {
   position: absolute;
   padding: 8px 16px;
@@ -266,6 +267,13 @@
   top: calc(142px + var(--board-height) + 13px);
   left: 277px;
   width: 250px;
+  text-align: center;
+}
+
+.best-badge {
+  bottom: 19px;
+  left: 824px;
+  width: 290px;
   text-align: center;
 }
 
