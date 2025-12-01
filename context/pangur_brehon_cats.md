@@ -31,3 +31,19 @@ Under the Brehon laws - the native legal system of early Ireland - cats were imp
 Each type of cat had a value (an _eraic_ or honour-price), and there were rules about compensation if a cat was stolen, injured, or killed. There were even colourful details about what a cat owed its household in basic duties: catching mice, not stealing food from the pot, and not scratching without cause. A good mouser - our high catch / lower meow cat - could be worth more than a simple farm animal, while a pampered pet-cat might be tied to the status of its owner.
 
 So when you move Pangur and the other cats around the board, lining up their catch and meow strengths against the scurrying mice, you're playing in the shadow of those old Brehon rules: treating cats not just as cute companions, but as legally recognised workers, guardians, and partners in keeping the household (and the monastery) in order.
+
+---
+
+## Copyright and Credits
+
+**Pangur Bán: The Game**
+
+© 2025 Gerald O'Sullivan / Robot Nerd Face Limited. All rights reserved.
+
+Game design, artwork, and narrative content by Gerald O'Sullivan.
+
+Music created by Gerald O'Sullivan using Suno AI Pro.
+
+Based on the 9th-century Old Irish poem "Pangur Bán".
+
+This game and its contents are protected under copyright law. See LICENSE file for full terms.

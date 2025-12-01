@@ -63,3 +63,6 @@ tsconfig.tsbuildinfo
 tsconfig.node.tsbuildinfo
 vite.config.js
 vite.config.d.ts
+
+# Build artifacts
+*.zip

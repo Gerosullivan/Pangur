@@ -6,4 +6,16 @@ Each cat has its own role and stats. Pangur is your aggressive striker with high
 
 The mice aren’t passive targets. They move, attack, and - if they end their turn on shadow tiles—eat grain and evolve into tougher 2/2, 3/3, or even nastier threats. Each wave brings six more mice; your meow at the gates determines how many flee and how many make it onto the board. Let too many feed and your grain loss meter climbs toward game over.
 
-Pangur Bán​ is designed as a focused tactics puzzle: small board, clear rules, and escalating pressure from the incoming waves. Each run is about reading the board state, chaining cat moves and attacks efficiently, and deciding when to commit a cat to a gate versus cleaning up the interior. It’s playable in short sessions but has enough depth to reward careful planning and experimentation.
+Pangur Bán​ is designed as a focused tactics puzzle: small board, clear rules, and escalating pressure from the incoming waves. Each run is about reading the board state, chaining cat moves and attacks efficiently, and deciding when to commit a cat to a gate versus cleaning up the interior. It's playable in short sessions but has enough depth to reward careful planning and experimentation.
+
+## License
+
+**Copyright © 2025 Gerald O'Sullivan / Robot Nerd Face Limited. All rights reserved.**
+
+This project is proprietary software made available for educational and reference purposes only. See [LICENSE](LICENSE) for full details.
+
+The source code may be viewed and studied for personal, non-commercial, educational purposes. All game assets including artwork, music, narrative content, and character designs are protected by copyright and may not be used in other projects.
+
+Music was created by Gerald O'Sullivan using Suno AI Pro.
+
+Based on the 9th-century Old Irish poem "Pangur Bán".
