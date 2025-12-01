@@ -885,8 +885,8 @@
     rgba(16, 185, 129, 0.08)
   );
   border: 1px solid rgba(16, 185, 129, 0.35);
-  color: #8af0cb;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+  color: #00945e;
+  font-size: 20px;
 }
 
 .result-banner.loss {
@@ -1084,7 +1084,8 @@
 
 .start-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 12px;
 }
 

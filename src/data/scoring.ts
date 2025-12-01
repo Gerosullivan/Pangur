@@ -17,6 +17,7 @@ const baseWeights: ScoringWeights = {
 const scoringByMode: Record<ModeId, ScoringWeights> = {
   tutorial: baseWeights,
   classic: baseWeights,
+  easy: baseWeights,
   hard: {
     ...baseWeights,
     waveCeiling: 12,

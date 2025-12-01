@@ -46,6 +46,11 @@ function App() {
     tutorialStart();
   };
 
+  const handleStartEasyMode = () => {
+    tutorialExit();
+    startMode("easy");
+  };
+
   const handleStartHardMode = () => {
     tutorialExit();
     startMode("hard");
@@ -160,6 +165,13 @@ function App() {
                   onClick={handleStartHardMode}
                 >
                   Start Game (Hard)
+                </button>
+                <button
+                  type="button"
+                  className="button-primary"
+                  onClick={handleStartEasyMode}
+                >
+                  Start Game (Easy)
                 </button>
               </div>
               <div className="settings-card">

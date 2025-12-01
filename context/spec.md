@@ -11,7 +11,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 
 ## 1b. Screen Flow
 
-- Start screen: Left side shows the cover image; right side lists modes (`Tutorial`, `Hard`). Clicking a mode starts the run on the shared 5×5 board; modes differ only by the initial mice file they load.
+ - Start screen: Left side shows the cover image; right side lists modes (`Tutorial`, `Easy`, `Hard`). Clicking a mode starts the run on the shared 5×5 board; modes differ only by the initial mice file they load (easy uses a lighter perimeter ring, hard keeps the full perimeter).
 - Tutorial screen: Dedicated view of the tutorial panel with a “Start Tutorial Game” button that begins a run using the tutorial/base `initialMice.json`.
   - Tutorial steps are script-locked: only the prompted action for the current step is accepted, and descriptive steps lock the board until the player advances.
 - Game screen: Existing board + panels. Restart keeps the currently selected mode.
@@ -22,7 +22,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 ## 2. Starting State
 
 - Board: 5x5 grid representing the building interior. All perimeter cells render as `shadow` terrain except the three open entrances at `B5`, `C5`, `D5` (terrain tag `gate`). Every perimeter cell begins occupied by a `1/1` mouse by default, driven by `src/data/initialMice.json`. Designers can change which tiles spawn resident mice—and their starting tiers (e.g., `3/3` mice)—by editing that file. Entry metadata still drives the shared queue described in §8.
-- Modes share this board layout for the current release. Only the `initialMice` file changes between modes (`initialMice.json` for tutorial/classic, `initialMice.hard.json` for the hard perimeter start).
+- Modes share this board layout for the current release. Only the `initialMice` file changes between modes (`initialMice.json` for tutorial/classic, `initialMice.easy.json` for the lighter perimeter ring, `initialMice.hard.json` for the hard perimeter start).
 - Cat pieces: Three residents off-board at the bottom center, displayed side-by-side (same cat component as will be on board - see UI spec). Base stats use `catch/meow`: Pangur (aka Cruibne) `3/1`, Guardian `1/3`, Baircne `2/2`. Each cat begins with five hearts (health).
 - Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat piece from the off board onto any free cell (entrance or otherwise). During this phase players may rearrange cats without limit—pick a placed cat back up, drop it somewhere else, swap positions, etc.—until they choose to press `Confirm Formation`. Only after confirmation does the normal turn loop begin.
 - Grain Loss Tracker: Start at `0` loss. Each grain eaten by mice increments the counter; grain loss no longer ends the run and instead reduces the end-of-run grain bonus.

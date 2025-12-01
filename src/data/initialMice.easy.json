@@ -1,0 +1,16 @@
+{
+  "placements": [
+    { "cell": "A1" },
+    { "cell": "C1" },
+    { "cell": "E1" },
+    { "cell": "A2" },
+    { "cell": "E2" },
+    { "cell": "A4" },
+    { "cell": "E4" },
+    { "cell": "A5" },
+    { "cell": "B5" },
+    { "cell": "C5" },
+    { "cell": "D5" },
+    { "cell": "E5" }
+  ]
+}

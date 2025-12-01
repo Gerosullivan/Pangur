@@ -1,4 +1,5 @@
 import baseMice from './initialMice.json';
+import easyMice from './initialMice.easy.json';
 import hardMice from './initialMice.hard.json';
 import type { InitialMiceConfig, ModeId } from '../types';
 
@@ -21,6 +22,12 @@ const modeMap: Record<ModeId, ModeConfig> = {
     label: 'Classic',
     description: 'Standard run using the base mouse layout.',
     initialMice: baseMice as InitialMiceConfig,
+  },
+  easy: {
+    id: 'easy',
+    label: 'Easy Perimeter',
+    description: 'A thinner perimeter ring with a few gaps.',
+    initialMice: easyMice as InitialMiceConfig,
   },
   hard: {
     id: 'hard',
