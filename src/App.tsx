@@ -9,6 +9,7 @@ import ControlPanel from "./components/ControlPanel";
 import TutorialHighlights from "./components/TutorialHighlights";
 import PanelActions from "./components/PanelActions";
 import TutorialPanel from "./components/TutorialPanel";
+import AudioControls from "./components/AudioControls";
 import coverStart from "../assets/cover_start_screen.jpeg";
 import type { Phase } from "./types";
 
@@ -81,6 +82,7 @@ function App() {
 
   return (
     <div className={shellClass}>
+      <AudioControls />
       {!isStartScreen && (
         <>
           <div className="wave-badge">
@@ -182,36 +184,6 @@ function App() {
                 >
                   Start Game (Easy)
                 </button>
-              </div>
-              <div className="settings-card">
-                <h3>Settings</h3>
-                <div className="settings-row">
-                  <label className="settings-label">
-                    <input
-                      type="checkbox"
-                      checked={settings.muted}
-                      onChange={(event) =>
-                        updateSettings({ muted: event.target.checked })
-                      }
-                    />
-                    Mute Music
-                  </label>
-                  <label className="settings-label">
-                    Music Volume
-                    <input
-                      type="range"
-                      min={0}
-                      max={1}
-                      step={0.1}
-                      value={settings.musicVolume}
-                      onChange={(event) =>
-                        updateSettings({
-                          musicVolume: Number(event.target.value),
-                        })
-                      }
-                    />
-                  </label>
-                </div>
               </div>
             </div>
           ) : (

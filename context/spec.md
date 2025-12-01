@@ -151,7 +151,12 @@ After the one-time setup placement, each round repeats these phases in order:
   - Resident mice occupy every interior cell simultaneously.
   - A mouse successfully upgrades to `7/7` (future-proofed capstone threat that cats cannot remove).
 
-## 11. Open Questions
+## 11. Audio
+
+- Six-track music playlist lives in `/assets/music`, plays in numeric filename order (`01_` → `06_`), auto-starts at 50% volume when the app loads, and loops back to the first track after the last finishes.
+- Global vertical control bar sits at the right middle of the shell on every screen with play/pause, mute/unmute, skip track, and a toggleable volume slider. Volume/mute preferences persist via settings.
+
+## 12. Open Questions
 
 - Lock in the exact heuristic for mouse movement targeting (current plan favors nearest shadow tiles on their entrance lines—tweak as we playtest).
 - Decide how much animation/pacing polish to add for incoming placement given the single staging lane.
