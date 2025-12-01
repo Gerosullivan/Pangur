@@ -189,16 +189,16 @@ function App() {
                 <button
                   type="button"
                   className="button-primary"
-                  onClick={handleStartHardMode}
+                  onClick={handleStartEasyMode}
                 >
-                  Start Game (Hard)
+                  Start Game (Easy)
                 </button>
                 <button
                   type="button"
                   className="button-primary"
-                  onClick={handleStartEasyMode}
+                  onClick={handleStartHardMode}
                 >
-                  Start Game (Easy)
+                  Start Game (Hard)
                 </button>
               </div>
             </div>
