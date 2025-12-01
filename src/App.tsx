@@ -11,6 +11,7 @@ import PanelActions from "./components/PanelActions";
 import TutorialPanel from "./components/TutorialPanel";
 import AudioControls from "./components/AudioControls";
 import { getMedalEmoji } from "./lib/scoring";
+import StartLoreScroll from "./components/StartLoreScroll";
 import coverStart from "../assets/cover_start_screen.jpeg";
 import type { Phase } from "./types";
 
@@ -153,8 +154,9 @@ function App() {
           {isStartScreen ? (
             <>
               <div className="board-backdrop" aria-hidden />
-              <div className="start-cover" aria-hidden>
+              <div className="start-cover">
                 <img src={coverStart} alt="Pangur Bán cover" />
+                <StartLoreScroll />
               </div>
             </>
           ) : (

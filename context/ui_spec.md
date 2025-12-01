@@ -21,6 +21,7 @@ Use a fixed canvas (no responsive scaling):
   - Right column: ~416px wide stack pinned to the right with internal scrolling between its top (≈182px) and bottom (≈40px) offsets so content stays visible inside the shell height.
 - Action/control UI lives inside the right column stack with tutorial + cat info instead of spanning a full-width bottom row. Phase label + restart are separate badges on the right edge (no top bar).
 - Opening state: while all cats remain in hand during setup, the board appears empty (pieces hidden) with a hero trio overlay on the board. Right column shows the tutorial panel plus a `Start Game` card with stacked buttons for Hard (full perimeter start) and Easy (lighter perimeter ring) alongside the Tutorial option.
+- Start screen left panel: cover art sits on the left with a semi-transparent lore block (Pangur/Brehon cat background) that scrolls upward from the bottom after a short pause when the app first loads.
 
 - **Incoming Mice Row**
 

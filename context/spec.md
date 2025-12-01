@@ -11,7 +11,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 
 ## 1b. Screen Flow
 
- - Start screen: Left side shows the cover image; right side lists modes (`Tutorial`, `Easy`, `Hard`). Clicking a mode starts the run on the shared 5×5 board; modes differ only by the initial mice file they load (easy uses a lighter perimeter ring, hard keeps the full perimeter).
+- Start screen: Left side shows the cover image with a slow upward scroll of the Pangur/Brehon cat lore (begins a couple seconds after load); right side lists modes (`Tutorial`, `Easy`, `Hard`). Clicking a mode starts the run on the shared 5×5 board; modes differ only by the initial mice file they load (easy uses a lighter perimeter ring, hard keeps the full perimeter).
 - Tutorial screen: Dedicated view of the tutorial panel with a “Start Tutorial Game” button that begins a run using the tutorial/base `initialMice.json`.
   - Tutorial steps are script-locked: only the prompted action for the current step is accepted, and descriptive steps lock the board until the player advances.
 - Game screen: Existing board + panels. Restart keeps the currently selected mode. A bottom-right 🏅 badge shows the top recorded run for the current mode (score, wave, grain loss) with a tooltip noting “Best score for this mode” and the breakdown.
