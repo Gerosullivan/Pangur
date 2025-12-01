@@ -101,7 +101,7 @@
 .right-column {
   position: absolute;
   top: 206px;
-  right: 167px;
+  left: 784px;
   width: 423px;
   height: 460px;
   display: grid;
@@ -126,12 +126,13 @@
 
 .tutorial-float {
   position: absolute;
-  top: 98px;
-  right: 107px;
-  width: 550px;
+  top: 73px;
+  left: 701px;
+  width: 591px;
   max-height: 540px;
   overflow: auto;
   z-index: 4;
+  min-height: 140px;
 }
 
 .incoming-lane {

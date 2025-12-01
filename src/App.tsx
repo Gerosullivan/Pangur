@@ -81,15 +81,23 @@ function App() {
           <div className="session-actions">
             <button
               type="button"
-              className="session-button"
-              onClick={resetGame}
+              className={`session-button ${tutorialActive ? 'button-disabled' : ''}`}
+              onClick={() => {
+                if (tutorialActive) return;
+                resetGame();
+              }}
+              disabled={tutorialActive}
             >
               Restart
             </button>
             <button
               type="button"
-              className="session-button quit"
-              onClick={() => setScreen("start")}
+              className={`session-button quit ${tutorialActive ? 'button-disabled' : ''}`}
+              onClick={() => {
+                if (tutorialActive) return;
+                setScreen("start");
+              }}
+              disabled={tutorialActive}
             >
               Quit
             </button>
