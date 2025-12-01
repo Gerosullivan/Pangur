@@ -57,29 +57,40 @@ function TutorialHighlights() {
 
   useEffect(() => {
     const refreshHighlights = () => {
-      prevElements.current.forEach((el) => {
-        el.classList.remove('outline-pulse');
-      });
-
-      if (tokens.length === 0 || !step) {
-        prevElements.current = [];
-        return;
-      }
-
       const nextElements: Element[] = [];
       tokens.forEach((token) => {
         const elements = getElementsForToken(token);
         elements.forEach((el) => {
-          el.classList.add('outline-pulse');
           nextElements.push(el);
         });
       });
+
+      // Remove highlights that are no longer referenced
+      const nextSet = new Set(nextElements);
+      prevElements.current.forEach((el) => {
+        if (!nextSet.has(el)) {
+          el.classList.remove('outline-pulse');
+        }
+      });
+
+      // Add highlights to current targets (idempotent to survive rerenders)
+      nextElements.forEach((el) => {
+        if (!el.classList.contains('outline-pulse')) {
+          el.classList.add('outline-pulse');
+        }
+      });
+
       prevElements.current = nextElements;
     };
 
     const observer = new MutationObserver(() => refreshHighlights());
     refreshHighlights();
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class'],
+    });
 
     return () => {
       observer.disconnect();

@@ -450,7 +450,7 @@
       "id": "next-cat-turn",
       "order": 32,
       "title": "Next Cat Turn",
-      "highlights": ["cats-on-board"],
+      "highlights": [],
       "text": "Once placement finishes, the next cat turn begins.",
       "instruction": "Select Next to continue.",
       "showNext": true,
