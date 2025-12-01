@@ -1,5 +1,7 @@
 # Pangur
 
+**[Play on itch.io →](https://robotnerdface.itch.io/pangur-ban)**
+
 Pangur Bán is a small, turn-based strategy board game about three heroic cats defending a shadowy barn from endless waves of hungry mice. You play on a tight 5×5 grid: cats move like chess queens, mice sneak along the edges, and every decision about where to stand or strike matters.
 
 Each cat has its own role and stats. Pangur is your aggressive striker with high catch (attack). Baircne is a balanced fighter who gets extra catch when standing near Pangur. Breoinne, the Guardian, brings big meow (deterrence) at the barn gates, scaring mice out of the incoming wave before they even set paw inside. Together they must clear resident mice while holding key entrance squares.
