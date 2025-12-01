@@ -95,6 +95,11 @@ function App() {
     startMode("hard");
   };
 
+  const handleStartMonasteryMode = () => {
+    tutorialExit();
+    startMode("monastery");
+  };
+
   return (
     <div className={shellClass}>
       <AudioControls />
@@ -166,7 +171,7 @@ function App() {
           {isStartScreen ? (
             <div className="start-panel-stack">
               <div className="start-header">
-                <p>Choose a mode to begin.</p>
+                <p>Choose a mode or board to begin.</p>
               </div>
               <div className="start-actions">
                 <button
@@ -189,6 +194,13 @@ function App() {
                   onClick={handleStartHardMode}
                 >
                   Start Game (Hard)
+                </button>
+                <button
+                  type="button"
+                  className="button-primary"
+                  onClick={handleStartMonasteryMode}
+                >
+                  Start Monastery Siege (Hard layout)
                 </button>
               </div>
             </div>

@@ -11,7 +11,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 
 ## 1b. Screen Flow
 
-- Start screen: Left side shows the cover image with a slow upward scroll of the Pangur/Brehon cat lore (begins a couple seconds after load); right side lists modes (`Tutorial`, `Easy`, `Hard`). Clicking a mode starts the run on the shared 5×5 board; modes differ only by the initial mice file they load (easy uses a lighter perimeter ring, hard keeps the full perimeter).
+- Start screen: Left side shows the cover image with a slow upward scroll of the Pangur/Brehon cat lore (begins a couple seconds after load); right side lists modes (`Tutorial`, `Easy`, `Hard`) plus a `Monastery Siege` board option. Tutorial/Easy/Hard use the base 5×5 board; Monastery Siege swaps in `boardLayout_monastery.json` while keeping the hard perimeter mouse file.
 - Tutorial screen: Dedicated view of the tutorial panel with a “Start Tutorial Game” button that begins a run using the tutorial/base `initialMice.json`.
   - Tutorial steps are script-locked: only the prompted action for the current step is accepted, and descriptive steps lock the board until the player advances.
 - Game screen: Existing board + panels. Restart keeps the currently selected mode. A bottom-right 🏅 badge shows the top recorded run for the current mode (score, wave, grain loss) with a tooltip noting “Best score for this mode” and the breakdown.
@@ -22,8 +22,8 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 
 ## 2. Starting State
 
-- Board: 5x5 grid representing the building interior. All perimeter cells render as `shadow` terrain except the three open entrances at `B5`, `C5`, `D5` (terrain tag `gate`). Every perimeter cell begins occupied by a `1/1` mouse by default, driven by `src/data/initialMice.json`. Designers can change which tiles spawn resident mice—and their starting tiers (e.g., `3/3` mice)—by editing that file. Entry metadata still drives the shared queue described in §8.
-- Modes share this board layout for the current release. Only the `initialMice` file changes between modes (`initialMice.json` for tutorial/classic, `initialMice.easy.json` for the lighter perimeter ring, `initialMice.hard.json` for the hard perimeter start).
+- Board: 5x5 grid representing the building interior. The base layout in `src/data/boardLayout.json` keeps entrances at `B5`, `C5`, `D5`; the Monastery layout in `src/data/boardLayout_monastery.json` moves the gates to `C1`, `E3`, and `C5`. All other perimeter cells render as `shadow` terrain.
+- Starting mice: `initialMice.json` seeds `1/1` mice on every perimeter cell by default; `initialMice.easy.json` thins that ring and `initialMice.hard.json` keeps it full. Designers can change which tiles spawn resident mice—and their starting tiers (e.g., `3/3` mice)—by editing those files. Tutorial/classic/easy/hard use the base board layout with their respective mice files; Monastery Siege pairs the monastery layout with the hard perimeter file.
 - Cat pieces: Three residents off-board at the bottom center, displayed side-by-side (same cat component as will be on board - see UI spec). Base stats use `catch/meow`: Pangur (aka Cruibne) `3/1`, Guardian `1/3`, Baircne `2/2`. Each cat begins with five hearts (health).
 - Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat piece from the off board onto any free cell (entrance or otherwise). During this phase players may rearrange cats without limit—pick a placed cat back up, drop it somewhere else, swap positions, etc.—until they choose to press `Confirm Formation`. Only after confirmation does the normal turn loop begin.
 - Grain Loss Tracker: Start at `0` loss. Each grain eaten by mice increments the counter; grain loss no longer ends the run and instead reduces the end-of-run grain bonus.
@@ -111,7 +111,7 @@ After the one-time setup placement, each round repeats these phases in order:
 - **Deterrence Calculation**
   - At phase start, entrants = `max(6 - Meowge, 0)`. Remove deterred mice from the queue in a single summary step (one frame) and log the scare total.
 - **Placement Algorithm**
-  - Process entrances left-to-right (`B5`, `C5`, `D5`). Skip an entrance entirely if a cat currently occupies it.
+  - Process entrances in cell-id order from the active board layout (base sorts to `B5`→`C5`→`D5`; monastery sorts to `C1`→`C5`→`E3`). Skip an entrance entirely if a cat currently occupies it.
   - For each entrance, flood-fill the “mouse line”: start on that cell, then traverse orthogonally through any connected chain of mice or empty cells, stopping only when a cat blocks the path or the board edge is reached. Every empty tile discovered along that traversal becomes a placement candidate — effectively letting the incoming mouse append to the end (or branches) of the existing mouse snake.
   - Example: if a mouse already sits on `D5`, the traversal steps to `D4`, `D3`, `D2`, `E5`, etc., exposing empty cells like `C4`, `D3`, `D2`, or `E1` as valid drop points even though the entrance itself is occupied.
   - Rank the candidate cells by (1) shadow tiles first, (2) fewest steps away from the entrance along the mouse line, then (3) board order (A→E, bottom→top) for determinism.
@@ -123,12 +123,12 @@ After the one-time setup placement, each round repeats these phases in order:
 ## 8. Special Cells & Modifiers
 
 - **Board + Initial Mice JSON**
-  - `src/data/boardLayout.json` enumerates every cell with a `terrain` tag (`shadow`, `gate` for entrance cells, `interior`). Gates are defined solely by their `terrain` type.
+  - `src/data/boardLayout.json` and `src/data/boardLayout_monastery.json` enumerate every cell with a `terrain` tag (`shadow`, `gate` for entrance cells, `interior`). Gates are defined solely by their `terrain` type; the active file is chosen by the start option.
   - `src/data/initialMice.json` lists resident mouse seeds with `cell` + optional `tier` (defaults to `1`). Each entry spawns a single mouse on that cell at game start; duplicate or invalid cells fail fast at load time. Use higher tiers (e.g., `3`) to pre-place upgraded `3/3` mice.
   - Validation ensures the layout covers all 25 cells with no duplicates. Gates must still sit on the perimeter. Wave size is fixed at six entrants; layout no longer configures queue sizing.
 
 - **Meow Zones**
-  - Only the open entrances `B5`, `C5`, and `D5` emit meow. A cat must stand on one of these cells for its meow value to count toward Meowge.
+  - Gate cells from the selected board layout emit meow (base layout uses `B5/C5/D5`, monastery uses `C1/E3/C5`). A cat must stand on one of these cells for its meow value to count toward Meowge.
   - Meow numbers render with a blue glow when active. Cats off-entrance show greyed/disabled meow stats to reinforce that they contribute zero deterrence.
 - **Shadow Bonus (Catch)**
   - All outer-ring tiles (row `1`, row `5`, column `A`, column `E`) are marked `shadow` except the three entrance cells above.

@@ -2,7 +2,7 @@ export type Column = 'A' | 'B' | 'C' | 'D' | 'E';
 export type Row = 1 | 2 | 3 | 4 | 5;
 export type CellId = `${Column}${Row}`;
 export type Screen = 'start' | 'tutorial' | 'game';
-export type ModeId = 'tutorial' | 'classic' | 'easy' | 'hard';
+export type ModeId = 'tutorial' | 'classic' | 'easy' | 'hard' | 'monastery';
 
 export type Phase = 'setup' | 'cat' | 'stepper';
 
@@ -54,6 +54,15 @@ export interface CellState {
   id: CellId;
   terrain: 'interior' | 'shadow' | 'gate';
   occupant?: OccupantRef;
+}
+
+export interface BoardLayoutCell {
+  id: CellId;
+  terrain: CellState['terrain'];
+}
+
+export interface BoardLayoutConfig {
+  cells: BoardLayoutCell[];
 }
 
 export type MouseMoveFrame = {

@@ -18,6 +18,7 @@ const MODE_TARGETS: Record<ModeId, ModeTargets> = {
   easy: { wave: 3, grain: 8 },
   tutorial: { wave: 6, grain: 32 },
   classic: { wave: 6, grain: 32 },
+  monastery: { wave: 6, grain: 32 },
 };
 
 export function getModeTargets(modeId: ModeId): ModeTargets {

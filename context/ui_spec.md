@@ -20,7 +20,7 @@ Use a fixed canvas (no responsive scaling):
 - Right parchment:
   - Right column: ~416px wide stack pinned to the right with internal scrolling between its top (≈182px) and bottom (≈40px) offsets so content stays visible inside the shell height.
 - Action/control UI lives inside the right column stack with tutorial + cat info instead of spanning a full-width bottom row. Phase label + restart are separate badges on the right edge (no top bar).
-- Opening state: while all cats remain in hand during setup, the board appears empty (pieces hidden) with a hero trio overlay on the board. Right column shows the tutorial panel plus a `Start Game` card with stacked buttons for Hard (full perimeter start) and Easy (lighter perimeter ring) alongside the Tutorial option.
+- Opening state: while all cats remain in hand during setup, the board appears empty (pieces hidden) with a hero trio overlay on the board. Right column shows the tutorial panel plus a `Start Game` card with stacked buttons for Hard (full perimeter start), Easy (lighter perimeter ring), and Monastery Siege (hard perimeter on the monastery board) alongside the Tutorial option.
 - Start screen left panel: cover art sits on the left with a semi-transparent lore block (Pangur/Brehon cat background) that scrolls upward from the bottom after a short pause when the app first loads.
 
 - **Incoming Mice Row**
@@ -40,7 +40,7 @@ Use a fixed canvas (no responsive scaling):
   - Cell Styling:
     - Interior cells: grey.
     - Shadow bonus cells (outer ring minus entrances): dark grey.
-    - Entrance cells (`B5`, `C5`, `D5`): yellow with subtle glowing outline to hint at meow interaction.
+    - Entrance cells (from the active layout: base uses `B5/C5/D5`, monastery uses `C1/E3/C5`): yellow with subtle glowing outline to hint at meow interaction.
   - Hovering any board square surfaces a small tooltip naming the terrain and summarizing its cat/mouse effects (shadow strike bonus for cats, feeding upgrades for mice, entrance meow activation, etc.). Tooltip hides while the cursor is over a cat piece and flips below the cursor on the top row to avoid clipping.
   - Setup begins with perimeter cells pre-populated by `1/1` mice (per layout config) while interior cells are empty and cats start in hand.
 

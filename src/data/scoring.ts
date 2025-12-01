@@ -23,6 +23,11 @@ const scoringByMode: Record<ModeId, ScoringWeights> = {
     waveCeiling: 12,
     waveWeight: 550,
   },
+  monastery: {
+    ...baseWeights,
+    waveCeiling: 12,
+    waveWeight: 550,
+  },
 };
 
 export function getScoringWeights(modeId: ModeId): ScoringWeights {

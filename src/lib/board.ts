@@ -1,33 +1,18 @@
-import boardLayout from '../data/boardLayout.json';
-import type { CellId, CellState, Column, Row } from '../types';
+import baseBoardLayout from '../data/boardLayout.json';
+import type { BoardLayoutConfig, CellId, CellState, Column, Row } from '../types';
 
 export const columns: Column[] = ['A', 'B', 'C', 'D', 'E'];
 export const rows: Row[] = [1, 2, 3, 4, 5];
 
-interface LayoutCell {
-  id: CellId;
-  terrain: CellState['terrain'];
-}
-
-interface LayoutFile {
-  cells: LayoutCell[];
-}
+type LayoutCell = BoardLayoutConfig['cells'][number];
 
 export interface EntryCellDefinition {
   id: CellId;
 }
 
-const layoutData = boardLayout as LayoutFile;
-const layoutMap = new Map<CellId, LayoutCell>();
-layoutData.cells.forEach((cell) => {
-  layoutMap.set(cell.id as CellId, { ...cell, id: cell.id as CellId });
-});
+let layoutMap = buildLayoutMap(baseBoardLayout as BoardLayoutConfig);
 
-validateLayout(layoutMap);
-
-export const gateCells: CellId[] = Array.from(layoutMap.values())
-  .filter((cell) => cell.terrain === 'gate')
-  .map((cell) => cell.id);
+export let gateCells: CellId[] = getGateCells(layoutMap);
 
 export const perimeterCells: CellId[] = columns.flatMap((column) =>
   rows
@@ -35,11 +20,18 @@ export const perimeterCells: CellId[] = columns.flatMap((column) =>
     .filter((cellId) => isPerimeter(cellId))
 );
 
-const entryCellDefinitions: EntryCellDefinition[] = gateCells.map((id) => ({ id }));
+let entryCellDefinitions: EntryCellDefinition[] = gateCells.map((id) => ({ id }));
 
-const entryDefinitionMap = new Map<CellId, EntryCellDefinition>(
+let entryDefinitionMap = new Map<CellId, EntryCellDefinition>(
   entryCellDefinitions.map((entry) => [entry.id, entry])
 );
+
+export function setBoardLayout(layout: BoardLayoutConfig): void {
+  layoutMap = buildLayoutMap(layout);
+  gateCells = getGateCells(layoutMap);
+  entryCellDefinitions = gateCells.map((id) => ({ id }));
+  entryDefinitionMap = new Map(entryCellDefinitions.map((entry) => [entry.id, entry]));
+}
 
 export function cellId(column: Column, row: Row): CellId {
   return `${column}${row}` as CellId;
@@ -191,6 +183,21 @@ export function isEntryCell(cellId: CellId): boolean {
 
 export function getWaveSize(defaultSize = 6): number {
   return defaultSize;
+}
+
+function buildLayoutMap(layout: BoardLayoutConfig): Map<CellId, LayoutCell> {
+  const map = new Map<CellId, LayoutCell>();
+  layout.cells.forEach((cell) => {
+    map.set(cell.id as CellId, { ...cell, id: cell.id as CellId });
+  });
+  validateLayout(map);
+  return map;
+}
+
+function getGateCells(map: Map<CellId, LayoutCell>): CellId[] {
+  return Array.from(map.values())
+    .filter((cell) => cell.terrain === 'gate')
+    .map((cell) => cell.id);
 }
 
 function validateLayout(map: Map<CellId, LayoutCell>): void {

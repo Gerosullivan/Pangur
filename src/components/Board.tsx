@@ -6,6 +6,8 @@ import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter,
 import { getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch } from '../lib/mechanics';
 import { useTutorialStore } from '../state/tutorialStore';
 import type { CatId, CellId, CellState } from '../types';
+import defaultBoardImage from '../../assets/board.jpeg';
+import monasteryBoardImage from '../../assets/board_mon.jpg';
 
 type TerrainTooltip = {
   title: string;
@@ -25,6 +27,7 @@ function Board() {
   const attackMouse = useGameStore((state) => state.attackMouse);
   const stepper = useGameStore((state) => state.stepper);
   const status = useGameStore((state) => state.status);
+  const modeId = useGameStore((state) => state.modeId);
 
   const catStats = useMemo(() => {
     const context = { cats, cells };
@@ -225,7 +228,10 @@ function Board() {
   return (
     <div
       className="board-wrapper"
-      style={tutorialLocked ? { pointerEvents: 'none' } : undefined}
+      style={{
+        backgroundImage: `url(${modeId === 'monastery' ? monasteryBoardImage : defaultBoardImage})`,
+        ...(tutorialLocked ? { pointerEvents: 'none' } : {}),
+      }}
     >
       <div className="board-grid game-board">{boardCells}</div>
     </div>

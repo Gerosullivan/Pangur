@@ -11,8 +11,8 @@ This prototype intentionally leaves implementation details to the next developer
 ## Key Implementation Notes
 
 1. **Board + Layout**
-   - Grid helpers (`src/lib/board.ts`) operate on a 5×5 interior (`A-E`, `1-5`). All perimeter cells are `shadow` terrain except entrances `B5/C5/D5` (terrain tag `gate`). Resident mice are seeded from `src/data/initialMice.json` (defaults to `1/1` on every perimeter cell, but tiers can be increased).
-   - Entry metadata in `boardLayout.json` seeds the “Next Wave” lane but no longer spawns per-edge staging bands; resident placements now live solely in `initialMice.json`.
+   - Grid helpers (`src/lib/board.ts`) operate on a 5×5 interior (`A-E`, `1-5`) and load the active layout from the selected mode. Base layout entrances are `B5/C5/D5`; the monastery layout (`src/data/boardLayout_monastery.json`) uses `C1/E3/C5`. All other perimeter cells are `shadow` terrain.
+   - Resident mice are seeded from the chosen `initialMice` file (base/easy/hard) independent of the layout; Monastery Siege uses the hard perimeter file on the monastery board. Entry metadata in the layout file drives gate placement for the shared queue.
 2. **Cats**
    - Movement validator treats every cat as a queen mover; Pangur tracks a per-turn `movesRemaining = 2` counter.
    - Shadow Strike is tracked on each cat when its first attack originates from a shadow tile. Baircne’s passive (“Bonded Strike”) checks adjacency to Pangur and grants +1 catch (never meow) whenever they’re neighboring.

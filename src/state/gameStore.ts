@@ -28,7 +28,7 @@ import {
   resetMouseAfterTurn,
   upgradeMouse,
 } from '../lib/mechanics';
-import { getNeighborCells, isShadowBonus, pathCellsBetween } from '../lib/board';
+import { getNeighborCells, isShadowBonus, pathCellsBetween, setBoardLayout } from '../lib/board';
 import { maybeActivateShadowBonus, updateShadowBonusOnMove } from '../lib/shadowBonus';
 import { buildMousePhaseFrames } from '../lib/mousePhase';
 import { buildIncomingPhaseFrames, replenishIncomingQueue } from '../lib/incomingWave';
@@ -133,6 +133,7 @@ function persistSettings(settings: SettingsState): void {
 
 function createRunState(modeId: ModeId, openingOverlay = false): GameState {
   const mode = getModeConfig(modeId);
+  setBoardLayout(mode.boardLayout);
   return createInitialGameState(mode.initialMice, { openingOverlay, modeId });
 }
 
