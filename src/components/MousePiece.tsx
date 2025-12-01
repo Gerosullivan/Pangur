@@ -50,6 +50,8 @@ function MousePiece({ mouse, highlighted, scared }: MousePieceProps) {
         <img
           src={imageSrc}
           alt="mouse"
+          width="61"
+          height="61"
           loading="eager"
           onError={() => {
             // Fallback to base sprite if a variant ever fails to load (Safari quirks).

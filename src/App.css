@@ -589,6 +589,10 @@
   border-radius: 50%;
 }
 
+.board-cell .piece-badge.mouse {
+  height: 77px;
+}
+
 .piece-badge.mouse img {
   border-radius: 50%;
 }
