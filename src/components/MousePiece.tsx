@@ -21,7 +21,12 @@ function MousePiece({ mouse, highlighted, scared }: MousePieceProps) {
     .join(' ');
 
   return (
-    <div className={className} aria-label={`Mouse ${mouse.attack}/${mouse.maxHearts}`}>
+    <div
+      className={className}
+      aria-label={`Mouse ${mouse.attack}/${mouse.maxHearts}`}
+      data-mouse-id={mouse.id}
+      data-mouse-tier={mouse.tier}
+    >
       {showStats && (
         <div className="piece-hearts" aria-hidden>
           {Array.from({ length: mouse.maxHearts }).map((_, idx) => (

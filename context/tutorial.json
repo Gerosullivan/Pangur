@@ -568,12 +568,12 @@
       "highlights": ["guardian", "mouse-10", "B4"],
       "text": "Guardian removes the last resident from this wave.",
       "instruction": "Attack the remaining mouse.",
-      "showNext": true,
+      "showNext": false,
       "completeOn": [
         {
           "action": "cat-attack",
           "actorId": "guardian",
-          "targetId": "mouse-10"
+          "to": "B4"
         }
       ]
     },
