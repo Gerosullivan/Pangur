@@ -1,6 +1,6 @@
 import { CAT_STARTING_HEARTS } from './cats';
 import { getScoringWeights } from '../data/scoring';
-import type { GameState, ScoreEntry } from '../types';
+import type { GameState, ModeId, ScoreEntry } from '../types';
 
 type ScorableState = Pick<GameState, 'status' | 'modeId' | 'wave' | 'grainLoss' | 'cats'>;
 
@@ -10,6 +10,24 @@ export type ScoreBreakdown = ScoreResult & {
   grainBonus: number;
   fullHealthBonus: number;
 };
+
+export function getMedalEmoji(entry: {
+  modeId: ModeId;
+  result: 'win' | 'loss';
+  grainLoss: number;
+  finishWave?: number;
+  wave: number;
+}): '🥇' | '🥈' | '🥉' {
+  const waveNumber = entry.finishWave ?? entry.wave ?? Number.POSITIVE_INFINITY;
+  const win = entry.result === 'win';
+  if (!win) return '🥉';
+  const withinGrainTarget = entry.grainLoss <= 32;
+  if (waveNumber <= 6) {
+    return withinGrainTarget ? '🥇' : '🥈';
+  }
+  if (withinGrainTarget) return '🥈';
+  return '🥉';
+}
 
 export function computeScore(state: ScorableState): ScoreResult | undefined {
   const breakdown = computeScoreBreakdown(state);

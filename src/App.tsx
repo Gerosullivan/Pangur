@@ -10,6 +10,7 @@ import TutorialHighlights from "./components/TutorialHighlights";
 import PanelActions from "./components/PanelActions";
 import TutorialPanel from "./components/TutorialPanel";
 import AudioControls from "./components/AudioControls";
+import { getMedalEmoji } from "./lib/scoring";
 import coverStart from "../assets/cover_start_screen.jpeg";
 import type { Phase } from "./types";
 
@@ -54,6 +55,15 @@ function App() {
   const bestWave = bestEntry ? bestEntry.finishWave ?? bestEntry.wave ?? "—" : "—";
   const bestGrainLoss = bestEntry ? bestEntry.grainLoss : "—";
   const bestScore = bestEntry ? bestEntry.score ?? "—" : "—";
+  const bestMedal = bestEntry
+    ? getMedalEmoji({
+        modeId: bestEntry.modeId,
+        result: bestEntry.result,
+        grainLoss: bestEntry.grainLoss,
+        finishWave: bestEntry.finishWave,
+        wave: bestEntry.wave,
+      })
+    : "—";
   const bestTooltip = bestEntry
     ? `Best score for this mode\nScore: ${bestScore}\nWave: ${bestWave}\nGrain Loss: ${bestGrainLoss}`
     : "No runs recorded for this mode yet.";
@@ -90,7 +100,7 @@ function App() {
           </div>
           <div className="grain-badge">Grain Loss {grainLoss} / 32</div>
           <div className="best-badge" title={bestTooltip}>
-            🏅:{bestScore}  🌊:{bestWave} 🌾:{bestGrainLoss}
+            {bestMedal} {bestScore}  🌊:{bestWave} 🌾:{bestGrainLoss}
           </div>
           <div className="session-actions">
             <button
@@ -115,22 +125,10 @@ function App() {
                 }
                 setScreen("start");
               }}
-            >
-              Quit
-            </button>
-          </div>
-          {tutorialActive && (
-            <button
-              type="button"
-              className="session-button exit"
-              onClick={() => {
-                tutorialExit();
-                setScreen("start");
-              }}
-            >
-              Exit Tutorial
-            </button>
-          )}
+              >
+                Quit
+              </button>
+            </div>
           <TutorialHighlights />
         </>
       )}

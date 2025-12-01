@@ -1,7 +1,7 @@
 import { useMemo, type DragEvent } from "react";
 import { useGameStore } from "../state/gameStore";
 import { catDefinitions } from "../lib/cats";
-import { computeScoreBreakdown } from "../lib/scoring";
+import { computeScoreBreakdown, getMedalEmoji } from "../lib/scoring";
 import CatPiece from "./CatPiece";
 import type { CatId } from "../types";
 
@@ -104,7 +104,16 @@ function ControlPanel() {
 
         {status.state === "won" && scoreSummary && (
           <div className="score-summary">
-            <div className="score-total">Score {scoreSummary.score}</div>
+            <div className="score-total">
+              {getMedalEmoji({
+                modeId,
+                result: "win",
+                grainLoss,
+                finishWave: scoreSummary.finishWave,
+                wave,
+              })}{" "}
+              Score {scoreSummary.score}
+            </div>
             <div className="score-breakdown">
               <span>
                 Finish wave {scoreSummary.finishWave} (+{scoreSummary.waveScore})
