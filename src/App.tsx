@@ -68,6 +68,22 @@ function App() {
     ? `Best score for this mode\nScore: ${bestScore}\nWave: ${bestWave}\nGrain Loss: ${bestGrainLoss}`
     : "No runs recorded for this mode yet.";
 
+  const grainTargets: Record<string, number> = {
+    easy: 8,
+    hard: 32,
+    tutorial: 32,
+    classic: 32,
+  };
+  const grainTarget = grainTargets[modeId] ?? 32;
+
+  const waveTargets: Record<string, number> = {
+    easy: 3,
+    hard: 6,
+    tutorial: 6,
+    classic: 6,
+  };
+  const waveTarget = waveTargets[modeId] ?? 6;
+
   const shellClass = useMemo(
     () => `app-shell phase-${phase} screen-${screen}`,
     [phase, screen]
@@ -96,9 +112,9 @@ function App() {
       {!isStartScreen && (
         <>
           <div className="wave-badge">
-            Wave {wave} - {phaseLabels[phase]}
+            Wave {wave}/{waveTarget} - {phaseLabels[phase]}
           </div>
-          <div className="grain-badge">Grain Loss {grainLoss} / 32</div>
+          <div className="grain-badge">Grain Loss {grainLoss} / {grainTarget}</div>
           <div className="best-badge" title={bestTooltip}>
             {bestMedal} {bestScore}  🌊:{bestWave} 🌾:{bestGrainLoss}
           </div>

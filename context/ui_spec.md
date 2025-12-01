@@ -57,7 +57,7 @@ Use a fixed canvas (no responsive scaling):
         - `Catch 0` grey badge if out of attacks this turn.
       - full meow and attack base points and modifiers. e.g. "Attack 4 (3 base +1 shadow bonus")"
       - Pangur-specific callout: show a `Moves 2/2` badge that decrements after each queen move so players track his remaining mobility at a glance.
-      - Baircne passive indicator: when the `2/2` cat sits next to Pangur, show a `Pangur’s Shield +1 Catch` badge on Baircne’s panel (not Pangur’s). His meow stat always stays 2 regardless of this passive.
+      - Baircne passive indicator: when the `2/2` cat sits next to Pangur, show a `Bonded Strike +1 Catch near Pangur` badge on Baircne’s panel (not Pangur’s). His meow stat always stays 2 regardless of this passive.
 
 - **Action / Control Stack**
 

@@ -20,7 +20,7 @@ export const catDefinitions: Record<CatId, CatDefinition> = {
   baircne: {
     id: 'baircne',
     name: 'Baircne',
-    role: 'Domestic Cat',
+    role: 'Battle Companion',
     baseCatch: 2,
     baseMeow: 2,
     portraitSrc: './cat_detail/Baircne_detail.png',

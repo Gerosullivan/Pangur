@@ -129,7 +129,7 @@ export function getCatEffectiveCatch(state: CatStatContext, catId: CatId): numbe
   const definition = catDefinitions[catId];
   let total = definition.baseCatch;
   if (!cat.position) return total;
-  if (catId === 'baircne' && isBaircneShielded(state)) {
+  if (catId === 'baircne' && isBondedStrikeActive(state)) {
     total += 1;
   }
   if (cat.shadowBonusActive) {
@@ -158,7 +158,7 @@ export function getCatDeterrenceMeow(state: CatStatContext, catId: CatId): numbe
   return catDefinitions[catId].baseMeow;
 }
 
-export function isBaircneShielded(state: CatStatContext): boolean {
+export function isBondedStrikeActive(state: CatStatContext): boolean {
   const baircne = state.cats.baircne;
   const pangur = state.cats.pangur;
   if (!baircne?.position || !pangur?.position) return false;

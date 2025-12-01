@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useGameStore } from '../state/gameStore';
 import { catDefinitions, CAT_STARTING_HEARTS } from '../lib/cats';
 import { isShadowBonus } from '../lib/board';
-import { getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch, isBaircneShielded } from '../lib/mechanics';
+import { getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch, isBondedStrikeActive } from '../lib/mechanics';
 
 function SidePanel() {
   const selectedCatId = useGameStore((state) => state.selectedCatId);
@@ -30,9 +30,9 @@ function SidePanel() {
       positionLabel = cat.position;
     }
 
-    const pangurShield = selectedCatId === 'baircne' && isBaircneShielded(context);
-    if (pangurShield) {
-      catchParts.push('+1 Pangur shield');
+    const bondedStrike = selectedCatId === 'baircne' && isBondedStrikeActive(context);
+    if (bondedStrike) {
+      catchParts.push('+1 Bonded Strike (near Pangur)');
     }
     if (spentCatch > 0) {
       catchParts.push(`-${spentCatch} spent`);
@@ -53,7 +53,7 @@ function SidePanel() {
       positionLabel,
       remainingCatch,
       hearts,
-      pangurShield,
+      bondedStrike,
     };
   }, [selectedCatId, cats, cells]);
 
@@ -77,11 +77,11 @@ function SidePanel() {
             src={detail.definition.portraitSrc}
             alt={`${detail.definition.name} portrait`}
           />
-        </div>
-        <div className="side-panel-right">
           <div className="piece-hearts" aria-label="Hearts">
             {detail.hearts}
           </div>
+        </div>
+        <div className="side-panel-right">
           <div>
             <strong>Catch:</strong> {detail.remainingCatch} ({detail.catchBreakdown})
           </div>
@@ -96,7 +96,7 @@ function SidePanel() {
           </div>
           <div className="badge-row">
             {detail.cat.turnEnded && <span className="badge">Turn Locked</span>}
-            {detail.definition.id === 'baircne' && detail.pangurShield && <span className="badge secondary">Pangur’s Shield +1 Catch</span>}
+            {detail.definition.id === 'baircne' && detail.bondedStrike && <span className="badge secondary">Bonded Strike +1 Catch near Pangur</span>}
           </div>
         </div>
       </div>

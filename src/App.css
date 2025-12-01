@@ -258,8 +258,8 @@
 
 .wave-badge {
   top: 25px;
-  left: 237px;
-  width: 250px;
+  left: 231px;
+  width: 260px;
   text-align: center;
 }
 
@@ -720,6 +720,23 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.side-panel-left {
+  position: relative;
+}
+
+.side-panel-left .piece-hearts {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+  text-align: center;
+  width: 100%;
+  pointer-events: none;
 }
 
 .side-panel-right {
