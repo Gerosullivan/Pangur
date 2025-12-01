@@ -38,7 +38,8 @@ import { useTutorialStore } from './tutorialStore';
 
 const SCOREBOARD_STORAGE_KEY = 'pangur-scoreboard';
 const SETTINGS_STORAGE_KEY = 'pangur-settings';
-const DEFAULT_SETTINGS: SettingsState = { muted: false, musicVolume: 0.5 };
+export const DEFAULT_MUSIC_VOLUME = 0.5;
+const DEFAULT_SETTINGS: SettingsState = { muted: false, musicVolume: DEFAULT_MUSIC_VOLUME };
 const DEFAULT_MODE: ModeId = 'tutorial';
 
 interface GameActions {

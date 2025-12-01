@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useGameStore } from "../state/gameStore";
+import { DEFAULT_MUSIC_VOLUME, useGameStore } from "../state/gameStore";
 import track01 from "../../assets/music/01_I-and-Pangur-Ban-my-cat.mp3";
 import track02 from "../../assets/music/02_Pangur-and-I-instrumental.mp3";
 import track03 from "../../assets/music/03_Brehon-Timedance.mp3";
@@ -28,7 +28,7 @@ export function useMusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(true);
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const initialVolume = useRef(settings.musicVolume);
+  const initialVolume = useRef(settings.musicVolume ?? DEFAULT_MUSIC_VOLUME);
   const initialMuted = useRef(settings.muted);
 
   useEffect(() => {
