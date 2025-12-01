@@ -1,10 +1,16 @@
-import { CAT_STARTING_HEARTS } from './cats';
-import { getScoringWeights } from '../data/scoring';
-import type { GameState, ModeId, ScoreEntry } from '../types';
+import { CAT_STARTING_HEARTS } from "./cats";
+import { getScoringWeights } from "../data/scoring";
+import type { GameState, ModeId, ScoreEntry } from "../types";
 
-type ScorableState = Pick<GameState, 'status' | 'modeId' | 'wave' | 'grainLoss' | 'cats'>;
+type ScorableState = Pick<
+  GameState,
+  "status" | "modeId" | "wave" | "grainLoss" | "cats"
+>;
 
-export type ScoreResult = Pick<ScoreEntry, 'score' | 'finishWave' | 'grainSaved' | 'catsFullHealth'>;
+export type ScoreResult = Pick<
+  ScoreEntry,
+  "score" | "finishWave" | "grainSaved" | "catsFullHealth"
+>;
 export type ScoreBreakdown = ScoreResult & {
   waveScore: number;
   grainBonus: number;
@@ -18,7 +24,7 @@ const MODE_TARGETS: Record<ModeId, ModeTargets> = {
   easy: { wave: 3, grain: 8 },
   tutorial: { wave: 6, grain: 32 },
   classic: { wave: 6, grain: 32 },
-  monastery: { wave: 6, grain: 32 },
+  monastery: { wave: 6, grain: 22 },
 };
 
 export function getModeTargets(modeId: ModeId): ModeTargets {
@@ -27,19 +33,19 @@ export function getModeTargets(modeId: ModeId): ModeTargets {
 
 export function getMedalEmoji(entry: {
   modeId: ModeId;
-  result: 'win' | 'loss';
+  result: "win" | "loss";
   grainLoss: number;
   finishWave?: number;
   wave: number;
-}): '🥇' | '🥈' | '🥉' {
+}): "🥇" | "🥈" | "🥉" {
   const target = getModeTargets(entry.modeId);
   const waveNumber = entry.finishWave ?? entry.wave ?? Number.POSITIVE_INFINITY;
-  const win = entry.result === 'win';
-  if (!win) return '🥉';
+  const win = entry.result === "win";
+  if (!win) return "🥉";
   const withinGrainTarget = entry.grainLoss <= target.grain;
-  if (waveNumber <= target.wave && withinGrainTarget) return '🥇';
-  if (waveNumber <= target.wave || withinGrainTarget) return '🥈';
-  return '🥉';
+  if (waveNumber <= target.wave && withinGrainTarget) return "🥇";
+  if (waveNumber <= target.wave || withinGrainTarget) return "🥈";
+  return "🥉";
 }
 
 export function computeScore(state: ScorableState): ScoreResult | undefined {
@@ -49,21 +55,31 @@ export function computeScore(state: ScorableState): ScoreResult | undefined {
   return { score, finishWave, grainSaved, catsFullHealth };
 }
 
-export function computeScoreBreakdown(state: ScorableState): ScoreBreakdown | undefined {
-  if (state.status.state !== 'won') return undefined;
+export function computeScoreBreakdown(
+  state: ScorableState
+): ScoreBreakdown | undefined {
+  if (state.status.state !== "won") return undefined;
   const targets = getModeTargets(state.modeId);
   const weights = getScoringWeights(state.modeId);
 
   const wavesUsed = Math.max(1, state.wave - 1);
-  const waveScore = Math.max(0, (targets.wave - wavesUsed + 1) * weights.waveWeight);
+  const waveScore = Math.max(
+    0,
+    (targets.wave - wavesUsed + 1) * weights.waveWeight
+  );
 
   const grainSaved = Math.max(0, targets.grain - state.grainLoss);
   const grainBonus = grainSaved * weights.grainWeight;
 
-  const catsFullHealth = Object.values(state.cats).filter((cat) => cat.hearts >= CAT_STARTING_HEARTS).length;
+  const catsFullHealth = Object.values(state.cats).filter(
+    (cat) => cat.hearts >= CAT_STARTING_HEARTS
+  ).length;
   const fullHealthBonus = catsFullHealth * weights.fullHealthWeight;
 
-  const score = Math.max(0, Math.round(waveScore + grainBonus + fullHealthBonus));
+  const score = Math.max(
+    0,
+    Math.round(waveScore + grainBonus + fullHealthBonus)
+  );
 
   return {
     score,
