@@ -18,14 +18,19 @@ export function getMedalEmoji(entry: {
   finishWave?: number;
   wave: number;
 }): '🥇' | '🥈' | '🥉' {
+  const thresholds: Record<ModeId, { wave: number; grain: number }> = {
+    hard: { wave: 6, grain: 32 },
+    easy: { wave: 3, grain: 8 },
+    tutorial: { wave: 6, grain: 32 },
+    classic: { wave: 6, grain: 32 },
+  };
+  const target = thresholds[entry.modeId] ?? { wave: 6, grain: 32 };
   const waveNumber = entry.finishWave ?? entry.wave ?? Number.POSITIVE_INFINITY;
   const win = entry.result === 'win';
   if (!win) return '🥉';
-  const withinGrainTarget = entry.grainLoss <= 32;
-  if (waveNumber <= 6) {
-    return withinGrainTarget ? '🥇' : '🥈';
-  }
-  if (withinGrainTarget) return '🥈';
+  const withinGrainTarget = entry.grainLoss <= target.grain;
+  if (waveNumber <= target.wave && withinGrainTarget) return '🥇';
+  if (waveNumber <= target.wave || withinGrainTarget) return '🥈';
   return '🥉';
 }
 
