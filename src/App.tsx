@@ -104,9 +104,11 @@ function App() {
             Wave {wave}/{waveTarget} - {phaseLabels[phase]}
           </div>
           <div className="grain-badge">Grain Loss {grainLoss} / {grainTarget}</div>
-          <div className="best-badge" title={bestTooltip}>
-            {bestMedal} {bestScore}  🌊:{bestWave} 🌾:{bestGrainLoss}
-          </div>
+          {bestEntry && (
+            <div className="best-badge" title={bestTooltip}>
+              {bestMedal} {bestScore}  🌊:{bestWave} 🌾:{bestGrainLoss}
+            </div>
+          )}
           <div className="session-actions">
             <button
               type="button"

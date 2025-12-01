@@ -33,7 +33,7 @@ import { maybeActivateShadowBonus, updateShadowBonusOnMove } from '../lib/shadow
 import { buildMousePhaseFrames } from '../lib/mousePhase';
 import { buildIncomingPhaseFrames, replenishIncomingQueue } from '../lib/incomingWave';
 import { logEvent } from '../lib/logger';
-import { computeScore } from '../lib/scoring';
+import { computeScore, getModeTargets } from '../lib/scoring';
 import { useTutorialStore } from './tutorialStore';
 
 const SCOREBOARD_STORAGE_KEY = 'pangur-scoreboard';
@@ -41,6 +41,7 @@ const SETTINGS_STORAGE_KEY = 'pangur-settings';
 export const DEFAULT_MUSIC_VOLUME = 0.5;
 const DEFAULT_SETTINGS: SettingsState = { muted: false, musicVolume: DEFAULT_MUSIC_VOLUME };
 const DEFAULT_MODE: ModeId = 'tutorial';
+const SCOREBOARD_SCHEMA_VERSION = 2;
 
 interface GameActions {
   resetGame: () => void;
@@ -64,7 +65,28 @@ function loadScoreboard(): ScoreEntry[] {
   if (typeof localStorage === 'undefined') return [];
   try {
     const raw = localStorage.getItem(SCOREBOARD_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as ScoreEntry[]) : [];
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as unknown;
+    // Legacy format was a bare array; clear it to avoid old scoring bugs.
+    if (Array.isArray(parsed)) {
+      localStorage.removeItem(SCOREBOARD_STORAGE_KEY);
+      return [];
+    }
+    if (
+      !parsed ||
+      typeof parsed !== 'object' ||
+      (parsed as { version?: unknown }).version !== SCOREBOARD_SCHEMA_VERSION ||
+      !Array.isArray((parsed as { entries?: unknown }).entries)
+    ) {
+      localStorage.removeItem(SCOREBOARD_STORAGE_KEY);
+      return [];
+    }
+    const entries = (parsed as { entries: ScoreEntry[] }).entries;
+    const sanitized = sanitizeScoreboard(entries);
+    if (sanitized.length !== entries.length) {
+      persistScoreboard(sanitized);
+    }
+    return sanitized;
   } catch (err) {
     console.warn('Failed to load scoreboard', err);
     return [];
@@ -74,10 +96,19 @@ function loadScoreboard(): ScoreEntry[] {
 function persistScoreboard(entries: ScoreEntry[]): void {
   if (typeof localStorage === 'undefined') return;
   try {
-    localStorage.setItem(SCOREBOARD_STORAGE_KEY, JSON.stringify(entries));
+    const payload = { version: SCOREBOARD_SCHEMA_VERSION, entries };
+    localStorage.setItem(SCOREBOARD_STORAGE_KEY, JSON.stringify(payload));
   } catch (err) {
     console.warn('Failed to persist scoreboard', err);
   }
+}
+
+function sanitizeScoreboard(entries: ScoreEntry[]): ScoreEntry[] {
+  return entries.filter((entry) => {
+    if (typeof entry.grainSaved !== 'number') return true;
+    const targets = getModeTargets(entry.modeId);
+    return entry.grainSaved <= targets.grain;
+  });
 }
 
 function loadSettings(): SettingsState {
@@ -626,7 +657,7 @@ useGameStore.subscribe((state, prev) => {
       reason: state.status.reason,
       timestamp: Date.now(),
     };
-    const nextScoreboard = [entry, ...state.scoreboard].slice(0, 10);
+    const nextScoreboard = sanitizeScoreboard([entry, ...state.scoreboard]).slice(0, 10);
     persistScoreboard(nextScoreboard);
     useGameStore.setState({ scoreboard: nextScoreboard, outcomeRecorded: true });
   }
