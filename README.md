@@ -10,6 +10,17 @@ The mice aren’t passive targets. They move, attack, and - if they end their tu
 
 Pangur Bán​ is designed as a focused tactics puzzle: small board, clear rules, and escalating pressure from the incoming waves. Each run is about reading the board state, chaining cat moves and attacks efficiently, and deciding when to commit a cat to a gate versus cleaning up the interior. It's playable in short sessions but has enough depth to reward careful planning and experimentation.
 
+## Screenshots
+
+![Start Screen](assets/screenshots/start_screen.png)
+*The opening screen with lore scroll*
+
+![Barn Gameplay](assets/screenshots/barn_play.png)
+*Defending the barn from incoming mice*
+
+![Monastery Gameplay](assets/screenshots/manastary_play.png)
+*Playing on the monastery board layout*
+
 ## License
 
 **Copyright © 2025 Gerald O'Sullivan / Robot Nerd Face Limited. All rights reserved.**
