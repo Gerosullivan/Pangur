@@ -1,6 +1,7 @@
 import { useMemo, type DragEvent } from "react";
 import { useGameStore } from "../state/gameStore";
 import { catDefinitions } from "../lib/cats";
+import { computeScoreBreakdown } from "../lib/scoring";
 import CatPiece from "./CatPiece";
 import type { CatId } from "../types";
 
@@ -11,6 +12,9 @@ function ControlPanel() {
   const stepper = useGameStore((state) => state.stepper);
   const selectedCatId = useGameStore((state) => state.selectedCatId);
   const status = useGameStore((state) => state.status);
+  const modeId = useGameStore((state) => state.modeId);
+  const wave = useGameStore((state) => state.wave);
+  const grainLoss = useGameStore((state) => state.grainLoss);
 
   const progressLabel = useMemo(() => {
     if (!stepper) return "";
@@ -27,6 +31,17 @@ function ControlPanel() {
     // The browser will automatically use the dragged element as the drag preview
     // which includes the full piece (border, stats, hearts, and images)
   };
+
+  const scoreSummary = useMemo(() => {
+    if (status.state !== "won") return undefined;
+    return computeScoreBreakdown({
+      status,
+      modeId,
+      wave,
+      grainLoss,
+      cats,
+    });
+  }, [status, modeId, wave, grainLoss, cats]);
 
   return (
     <div className="control-panel">
@@ -84,6 +99,23 @@ function ControlPanel() {
           >
             {status.state === "won" ? "Victory achieved!" : "Game over."}{" "}
             {status.reason ?? ""}
+          </div>
+        )}
+
+        {status.state === "won" && scoreSummary && (
+          <div className="score-summary">
+            <div className="score-total">Score {scoreSummary.score}</div>
+            <div className="score-breakdown">
+              <span>
+                Finish wave {scoreSummary.finishWave} (+{scoreSummary.waveScore})
+              </span>
+              <span>
+                Grain saved {scoreSummary.grainSaved} (+{scoreSummary.grainBonus})
+              </span>
+              <span>
+                Full-health cats {scoreSummary.catsFullHealth} (+{scoreSummary.fullHealthBonus})
+              </span>
+            </div>
           </div>
         )}
 

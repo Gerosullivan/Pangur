@@ -2,9 +2,23 @@ import { CAT_STARTING_HEARTS } from './cats';
 import { getScoringWeights } from '../data/scoring';
 import type { GameState, ScoreEntry } from '../types';
 
-type ScoreResult = Pick<ScoreEntry, 'score' | 'finishWave' | 'grainSaved' | 'catsFullHealth'>;
+type ScorableState = Pick<GameState, 'status' | 'modeId' | 'wave' | 'grainLoss' | 'cats'>;
 
-export function computeScore(state: GameState): ScoreResult | undefined {
+export type ScoreResult = Pick<ScoreEntry, 'score' | 'finishWave' | 'grainSaved' | 'catsFullHealth'>;
+export type ScoreBreakdown = ScoreResult & {
+  waveScore: number;
+  grainBonus: number;
+  fullHealthBonus: number;
+};
+
+export function computeScore(state: ScorableState): ScoreResult | undefined {
+  const breakdown = computeScoreBreakdown(state);
+  if (!breakdown) return undefined;
+  const { score, finishWave, grainSaved, catsFullHealth } = breakdown;
+  return { score, finishWave, grainSaved, catsFullHealth };
+}
+
+export function computeScoreBreakdown(state: ScorableState): ScoreBreakdown | undefined {
   if (state.status.state !== 'won') return undefined;
   const weights = getScoringWeights(state.modeId);
 
@@ -24,5 +38,8 @@ export function computeScore(state: GameState): ScoreResult | undefined {
     finishWave: wavesUsed,
     grainSaved,
     catsFullHealth,
+    waveScore,
+    grainBonus,
+    fullHealthBonus,
   };
 }

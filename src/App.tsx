@@ -27,6 +27,7 @@ function App() {
   const tutorialStart = useTutorialStore((state) => state.start);
   const tutorialExit = useTutorialStore((state) => state.exit);
   const tutorialActive = useTutorialStore((state) => state.active);
+  const status = useGameStore((state) => state.status);
 
   const phaseLabels: Record<Phase, string> = {
     setup: "Setup turn",
@@ -276,7 +277,7 @@ function App() {
           ) : (
             <>
               <div className="panel">
-                <SidePanel />
+                {status.state === "playing" && <SidePanel />}
                 <ControlPanel />
               </div>
               <PanelActions />

@@ -15,7 +15,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 - Tutorial screen: Dedicated view of the tutorial panel with a “Start Tutorial Game” button that begins a run using the tutorial/base `initialMice.json`.
   - Tutorial steps are script-locked: only the prompted action for the current step is accepted, and descriptive steps lock the board until the player advances.
 - Game screen: Existing board + panels. Restart keeps the currently selected mode.
-- Scoreboard: Runs append to a local list (max 10) with fields `{ modeId, result (win/loss), wave, grainLoss, catsLost, reason, timestamp }`, shown on the start screen. Copy/Clear controls manage it client-side only.
+- Scoreboard: Runs append to a local list (max 10) with fields `{ modeId, result (win/loss), score?, finishWave?, grainSaved?, grainLoss, catsLost, catsFullHealth?, reason, timestamp }`, shown on the start screen. Copy/Clear controls manage it client-side only. Wins also surface an immediate score + breakdown in the in-game panel after victory.
 - Settings: Simple mute toggle and music volume slider persisted locally; apply to background music when added.
 - Scoring (prototype): Only awarded on a win. Score factors in finishing wave (fewer waves is better via an inverse weight), grain saved (32 - grain loss), and a small bonus per cat at full health. Cat death is an instant loss with no score. Scoreboard entries store score + finish wave as vanity metrics.
 
@@ -97,7 +97,7 @@ After the one-time setup placement, each round repeats these phases in order:
   - Movement: a mouse may travel up to `attack` tiles per turn using only orthogonal steps. Choose a destination path that reaches the closest shadow tile; if multiple routes exist, select the path that minimizes distance to any perimeter shadow edge, even if it requires moving east/west instead of straight south from an entrance. Mice cannot move through cats but may pass through fellow mice if the intermediate cell vacates earlier in the same phase.
 - **Phase 2 – Feed / Upgrade**
   - Resolve only for mice not stunned and still alive.
-  - Every mouse increases the Grain Loss counter by its current tier (1 for base, 2 for `2/2`, etc.). Hitting `32` total loss ends the game immediately.
+  - Every mouse increases the Grain Loss counter by its current tier (1 for base, 2 for `2/2`, etc.). Grain loss no longer ends the game; it only reduces the grain bonus at end of run.
   - Any mouse on a shadow tile gains +1/+1 after eating, with no upper limit (e.g., `3/3`, `4/4`, etc.). Mice off shadow tiles merely sustain themselves at their current stats.
 - **Phase 3 – Cleanup**
   - Remove the stunned flag from every surviving mouse and heal all of them back to their max hearts (whatever their current tier grants).

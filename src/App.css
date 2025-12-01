@@ -734,7 +734,7 @@
 }
 
 .badge.secondary {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgb(105 66 25);
 }
 
 .pangur-sequence {
@@ -887,6 +887,7 @@
   border: 1px solid rgba(16, 185, 129, 0.35);
   color: #00945e;
   font-size: 20px;
+  margin-top: 30px;
 }
 
 .result-banner.loss {
@@ -898,6 +899,39 @@
   border: 1px solid rgba(217, 109, 85, 0.4);
   color: #d32500;
   font-size: 20px;
+}
+
+.score-summary {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgb(83 38 0 / 84%);
+  border-radius: 5px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: rgba(242, 242, 242, 0.9);
+  text-shadow: none;
+}
+
+.score-total {
+  font-size: 18px;
+  font-weight: 800;
+  color: #d8f5ff;
+  letter-spacing: 0.5px;
+}
+
+.score-breakdown {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: 1fr;
+  font-size: 14px;
+  color: rgba(242, 242, 242, 0.75);
+}
+
+.score-breakdown span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .setup-hint {
