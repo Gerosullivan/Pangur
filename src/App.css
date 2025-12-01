@@ -394,68 +394,6 @@
   justify-content: center;
 }
 
-.cell-tooltip {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translate(-50%, 6px);
-  width: 220px;
-  padding: 8px 10px;
-  background: rgba(9, 13, 19, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
-  color: #f2f2f2;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
-  font-size: 12px;
-  line-height: 1.35;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.12s ease, transform 0.12s ease;
-  z-index: 5;
-}
-
-.board-cell.tooltip-below .cell-tooltip {
-  top: calc(100% + 8px);
-  bottom: auto;
-  transform: translate(-50%, -6px);
-}
-
-.board-cell:hover .cell-tooltip,
-.board-cell:focus-within .cell-tooltip {
-  opacity: 1;
-  transform: translate(-50%, 0);
-}
-
-.board-cell.cat-hover .cell-tooltip {
-  opacity: 0 !important;
-}
-
-.cell-tooltip-title {
-  font-weight: 700;
-  color: #ffdca8;
-  font-size: 13px;
-  letter-spacing: 0.3px;
-  margin-bottom: 4px;
-  text-transform: uppercase;
-}
-
-.cell-tooltip-row {
-  display: grid;
-  grid-template-columns: 46px 1fr;
-  gap: 6px;
-  align-items: flex-start;
-  margin-top: 2px;
-}
-
-.cell-tooltip-label {
-  color: rgba(242, 242, 242, 0.75);
-  font-weight: 600;
-}
-
-.cell-tooltip-text {
-  color: rgba(242, 242, 242, 0.92);
-}
-
 .cell-id-debug {
   position: absolute;
   bottom: 6px;

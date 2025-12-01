@@ -20,10 +20,10 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 
 ## 2. Starting State
 
-- Board: 5x5 grid representing the building interior. All perimeter cells render as `shadow` terrain except the three open gates at `B5`, `C5`, `D5`. Every perimeter cell begins occupied by a `1/1` mouse by default, driven by `src/data/initialMice.json`. Designers can change which tiles spawn resident mice—and their starting tiers (e.g., `3/3` mice)—by editing that file. Entry metadata still drives the shared queue described in §8.
+- Board: 5x5 grid representing the building interior. All perimeter cells render as `shadow` terrain except the three open entrances at `B5`, `C5`, `D5` (terrain tag `gate`). Every perimeter cell begins occupied by a `1/1` mouse by default, driven by `src/data/initialMice.json`. Designers can change which tiles spawn resident mice—and their starting tiers (e.g., `3/3` mice)—by editing that file. Entry metadata still drives the shared queue described in §8.
 - Modes share this board layout for the current release. Only the `initialMice` file changes between modes (`initialMice.json` for tutorial/classic, `initialMice.hard.json` for the hard perimeter start).
 - Cat pieces: Three residents off-board at the bottom center, displayed side-by-side (same cat component as will be on board - see UI spec). Base stats use `catch/meow`: Pangur (aka Cruibne) `3/1`, Guardian `1/3`, Baircne `2/2`. Each cat begins with five hearts (health).
-- Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat piece from the off board onto any free cell (gate or otherwise). During this phase players may rearrange cats without limit—pick a placed cat back up, drop it somewhere else, swap positions, etc.—until they choose to press `Confirm Formation`. Only after confirmation does the normal turn loop begin.
+- Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat piece from the off board onto any free cell (entrance or otherwise). During this phase players may rearrange cats without limit—pick a placed cat back up, drop it somewhere else, swap positions, etc.—until they choose to press `Confirm Formation`. Only after confirmation does the normal turn loop begin.
 - Grain Loss Tracker: Start at `0` loss. Each grain eaten by mice increments the counter; reaching `32` loss triggers Game Over.
 - Incoming Wave: Six mouse pieces per wave, visualized as a `Next Wave` lane of six icons. As cats generate Meowge, the leftmost icons flip to 😱 to preview how many will be deterred; remaining icons stay 🐭.
 
@@ -34,7 +34,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 - `Hearts`: Cat / mouse health. When a cat or mouse reaches 0 hearts it is removed. Mice can continue upgrading beyond `2/2` in +1/+1 steps every time they successfully eat grain while standing on a shadow cell.
 - `Stunned (mouse only)`: Mouse skips its attack/eat actions for the rest of the current turn cycle.
 - Mouse stat formats: `1/1` (attack/health base) or `2/2` (attack/health after grain).
-- `Nearest` (adjacent): Any cell that shares an edge **or** a corner with the origin cell (orthogonal or diagonal). This definition applies to cat/mouse attack ranges, aura checks, and terrain effects that reference “closest” cells (e.g., gate meow zones).
+- `Nearest` (adjacent): Any cell that shares an edge **or** a corner with the origin cell (orthogonal or diagonal). This definition applies to cat/mouse attack ranges, aura checks, and terrain effects that reference “closest” cells (e.g., entrance meow zones).
 
 ## 4. Turn Loop Overview
 
@@ -51,9 +51,9 @@ After the one-time setup placement, each round repeats these phases in order:
    - Every meaningful state update (target selection, damage, eating, stat changes) pauses until the player advances with the stepper control.
    - If a mouse attacks a cat who is currently “asleep”, the cat visually wakes (portrait returns to the normal cat piece) for the rest of the round; this does not restore actions.
 3. **Incoming Wave Phase**
-   - Calculate Meowge from cats standing on gate cells only (§8). Apply it to the fixed six-slot `Next Wave` lane, flipping the leftmost icons to 😱 for deterred mice; the rest remain 🐭.
+   - Calculate Meowge from cats standing on entrance cells only (§8). Apply it to the fixed six-slot `Next Wave` lane, flipping the leftmost icons to 😱 for deterred mice; the rest remain 🐭.
    - If Meowge ≥ six, the wave disperses instantly; otherwise, advance to placement.
-   - Placement walks each gate’s preferred paths toward the nearest shadow perimeter (south, east, or west depending on the gate) and fills open cells, prioritizing shadow tiles so mice can upgrade next turn.
+   - Placement walks each entrance’s preferred paths toward the nearest shadow perimeter (south, east, or west depending on the entrance) and fills open cells, prioritizing shadow tiles so mice can upgrade next turn.
    - If there are more entrants than legal cells, delete the extras (they fail to infiltrate) and end the phase.
    - The stepper pauses on a Meowge summary frame, one combined scare frame, then individual placement frames before returning control to the cat phase.
 
@@ -91,9 +91,9 @@ After the one-time setup placement, each round repeats these phases in order:
   - Cat meow reduces incoming mouse damage: total hits = `max(mouse attack − cat effective meow, 0)`.
   - Targeting priority (re-evaluate after each hit):
     1. Cat with base stat `1/3`.
-    2. Any cat nearest to the gates (rows `5` then `4`), breaking ties left→right.
+    2. Any cat nearest to the entrances (rows `5` then `4`), breaking ties left→right.
     3. Remaining cats sorted by lowest current hearts, then left→right.
-  - Movement: a mouse may travel up to `attack` tiles per turn using only orthogonal steps. Choose a destination path that reaches the closest shadow tile; if multiple routes exist, select the path that minimizes distance to any perimeter shadow edge, even if it requires moving east/west instead of straight south from a gate. Mice cannot move through cats but may pass through fellow mice if the intermediate cell vacates earlier in the same phase.
+  - Movement: a mouse may travel up to `attack` tiles per turn using only orthogonal steps. Choose a destination path that reaches the closest shadow tile; if multiple routes exist, select the path that minimizes distance to any perimeter shadow edge, even if it requires moving east/west instead of straight south from an entrance. Mice cannot move through cats but may pass through fellow mice if the intermediate cell vacates earlier in the same phase.
 - **Phase 2 – Feed / Upgrade**
   - Resolve only for mice not stunned and still alive.
   - Every mouse increases the Grain Loss counter by its current tier (1 for base, 2 for `2/2`, etc.). Hitting `32` total loss ends the game immediately.
@@ -109,32 +109,32 @@ After the one-time setup placement, each round repeats these phases in order:
 - **Deterrence Calculation**
   - At phase start, entrants = `max(6 - Meowge, 0)`. Remove deterred mice from the queue in a single summary step (one frame) and log the scare total.
 - **Placement Algorithm**
-  - Process gates left-to-right (`B5`, `C5`, `D5`). Skip a gate entirely if a cat currently occupies it.
-  - For each gate, flood-fill the “mouse line”: start on the gate cell, then traverse orthogonally through any connected chain of mice or empty cells, stopping only when a cat blocks the path or the board edge is reached. Every empty tile discovered along that traversal becomes a placement candidate — effectively letting the incoming mouse append to the end (or branches) of the existing mouse snake.
-  - Example: if a mouse already sits on `D5`, the traversal steps to `D4`, `D3`, `D2`, `E5`, etc., exposing empty cells like `C4`, `D3`, `D2`, or `E1` as valid drop points even though the gate itself is occupied.
-  - Rank the candidate cells by (1) shadow tiles first, (2) fewest steps away from the gate along the mouse line, then (3) board order (A→E, bottom→top) for determinism.
-  - Place entering mice by consuming ranked cells from the current gate before moving to the next. Continue cycling until all entrants are placed or no legal cells remain. If there are more entrants than legal cells, delete the excess mice (they fail to infiltrate), giving the cats the advantage for that wave.
+  - Process entrances left-to-right (`B5`, `C5`, `D5`). Skip an entrance entirely if a cat currently occupies it.
+  - For each entrance, flood-fill the “mouse line”: start on that cell, then traverse orthogonally through any connected chain of mice or empty cells, stopping only when a cat blocks the path or the board edge is reached. Every empty tile discovered along that traversal becomes a placement candidate — effectively letting the incoming mouse append to the end (or branches) of the existing mouse snake.
+  - Example: if a mouse already sits on `D5`, the traversal steps to `D4`, `D3`, `D2`, `E5`, etc., exposing empty cells like `C4`, `D3`, `D2`, or `E1` as valid drop points even though the entrance itself is occupied.
+  - Rank the candidate cells by (1) shadow tiles first, (2) fewest steps away from the entrance along the mouse line, then (3) board order (A→E, bottom→top) for determinism.
+  - Place entering mice by consuming ranked cells from the current entrance before moving to the next. Continue cycling until all entrants are placed or no legal cells remain. If there are more entrants than legal cells, delete the excess mice (they fail to infiltrate), giving the cats the advantage for that wave.
 - **Stepper Presentation**
-  - Frame order: Meowge summary (including total scared), **one combined frame for all scared mice fleeing**, then one frame per placement describing gate + destination.
+  - Frame order: Meowge summary (including total scared), **one combined frame for all scared mice fleeing**, then one frame per placement describing entrance + destination.
   - Final frame increments the wave counter, keeps the “Next Wave” lane at six icons, and returns control to the cat phase.
 
 ## 8. Special Cells & Modifiers
 
 - **Board + Initial Mice JSON**
-  - `src/data/boardLayout.json` enumerates every cell with a `terrain` tag (`shadow`, `gate`, `interior`) and optional `entry` block. Entry metadata captures `direction` (`north`, `south`, `east`, `west`) and the number of mice queued outside that perimeter cell on turn 1.
+  - `src/data/boardLayout.json` enumerates every cell with a `terrain` tag (`shadow`, `gate` for entrance cells, `interior`) and optional `entry` block. Entry metadata captures `direction` (`north`, `south`, `east`, `west`) and the number of mice queued outside that perimeter cell on turn 1.
   - `src/data/initialMice.json` lists resident mouse seeds with `cell` + optional `tier` (defaults to `1`). Each entry spawns a single mouse on that cell at game start; duplicate or invalid cells fail fast at load time. Use higher tiers (e.g., `3`) to pre-place upgraded `3/3` mice.
   - The loaders validate that entry cells live on the perimeter and that their direction matches the side they touch; invalid layouts fail fast at build time.
   - UI + gameplay both hydrate directly from these files: updating `incomingMice` changes queue sizing/placement, and editing `initialMice.json` changes resident spawns with no code changes.
 
 - **Meow Zones**
-  - Only the open gates `B5`, `C5`, and `D5` emit meow. A cat must stand on one of these cells for its meow value to count toward Meowge.
-  - Meow numbers render with a blue glow when active. Cats off-gate show greyed/disabled meow stats to reinforce that they contribute zero deterrence.
+  - Only the open entrances `B5`, `C5`, and `D5` emit meow. A cat must stand on one of these cells for its meow value to count toward Meowge.
+  - Meow numbers render with a blue glow when active. Cats off-entrance show greyed/disabled meow stats to reinforce that they contribute zero deterrence.
 - **Shadow Bonus (Catch)**
-  - All outer-ring tiles (row `1`, row `5`, column `A`, column `E`) are marked `shadow` except the three gate cells above.
+  - All outer-ring tiles (row `1`, row `5`, column `A`, column `E`) are marked `shadow` except the three entrance cells above.
   - Cats obtain the +1 Shadow Strike bonus only if they initiate their first attack of the turn while standing on any shadow tile. The bonus is not tied to the start of turn anymore; it depends on the cell where the attack begins.
   - UI: cat catch number glows red while Shadow Strike is primed.
   - UI: cat catch number bold with red glow while the bonus is active; render these shadow bonus cells darker so the player can plan formations.
-  - Hovering any cell now shows a tooltip that labels the terrain and lists its cat/mouse effects (e.g., shadow = +1 Shadow Strike on the first attack sequence for cats; mice upgrade after eating there; gates enable meow deterrence and spawn entrants).
+  - Hovering any cell now shows a tooltip that labels the terrain and lists its cat/mouse effects (e.g., shadow = +1 Shadow Strike on the first attack sequence for cats; mice upgrade after eating there; entrances enable meow deterrence and spawn entrants).
 
 ## 9. Resource & State Tracking
 
@@ -153,6 +153,6 @@ After the one-time setup placement, each round repeats these phases in order:
 
 ## 11. Open Questions
 
-- Lock in the exact heuristic for mouse movement targeting (current plan favors nearest shadow tiles on their gate lines—tweak as we playtest).
+- Lock in the exact heuristic for mouse movement targeting (current plan favors nearest shadow tiles on their entrance lines—tweak as we playtest).
 - Decide how much animation/pacing polish to add for incoming placement given the single staging lane.
 - Confirm which optional controls (undo, restart) are still in scope for this iteration.

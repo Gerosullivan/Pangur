@@ -38,9 +38,9 @@ Use a fixed canvas (no responsive scaling):
   - A subtle lightened backdrop sits under the board footprint to lift the square off the background art.
   - Cell Styling:
     - Interior cells: grey.
-    - Shadow bonus cells (outer ring minus gates): dark grey.
-    - Open gate cells (`B5`, `C5`, `D5`): yellow with subtle glowing outline to hint at meow interaction.
-  - Hovering any board square surfaces a small tooltip naming the terrain and summarizing its cat/mouse effects (shadow strike bonus for cats, feeding upgrades for mice, gate meow activation, etc.). Tooltip hides while the cursor is over a cat piece and flips below the cursor on the top row to avoid clipping.
+    - Shadow bonus cells (outer ring minus entrances): dark grey.
+    - Entrance cells (`B5`, `C5`, `D5`): yellow with subtle glowing outline to hint at meow interaction.
+  - Hovering any board square surfaces a small tooltip naming the terrain and summarizing its cat/mouse effects (shadow strike bonus for cats, feeding upgrades for mice, entrance meow activation, etc.). Tooltip hides while the cursor is over a cat piece and flips below the cursor on the top row to avoid clipping.
   - Setup begins with perimeter cells pre-populated by `1/1` mice (per layout config) while interior cells are empty and cats start in hand.
 
   - **Right Side Panel (active when cat selected)**

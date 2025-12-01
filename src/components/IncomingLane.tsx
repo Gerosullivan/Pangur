@@ -28,9 +28,12 @@ function IncomingLane() {
     return { mouse, isDeterred };
   });
 
+  const title =
+    'Next Wave: six slots preview incoming mice. Cats on entrances add meow; deterred mice (😱) leave before placement, remaining (🐭) try to enter.';
+
   return (
     <div className="incoming-lane">
-      <div className="incoming-slot-grid" aria-label="Incoming mice slots">
+      <div className="incoming-slot-grid" aria-label="Incoming mice slots" title={title}>
         {slots.map((slot, idx) => (
           <div key={idx} className="incoming-slot" aria-label={`Incoming slot ${idx + 1}`}>
             {slot.mouse && (

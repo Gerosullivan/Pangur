@@ -18,7 +18,7 @@ Pangur Bán - Tutorial
    - **Instruct**: "Select Next to continue"
    - **ShowNext**: true
 4. Entrance squares:
-   - **Highlight**: just gate/ entrance squares"
+   - **Highlight**: entrance squares
    - **Text**: "Incoming mice"
    - **Instruct**: "Select Next to continue"
    - **ShowNext**: true
@@ -103,7 +103,7 @@ Pangur Bán - Tutorial
 
     - **Highlight**:
       - .top-bar-metric
-    - **Text**: "Cats go first. Mice go second. then a new wave on mice enter into the gate cells."
+    - **Text**: "Cats go first. Mice go second. then a new wave on mice enter into the entrance cells."
 
     - **Instruct**: "Select Next to continue"
     - **ShowNext**: true

@@ -85,7 +85,7 @@ Create a square illustration for a physical board game representing a barn inter
 
 **Purpose:** Strategic upgrade zones for mice; defensive bonus zones for cats
 
-### 3. Gate Cells (3 cells)
+### 3. Entrance Cells (3 cells)
 
 **Locations:** B5, C5, D5
 
@@ -99,13 +99,13 @@ Create a square illustration for a physical board game representing a barn inter
 - Visual indication of "entry point" (threshold stones, worn floorboards)
 - Slightly elevated or distinct flooring material (stone threshold vs wood interior)
 
-**Purpose:** Entry gates for incoming mice; special meow deterrence zones
+**Purpose:** Entrances for incoming mice; special meow deterrence zones
 
 ## Outside Board Area
 
 ### Incoming Mice Staging Area
 
-**Location:** Above Row 5 (outside the main 5×5 grid, centered above the three gate cells)
+**Location:** Above Row 5 (outside the main 5×5 grid, centered above the three entrance cells)
 
 **Visual Characteristics:**
 
@@ -130,7 +130,7 @@ Create a square illustration for a physical board game representing a barn inter
 ### Primary Colors
 
 - **Teal/Cyan accents:** For highlights, possibly water bucket or tool details
-- **Orange/Amber:** Gate glow, warm light, wheat highlights
+- **Orange/Amber:** Entrance glow, warm light, wheat highlights
 - **Rich Brown:** Wood tones, barn structure
 - **Coral/Salmon:** Warm accent details
 - **Off-White:** Light areas, grain, dust motes
@@ -140,7 +140,7 @@ Create a square illustration for a physical board game representing a barn inter
 
 - **Interior cells:** Warm browns, lighter tones
 - **Shadow cells:** Deep charcoal shadows with darker browns
-- **Gate cells:** Orange/amber glow with off-white highlights (bright, inviting)
+- **Entrance cells:** Orange/amber glow with off-white highlights (bright, inviting)
 - **Wheat bundles:** Golden amber with brown shadows
 
 ## Technical Requirements
@@ -163,7 +163,7 @@ Create a square illustration for a physical board game representing a barn inter
 
 ### Visual Hierarchy
 
-1. Gate cells (B5, C5, D5) - brightest, most eye-catching
+1. Entrance cells (B5, C5, D5) - brightest, most eye-catching
 2. Interior cells - neutral, clear play space
 3. Shadow cells - darker, atmospheric, with wheat details
 4. Incoming mice area - distinct but connected
@@ -175,15 +175,15 @@ Create a square illustration for a physical board game representing a barn inter
 - Wooden support beams casting diagonal shadows across cells
 - Barn rafters visible in shadow areas
 - Scattered straw wisps throughout
-- Grain dust motes in light beams (especially near gates)
+- Grain dust motes in light beams (especially near entrances)
 - Weathered wood texture - knots, cracks, age marks
 - Small tool details in shadows (rake, bucket) - non-intrusive
 - Possible cat paw prints in dust on some tiles (subtle easter egg)
 
 ### Lighting Direction
 
-- Primary light source from top (Row 5 gates)
-- Creates natural shadow gradient: brightest at gates, darker toward Row 1
+- Primary light source from top (Row 5 entrances)
+- Creates natural shadow gradient: brightest at entrances, darker toward Row 1
 - Shadow cells at perimeter darkest
 - Some ambient light in interior (from barn openings)
 
@@ -200,8 +200,8 @@ Create a square illustration for a physical board game representing a barn inter
 
 ### What to EMPHASIZE
 
-- Clear visual distinction between cell types (interior/shadow/gate)
+- Clear visual distinction between cell types (interior/shadow/entrance)
 - Barn atmosphere and rustic charm
 - Functional playability - pieces must be clearly visible
 - Celtic/medieval barn aesthetic
-- Strategic visual language (shadows = danger/power, gates = entry, wheat = resource)
+- Strategic visual language (shadows = danger/power, entrances = entry, wheat = resource)

@@ -467,7 +467,7 @@
       "title": "Pick Off Entrance Mice",
       "highlights": ["baircne", "mouse-7", "D5"],
       "text": "Use Baircne to remove the entrance threat.",
-      "instruction": "Attack the gate mouse.",
+      "instruction": "Attack the entrance mouse.",
       "showNext": false,
       "completeOn": [
         {
@@ -616,7 +616,7 @@
       "id": "turn3-pangur-center",
       "title": "Center Pangur",
       "highlights": ["pangur", "C4"],
-      "text": "Center Pangur so he can pivot to any gate next wave.",
+      "text": "Center Pangur so he can pivot to any entrance next wave.",
       "instruction": "Move Pangur to the highlighted cell.",
       "showNext": false,
       "completeOn": [
@@ -646,9 +646,9 @@
     },
     {
       "id": "turn3-baircne-clears-d5",
-      "title": "Gate Relief",
+      "title": "Entrance Relief",
       "highlights": ["baircne", "mouse-11", "D5"],
-      "text": "Clear the second gate mouse to free the entrance.",
+      "text": "Clear the second entrance mouse to free the entrance.",
       "instruction": "Attack the mouse on D5.",
       "showNext": false,
       "completeOn": [
@@ -662,9 +662,9 @@
     },
     {
       "id": "turn3-baircne-move-d5",
-      "title": "Hold the Gate",
+      "title": "Hold the Entrance",
       "highlights": ["baircne", "D5"],
-      "text": "Park Baircne on the gate to stack meow.",
+      "text": "Park Baircne on the entrance to stack meow.",
       "instruction": "Move Baircne to the highlighted cell.",
       "showNext": false,
       "completeOn": [
@@ -694,9 +694,9 @@
     },
     {
       "id": "turn3-pangur-clears-c5",
-      "title": "Secure the Gate",
+      "title": "Secure the Entrance",
       "highlights": ["pangur", "mouse-8", "C5"],
-      "text": "Secure the center gate by removing the queued mouse.",
+      "text": "Secure the center entrance by removing the queued mouse.",
       "instruction": "Attack the mouse on C5 with Pangur.",
       "showNext": false,
       "completeOn": [
@@ -710,9 +710,9 @@
     },
     {
       "id": "turn3-pangur-move-c5",
-      "title": "Park on Center Gate",
+      "title": "Park on Center Entrance",
       "highlights": ["pangur", "C5"],
-      "text": "Park Pangur on the center gate to add meow for the next wave.",
+      "text": "Park Pangur on the center entrance to add meow for the next wave.",
       "instruction": "Move Pangur to the highlighted cell.",
       "showNext": false,
       "completeOn": [
