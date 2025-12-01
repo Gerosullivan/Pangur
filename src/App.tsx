@@ -13,7 +13,7 @@ import AudioControls from "./components/AudioControls";
 import { getMedalEmoji, getModeTargets } from "./lib/scoring";
 import StartLoreScroll from "./components/StartLoreScroll";
 import coverStart from "../assets/cover_start_screen.jpeg";
-import type { Phase } from "./types";
+import type { ModeId, Phase, ScoreEntry } from "./types";
 
 function App() {
   const screen = useGameStore((state) => state.screen);
@@ -38,20 +38,44 @@ function App() {
     stepper: "Mouse turn",
   };
 
-  const bestEntry = useMemo(() => {
-    const entries = scoreboard.filter((entry) => entry.modeId === modeId);
+  const pickBestEntry = (entries: ScoreEntry[]): ScoreEntry | undefined => {
     if (!entries.length) return undefined;
     return entries.reduce((best, entry) => {
       const bestScore = best.score ?? 0;
       const entryScore = entry.score ?? 0;
-      if (entryScore !== bestScore)
-        return entryScore > bestScore ? entry : best;
+      if (entryScore !== bestScore) return entryScore > bestScore ? entry : best;
       const bestWave = best.finishWave ?? best.wave ?? 0;
       const entryWave = entry.finishWave ?? entry.wave ?? 0;
       if (entryWave !== bestWave) return entryWave > bestWave ? entry : best;
       return entry.grainLoss < best.grainLoss ? entry : best;
     }, entries[0]);
+  };
+
+  const bestEntry = useMemo(() => {
+    const entries = scoreboard.filter((entry) => entry.modeId === modeId);
+    return pickBestEntry(entries);
   }, [modeId, scoreboard]);
+
+  const bestMedalsByMode = useMemo(() => {
+    const result: Partial<Record<ModeId, '🥇' | '🥈' | '🥉'>> = {};
+    const entriesByMode = new Map<ModeId, ScoreEntry[]>();
+    scoreboard.forEach((entry) => {
+      entriesByMode.set(entry.modeId, [...(entriesByMode.get(entry.modeId) ?? []), entry]);
+    });
+    (['tutorial', 'easy', 'hard', 'classic', 'monastery'] as ModeId[]).forEach((id) => {
+      const best = pickBestEntry(entriesByMode.get(id) ?? []);
+      if (best) {
+        result[id] = getMedalEmoji({
+          modeId: best.modeId,
+          result: best.result,
+          grainLoss: best.grainLoss,
+          finishWave: best.finishWave,
+          wave: best.wave,
+        });
+      }
+    });
+    return result;
+  }, [scoreboard]);
 
   const bestWave = bestEntry ? bestEntry.finishWave ?? bestEntry.wave ?? "—" : "—";
   const bestGrainLoss = bestEntry ? bestEntry.grainLoss : "—";
@@ -179,6 +203,9 @@ function App() {
                   className="button-secondary"
                   onClick={handleStartTutorialMode}
                 >
+                  {bestMedalsByMode.tutorial && (
+                    <span className="start-medal">{bestMedalsByMode.tutorial}</span>
+                  )}
                   Start Tutorial
                 </button>
                 <button
@@ -186,21 +213,30 @@ function App() {
                   className="button-primary"
                   onClick={handleStartEasyMode}
                 >
-                  Start Game (Easy)
+                  {bestMedalsByMode.easy && (
+                    <span className="start-medal">{bestMedalsByMode.easy}</span>
+                  )}
+                  Play Barn (easy)
                 </button>
                 <button
                   type="button"
                   className="button-primary"
                   onClick={handleStartHardMode}
                 >
-                  Start Game (Hard)
+                  {bestMedalsByMode.hard && (
+                    <span className="start-medal">{bestMedalsByMode.hard}</span>
+                  )}
+                  Play Barn (hard)
                 </button>
                 <button
                   type="button"
                   className="button-primary"
                   onClick={handleStartMonasteryMode}
                 >
-                  Start Monastery Siege (Hard layout)
+                  {bestMedalsByMode.monastery && (
+                    <span className="start-medal">{bestMedalsByMode.monastery}</span>
+                  )}
+                  Play Monastery (hard)
                 </button>
               </div>
             </div>
