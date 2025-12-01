@@ -832,11 +832,13 @@
 }
 
 .button-secondary {
-  background: rgba(3, 150, 166, 0.3);
+  background: #0082ce;
+  border: 2px solid #00a3ff;
   color: #f2f2f2;
   padding: 12px 28px;
   border-radius: 999px;
   font-weight: 500;
+  font-size: 20px;
 }
 
 .button-disabled {
@@ -1113,6 +1115,8 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  align-items: center;
+  text-align: center;
 }
 
 .start-header h1 {
@@ -1127,7 +1131,7 @@
 .start-actions {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
 }
 

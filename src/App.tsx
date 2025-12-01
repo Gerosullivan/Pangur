@@ -22,7 +22,6 @@ function App() {
   const setScreen = useGameStore((state) => state.setScreen);
   const modeId = useGameStore((state) => state.modeId);
   const scoreboard = useGameStore((state) => state.scoreboard);
-  const clearScoreboard = useGameStore((state) => state.clearScoreboard);
   const settings = useGameStore((state) => state.settings);
   const updateSettings = useGameStore((state) => state.updateSettings);
   const tutorialStart = useTutorialStore((state) => state.start);
@@ -51,10 +50,12 @@ function App() {
     }, entries[0]);
   }, [modeId, scoreboard]);
 
-  const bestWave = bestEntry
-    ? bestEntry.finishWave ?? bestEntry.wave ?? "—"
-    : "—";
+  const bestWave = bestEntry ? bestEntry.finishWave ?? bestEntry.wave ?? "—" : "—";
   const bestGrainLoss = bestEntry ? bestEntry.grainLoss : "—";
+  const bestScore = bestEntry ? bestEntry.score ?? "—" : "—";
+  const bestTooltip = bestEntry
+    ? `Best score for this mode\nScore: ${bestScore}\nWave: ${bestWave}\nGrain Loss: ${bestGrainLoss}`
+    : "No runs recorded for this mode yet.";
 
   const shellClass = useMemo(
     () => `app-shell phase-${phase} screen-${screen}`,
@@ -78,33 +79,6 @@ function App() {
     startMode("hard");
   };
 
-  const handleCopyScores = async () => {
-    if (!scoreboard.length) return;
-    const text = scoreboard
-      .map(
-        (entry) =>
-          `${new Date(entry.timestamp).toLocaleString()} · ${
-            entry.modeId
-          } · ${entry.result.toUpperCase()} · score ${
-            entry.score ?? "-"
-          } · finish wave ${entry.finishWave ?? entry.wave} · grain ${
-            entry.grainLoss
-          }${
-            entry.grainSaved !== undefined ? ` (saved ${entry.grainSaved})` : ""
-          } · cats lost ${entry.catsLost}${
-            entry.catsFullHealth !== undefined
-              ? ` (full health ${entry.catsFullHealth})`
-              : ""
-          }${entry.reason ? ` (${entry.reason})` : ""}`
-      )
-      .join("\n");
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch (err) {
-      console.warn("Copy failed", err);
-    }
-  };
-
   return (
     <div className={shellClass}>
       {!isStartScreen && (
@@ -113,8 +87,8 @@ function App() {
             Wave {wave} - {phaseLabels[phase]}
           </div>
           <div className="grain-badge">Grain Loss {grainLoss} / 32</div>
-          <div className="best-badge">
-            🏅 Wave: {bestWave} 🌾 loss: {bestGrainLoss}
+          <div className="best-badge" title={bestTooltip}>
+            🏅:{bestScore}  🌊:{bestWave} 🌾:{bestGrainLoss}
           </div>
           <div className="session-actions">
             <button
@@ -238,75 +212,6 @@ function App() {
                     />
                   </label>
                 </div>
-              </div>
-              <div className="scoreboard-card">
-                <div className="scoreboard-header">
-                  <h3>Scoreboard</h3>
-                  <div className="scoreboard-actions">
-                    <button
-                      type="button"
-                      className="button-quiet"
-                      onClick={handleCopyScores}
-                      disabled={scoreboard.length === 0}
-                    >
-                      Copy
-                    </button>
-                    <button
-                      type="button"
-                      className="button-quiet"
-                      onClick={clearScoreboard}
-                      disabled={scoreboard.length === 0}
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </div>
-                {scoreboard.length === 0 ? (
-                  <p className="scoreboard-empty">
-                    Finish a game to see results here.
-                  </p>
-                ) : (
-                  <ul className="scoreboard-list">
-                    {scoreboard.map((entry) => (
-                      <li
-                        key={`${entry.timestamp}-${entry.modeId}-${entry.wave}-${entry.result}`}
-                        className="scoreboard-row"
-                      >
-                        <div className="scoreboard-top">
-                          <span
-                            className={`score-pill ${
-                              entry.result === "win" ? "win" : "loss"
-                            }`}
-                          >
-                            {entry.result}
-                          </span>
-                          <span className="score-mode">{entry.modeId}</span>
-                          <span className="score-score">
-                            Score{" "}
-                            {entry.score !== undefined ? entry.score : "—"}
-                          </span>
-                          <span className="score-wave">
-                            Finish Wave {entry.finishWave ?? entry.wave}
-                          </span>
-                        </div>
-                        <div className="scoreboard-meta">
-                          {entry.grainSaved !== undefined && (
-                            <span>Grain saved {entry.grainSaved}</span>
-                          )}
-                          <span>Grain {entry.grainLoss}</span>
-                          <span>Cats lost {entry.catsLost}</span>
-                          {entry.catsFullHealth !== undefined && (
-                            <span>Full health {entry.catsFullHealth}</span>
-                          )}
-                          {entry.reason && <span>{entry.reason}</span>}
-                          <span>
-                            {new Date(entry.timestamp).toLocaleString()}
-                          </span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
             </div>
           ) : (
