@@ -432,7 +432,7 @@
       "order": 31,
       "title": "Incoming Placement",
       "highlights": ["gate-line"],
-      "text": "Entering mice append to existing mouse lines if paths are open. Entrance cats block entry on their cells.",
+      "text": "Mice enter through open entrance cells. A cat standing on an entrance blocks that specific entrance, forcing mice to use other paths. New mice will appear one at a time on available entrances.",
       "instruction": "Advance to place incoming mice.",
       "showNext": false,
       "completeOn": [
