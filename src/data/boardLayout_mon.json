@@ -16,7 +16,7 @@
     { "id": "B3", "terrain": "interior" },
     { "id": "C3", "terrain": "interior" },
     { "id": "D3", "terrain": "interior" },
-    { "id": "E3", "terrain": "shadow" },
+    { "id": "B5", "terrain": "shadow" },
 
     { "id": "A4", "terrain": "shadow" },
     { "id": "B4", "terrain": "interior" },
@@ -25,9 +25,21 @@
     { "id": "E4", "terrain": "shadow" },
 
     { "id": "A5", "terrain": "shadow" },
-    { "id": "B5", "terrain": "gate" },
-    { "id": "C5", "terrain": "gate" },
-    { "id": "D5", "terrain": "gate" },
+    {
+      "id": "E3",
+      "terrain": "shadow",
+      "entry": { "direction": "north", "incomingMice": 6 }
+    },
+    {
+      "id": "C5",
+      "terrain": "gate",
+      "entry": { "direction": "north", "incomingMice": 6 }
+    },
+    {
+      "id": "C1",
+      "terrain": "shadow",
+      "entry": { "direction": "north", "incomingMice": 6 }
+    },
     { "id": "E5", "terrain": "shadow" }
   ]
 }

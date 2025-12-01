@@ -1,7 +1,6 @@
 export type Column = 'A' | 'B' | 'C' | 'D' | 'E';
 export type Row = 1 | 2 | 3 | 4 | 5;
 export type CellId = `${Column}${Row}`;
-export type EntryDirection = 'north' | 'south' | 'east' | 'west';
 export type Screen = 'start' | 'tutorial' | 'game';
 export type ModeId = 'tutorial' | 'classic' | 'easy' | 'hard';
 

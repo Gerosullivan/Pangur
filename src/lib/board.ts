@@ -1,25 +1,19 @@
 import boardLayout from '../data/boardLayout.json';
-import type { CellId, CellState, Column, EntryDirection, Row } from '../types';
+import type { CellId, CellState, Column, Row } from '../types';
 
 export const columns: Column[] = ['A', 'B', 'C', 'D', 'E'];
 export const rows: Row[] = [1, 2, 3, 4, 5];
 
-interface EntryConfig {
-  direction: EntryDirection;
-  incomingMice: number;
-}
-
 interface LayoutCell {
   id: CellId;
   terrain: CellState['terrain'];
-  entry?: EntryConfig;
 }
 
 interface LayoutFile {
   cells: LayoutCell[];
 }
 
-export interface EntryCellDefinition extends EntryConfig {
+export interface EntryCellDefinition {
   id: CellId;
 }
 
@@ -41,13 +35,7 @@ export const perimeterCells: CellId[] = columns.flatMap((column) =>
     .filter((cellId) => isPerimeter(cellId))
 );
 
-const entryCellDefinitions: EntryCellDefinition[] = Array.from(layoutMap.values())
-  .filter((cell): cell is LayoutCell & { entry: EntryConfig } => Boolean(cell.entry))
-  .map((cell) => ({
-    id: cell.id,
-    direction: cell.entry!.direction,
-    incomingMice: cell.entry!.incomingMice,
-  }));
+const entryCellDefinitions: EntryCellDefinition[] = gateCells.map((id) => ({ id }));
 
 const entryDefinitionMap = new Map<CellId, EntryCellDefinition>(
   entryCellDefinitions.map((entry) => [entry.id, entry])
@@ -202,9 +190,7 @@ export function isEntryCell(cellId: CellId): boolean {
 }
 
 export function getWaveSize(defaultSize = 6): number {
-  const configured = getEntryCells().reduce((total, entry) => total + entry.incomingMice, 0);
-  if (configured <= 0) return defaultSize;
-  return Math.min(configured, defaultSize);
+  return defaultSize;
 }
 
 function validateLayout(map: Map<CellId, LayoutCell>): void {
@@ -220,23 +206,8 @@ function validateLayout(map: Map<CellId, LayoutCell>): void {
       throw new Error(`Board layout has duplicate cell ${cell.id}`);
     }
     seen.add(cell.id);
-    if (cell.entry) {
-      if (!isPerimeter(cell.id)) {
-        throw new Error(`Entry cell ${cell.id} is not on the perimeter`);
-      }
-      const { direction } = cell.entry;
-      const { column, row } = parseCell(cell.id);
-      const matchesSide =
-        (direction === 'north' && row === rows[rows.length - 1]) ||
-        (direction === 'south' && row === rows[0]) ||
-        (direction === 'west' && column === columns[0]) ||
-        (direction === 'east' && column === columns[columns.length - 1]);
-      if (!matchesSide) {
-        throw new Error(`Entry cell ${cell.id} has mismatched direction ${direction}`);
-      }
-      if (cell.entry.incomingMice < 0) {
-        throw new Error(`Entry cell ${cell.id} cannot have negative incoming mice`);
-      }
+    if (cell.terrain === 'gate' && !isPerimeter(cell.id)) {
+      throw new Error(`Gate cell ${cell.id} must sit on the perimeter`);
     }
   });
 }

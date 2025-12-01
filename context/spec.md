@@ -123,10 +123,9 @@ After the one-time setup placement, each round repeats these phases in order:
 ## 8. Special Cells & Modifiers
 
 - **Board + Initial Mice JSON**
-  - `src/data/boardLayout.json` enumerates every cell with a `terrain` tag (`shadow`, `gate` for entrance cells, `interior`) and optional `entry` block. Entry metadata captures `direction` (`north`, `south`, `east`, `west`) and the number of mice queued outside that perimeter cell on turn 1.
+  - `src/data/boardLayout.json` enumerates every cell with a `terrain` tag (`shadow`, `gate` for entrance cells, `interior`). Gates are defined solely by their `terrain` type.
   - `src/data/initialMice.json` lists resident mouse seeds with `cell` + optional `tier` (defaults to `1`). Each entry spawns a single mouse on that cell at game start; duplicate or invalid cells fail fast at load time. Use higher tiers (e.g., `3`) to pre-place upgraded `3/3` mice.
-  - The loaders validate that entry cells live on the perimeter and that their direction matches the side they touch; invalid layouts fail fast at build time.
-  - UI + gameplay both hydrate directly from these files: updating `incomingMice` changes queue sizing/placement, and editing `initialMice.json` changes resident spawns with no code changes.
+  - Validation ensures the layout covers all 25 cells with no duplicates. Gates must still sit on the perimeter. Wave size is fixed at six entrants; layout no longer configures queue sizing.
 
 - **Meow Zones**
   - Only the open entrances `B5`, `C5`, and `D5` emit meow. A cat must stand on one of these cells for its meow value to count toward Meowge.

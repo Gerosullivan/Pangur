@@ -1,6 +1,6 @@
 # Pangur, Cats, and Early Irish Lore
 
-Pangur in this project draws on *Pangur Ban*, a 9th-century Old Irish poem written by a monk about his white cat. In the poem, the monk compares his quiet work of studying and copying manuscripts to Pangur's work of watching, hunting, and pouncing on mice in the dark corners of the monastery. Man and cat share a small pool of lamplight, each absorbed in their own task, completely content in one another's company.
+Pangur in this game draws on _Pangur Ban_, a 9th-century Old Irish poem written by a monk about his white cat. In the poem, the monk compares his quiet work of studying and copying manuscripts to Pangur's work of watching, hunting, and pouncing on mice in the dark corners of the monastery. Man and cat share a small pool of lamplight, each absorbed in their own task, completely content in one another's company.
 
 That sense of focused, companionable work is at the heart of this game's Pangur: a working cat whose joy is in the hunt, but who also shares a kind of partnership with the humans (and players) around them. The monk's script becomes our game rules; Pangur's pounce becomes our catch actions; the small stone cell becomes a playful grid of tiles.
 
@@ -28,6 +28,6 @@ Under the Brehon laws - the native legal system of early Ireland - cats were imp
 - **Guard cat**: useful for warning and watching, more like a living alarm.
 - **Pet or lap-cat**: valued for companionship and prestige.
 
-Each type of cat had a value (an *eraic* or honour-price), and there were rules about compensation if a cat was stolen, injured, or killed. There were even colourful details about what a cat owed its household in basic duties: catching mice, not stealing food from the pot, and not scratching without cause. A good mouser - our high catch / lower meow cat - could be worth more than a simple farm animal, while a pampered pet-cat might be tied to the status of its owner.
+Each type of cat had a value (an _eraic_ or honour-price), and there were rules about compensation if a cat was stolen, injured, or killed. There were even colourful details about what a cat owed its household in basic duties: catching mice, not stealing food from the pot, and not scratching without cause. A good mouser - our high catch / lower meow cat - could be worth more than a simple farm animal, while a pampered pet-cat might be tied to the status of its owner.
 
 So when you move Pangur and the other cats around the board, lining up their catch and meow strengths against the scurrying mice, you're playing in the shadow of those old Brehon rules: treating cats not just as cute companions, but as legally recognised workers, guardians, and partners in keeping the household (and the monastery) in order.
