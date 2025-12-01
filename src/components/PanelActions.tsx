@@ -22,7 +22,7 @@ function PanelActions() {
 
   return (
     <div className="panel-actions">
-      <div className="panel-buttons single">
+      <div className={`panel-buttons single ${phase === 'stepper' ? 'stepper-right' : ''}`}>
         {phase === 'setup' && (
           <button
             type="button"

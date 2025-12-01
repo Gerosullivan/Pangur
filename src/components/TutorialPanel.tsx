@@ -46,15 +46,14 @@ function TutorialPanel() {
   const atStart = index === 0;
   const atEnd = index >= steps.length - 1;
   const showNext = step?.showNext !== false;
+  const total = steps.length;
+  const progress = Math.min(1, total > 0 ? (index + 1) / total : 0);
 
   return (
     <div className="tutorial-panel">
       <div className="tutorial-header">
         <div className="tutorial-title-row">
           <div className="tutorial-title">{step?.title ?? 'Tutorial'}</div>
-          <div className="tutorial-subtitle">
-            Step {index + 1} / {steps.length}
-          </div>
         </div>
       </div>
 
@@ -84,6 +83,9 @@ function TutorialPanel() {
             </button>
           </div>
         )}
+      </div>
+      <div className="tutorial-progress">
+        <div className="tutorial-progress-fill" style={{ width: `${progress * 100}%` }} />
       </div>
     </div>
   );

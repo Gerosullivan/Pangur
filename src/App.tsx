@@ -92,12 +92,13 @@ function App() {
             </button>
             <button
               type="button"
-              className={`session-button quit ${tutorialActive ? 'button-disabled' : ''}`}
+              className="session-button quit"
               onClick={() => {
-                if (tutorialActive) return;
+                if (tutorialActive) {
+                  tutorialExit();
+                }
                 setScreen("start");
               }}
-              disabled={tutorialActive}
             >
               Quit
             </button>
