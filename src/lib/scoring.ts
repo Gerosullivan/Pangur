@@ -11,6 +11,19 @@ export type ScoreBreakdown = ScoreResult & {
   fullHealthBonus: number;
 };
 
+export type ModeTargets = { wave: number; grain: number };
+
+const MODE_TARGETS: Record<ModeId, ModeTargets> = {
+  hard: { wave: 6, grain: 32 },
+  easy: { wave: 3, grain: 8 },
+  tutorial: { wave: 6, grain: 32 },
+  classic: { wave: 6, grain: 32 },
+};
+
+export function getModeTargets(modeId: ModeId): ModeTargets {
+  return MODE_TARGETS[modeId] ?? { wave: 6, grain: 32 };
+}
+
 export function getMedalEmoji(entry: {
   modeId: ModeId;
   result: 'win' | 'loss';
@@ -18,13 +31,7 @@ export function getMedalEmoji(entry: {
   finishWave?: number;
   wave: number;
 }): '🥇' | '🥈' | '🥉' {
-  const thresholds: Record<ModeId, { wave: number; grain: number }> = {
-    hard: { wave: 6, grain: 32 },
-    easy: { wave: 3, grain: 8 },
-    tutorial: { wave: 6, grain: 32 },
-    classic: { wave: 6, grain: 32 },
-  };
-  const target = thresholds[entry.modeId] ?? { wave: 6, grain: 32 };
+  const target = getModeTargets(entry.modeId);
   const waveNumber = entry.finishWave ?? entry.wave ?? Number.POSITIVE_INFINITY;
   const win = entry.result === 'win';
   if (!win) return '🥉';
@@ -43,12 +50,13 @@ export function computeScore(state: ScorableState): ScoreResult | undefined {
 
 export function computeScoreBreakdown(state: ScorableState): ScoreBreakdown | undefined {
   if (state.status.state !== 'won') return undefined;
+  const targets = getModeTargets(state.modeId);
   const weights = getScoringWeights(state.modeId);
 
   const wavesUsed = Math.max(1, state.wave - 1);
-  const waveScore = Math.max(0, (weights.waveCeiling - wavesUsed) * weights.waveWeight);
+  const waveScore = Math.max(0, (targets.wave - wavesUsed + 1) * weights.waveWeight);
 
-  const grainSaved = Math.max(0, 32 - state.grainLoss);
+  const grainSaved = Math.max(0, targets.grain - state.grainLoss);
   const grainBonus = grainSaved * weights.grainWeight;
 
   const catsFullHealth = Object.values(state.cats).filter((cat) => cat.hearts >= CAT_STARTING_HEARTS).length;

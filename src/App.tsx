@@ -10,7 +10,7 @@ import TutorialHighlights from "./components/TutorialHighlights";
 import PanelActions from "./components/PanelActions";
 import TutorialPanel from "./components/TutorialPanel";
 import AudioControls from "./components/AudioControls";
-import { getMedalEmoji } from "./lib/scoring";
+import { getMedalEmoji, getModeTargets } from "./lib/scoring";
 import StartLoreScroll from "./components/StartLoreScroll";
 import coverStart from "../assets/cover_start_screen.jpeg";
 import type { Phase } from "./types";
@@ -69,21 +69,9 @@ function App() {
     ? `Best score for this mode\nScore: ${bestScore}\nWave: ${bestWave}\nGrain Loss: ${bestGrainLoss}`
     : "No runs recorded for this mode yet.";
 
-  const grainTargets: Record<string, number> = {
-    easy: 8,
-    hard: 32,
-    tutorial: 32,
-    classic: 32,
-  };
-  const grainTarget = grainTargets[modeId] ?? 32;
-
-  const waveTargets: Record<string, number> = {
-    easy: 3,
-    hard: 6,
-    tutorial: 6,
-    classic: 6,
-  };
-  const waveTarget = waveTargets[modeId] ?? 6;
+  const modeTargets = getModeTargets(modeId);
+  const grainTarget = modeTargets.grain;
+  const waveTarget = modeTargets.wave;
 
   const shellClass = useMemo(
     () => `app-shell phase-${phase} screen-${screen}`,

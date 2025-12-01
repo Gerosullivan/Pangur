@@ -18,7 +18,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 - Best badge medal (all modes, wins only): thresholds vary by mode. Hard/tutorial/classic: wave target 6, grain target 32. Easy: wave target 3, grain target 8. 🥇 if finished on or before the mode’s wave target while staying within the mode’s grain target; 🥈 if finished on/before the wave target but over the grain target, or after the wave target while staying within the grain target; otherwise 🥉. The same medal shows on the victory score summary.
 - Scoreboard: Runs append to a local list (max 10) with fields `{ modeId, result (win/loss), score?, finishWave?, grainSaved?, grainLoss, catsLost, catsFullHealth?, reason, timestamp }`, used for the in-game best badge and future stats (not shown on the start screen). Wins also surface an immediate score + breakdown in the in-game panel after victory.
 - Settings: Simple mute toggle and music volume slider persisted locally; apply to background music when added.
-- Scoring (prototype): Only awarded on a win. Score factors in finishing wave (fewer waves is better via an inverse weight), grain saved (32 - grain loss), and a small bonus per cat at full health. Cat death is an instant loss with no score. Scoreboard entries store score + finish wave as vanity metrics.
+- Scoring (prototype): Only awarded on a win. Score factors in finishing wave (fewer waves is better via an inverse weight that keys off the mode’s wave target — easy 3, others 6), grain saved based on the mode’s grain target (easy 8, others 32), and a small bonus per cat at full health. Cat death is an instant loss with no score. Scoreboard entries store score + finish wave as vanity metrics.
 
 ## 2. Starting State
 
