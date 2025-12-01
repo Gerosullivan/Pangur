@@ -75,8 +75,14 @@ function ControlPanel() {
 
         {/* Game over message */}
         {status.state !== "playing" && phase !== "setup" && (
-          <div className="deterrence-info">
-            {status.state === "won" ? "Victory achieved!" : "Defeat."}{" "}
+          <div
+            className={`deterrence-info ${
+              status.state === "won"
+                ? "result-banner win"
+                : "result-banner loss"
+            }`}
+          >
+            {status.state === "won" ? "Victory achieved!" : "Game over."}{" "}
             {status.reason ?? ""}
           </div>
         )}

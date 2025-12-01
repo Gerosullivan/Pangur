@@ -869,6 +869,37 @@
   /* color: rgba(242, 242, 242, 0.7); */
 }
 
+.result-banner {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.25px;
+  /* text-transform: uppercase; */
+}
+
+.result-banner.win {
+  background: linear-gradient(
+    90deg,
+    rgba(16, 185, 129, 0.18),
+    rgba(16, 185, 129, 0.08)
+  );
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #8af0cb;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+.result-banner.loss {
+  background: linear-gradient(
+    90deg,
+    rgba(217, 109, 85, 0.22),
+    rgba(217, 109, 85, 0.1)
+  );
+  border: 1px solid rgba(217, 109, 85, 0.4);
+  color: #d32500;
+  font-size: 20px;
+}
+
 .setup-hint {
   font-size: 14px;
 }
