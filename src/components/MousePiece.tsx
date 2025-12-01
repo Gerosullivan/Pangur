@@ -1,3 +1,8 @@
+import mouseDead from '../../assets/mice/mouse_dead.png';
+import mouseDizzy from '../../assets/mice/mouse_dizzy.png';
+import mouseGrainFed from '../../assets/mice/mouse_grain_fed.png';
+import mouseNormal from '../../assets/mice/mouse_normal.png';
+import mouseScared from '../../assets/mice/mouse_scared.png';
 import type { MouseState } from '../types';
 
 interface MousePieceProps {
@@ -10,10 +15,10 @@ function MousePiece({ mouse, highlighted, scared }: MousePieceProps) {
   const showStats = mouse.maxHearts > 1 || mouse.attack > 1;
 
   const imageSrc = (() => {
-    if (scared) return './mice/mouse_scared.png';
-    if (mouse.stunned) return './mice/mouse_dizzy.png';
-    if (mouse.attack > 1) return './mice/mouse_grain_fed.png';
-    return './mice/mouse_normal.png';
+    if (scared) return mouseScared;
+    if (mouse.stunned) return mouseDizzy;
+    if (mouse.attack > 1) return mouseGrainFed;
+    return mouseNormal;
   })();
 
   const className = ['piece', 'mouse', mouse.stunned ? 'stunned' : undefined, highlighted ? 'highlighted' : undefined]
