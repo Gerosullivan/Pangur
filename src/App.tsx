@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import "./App.css";
 import { useGameStore } from "./state/gameStore";
 import { useTutorialStore } from "./state/tutorialStore";
@@ -13,6 +13,14 @@ import AudioControls from "./components/AudioControls";
 import { getMedalEmoji, getModeTargets } from "./lib/scoring";
 import StartLoreScroll from "./components/StartLoreScroll";
 import coverStart from "../assets/cover_start_screen.jpeg";
+import mouseNormal from "../assets/mice/mouse_normal.png";
+import mouseGrainFed from "../assets/mice/mouse_grain_fed.png";
+import mouseScared from "../assets/mice/mouse_scared.png";
+import mouseDizzy from "../assets/mice/mouse_dizzy.png";
+import mouseDead from "../assets/mice/mouse_dead.png";
+import pangurPortrait from "../assets/cat_detail/Pangur_detail.png";
+import breoinnePortrait from "../assets/cat_detail/Breonne_detail.png";
+import baircnePortrait from "../assets/cat_detail/Baircne_detail.png";
 import type { ModeId, Phase, ScoreEntry } from "./types";
 
 function App() {
@@ -31,6 +39,23 @@ function App() {
   const tutorialExit = useTutorialStore((state) => state.exit);
   const tutorialActive = useTutorialStore((state) => state.active);
   const status = useGameStore((state) => state.status);
+
+  useEffect(() => {
+    // Preload key sprites to avoid Safari hiccups.
+    [
+      mouseNormal,
+      mouseGrainFed,
+      mouseScared,
+      mouseDizzy,
+      mouseDead,
+      pangurPortrait,
+      breoinnePortrait,
+      baircnePortrait,
+    ].forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
 
   const phaseLabels: Record<Phase, string> = {
     setup: "Setup turn",
@@ -221,22 +246,22 @@ function App() {
                 <button
                   type="button"
                   className="button-primary"
+                  onClick={handleStartMonasteryMode}
+                >
+                  {bestMedalsByMode.monastery && (
+                    <span className="start-medal">{bestMedalsByMode.monastery}</span>
+                  )}
+                  Play Monastery (medium)
+                </button>
+                <button
+                  type="button"
+                  className="button-primary"
                   onClick={handleStartHardMode}
                 >
                   {bestMedalsByMode.hard && (
                     <span className="start-medal">{bestMedalsByMode.hard}</span>
                   )}
                   Play Barn (hard)
-                </button>
-                <button
-                  type="button"
-                  className="button-primary"
-                  onClick={handleStartMonasteryMode}
-                >
-                  {bestMedalsByMode.monastery && (
-                    <span className="start-medal">{bestMedalsByMode.monastery}</span>
-                  )}
-                  Play Monastery (hard)
                 </button>
               </div>
             </div>

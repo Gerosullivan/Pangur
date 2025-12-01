@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react';
 import mouseDead from '../../assets/mice/mouse_dead.png';
 import mouseDizzy from '../../assets/mice/mouse_dizzy.png';
 import mouseGrainFed from '../../assets/mice/mouse_grain_fed.png';
@@ -14,12 +15,18 @@ interface MousePieceProps {
 function MousePiece({ mouse, highlighted, scared }: MousePieceProps) {
   const showStats = mouse.maxHearts > 1 || mouse.attack > 1;
 
-  const imageSrc = (() => {
+  const preferredSrc = useMemo(() => {
     if (scared) return mouseScared;
     if (mouse.stunned) return mouseDizzy;
     if (mouse.attack > 1) return mouseGrainFed;
     return mouseNormal;
-  })();
+  }, [mouse.attack, mouse.stunned, scared]);
+
+  const [imageSrc, setImageSrc] = useState(preferredSrc);
+  useEffect(() => {
+    // Update src when mouse state changes (e.g., becomes stunned or grain-fed).
+    setImageSrc(preferredSrc);
+  }, [preferredSrc]);
 
   const className = ['piece', 'mouse', mouse.stunned ? 'stunned' : undefined, highlighted ? 'highlighted' : undefined]
     .filter(Boolean)
@@ -40,7 +47,15 @@ function MousePiece({ mouse, highlighted, scared }: MousePieceProps) {
         </div>
       )}
       <div className="piece-badge mouse" aria-hidden>
-        <img src={imageSrc} alt="mouse" />
+        <img
+          src={imageSrc}
+          alt="mouse"
+          loading="eager"
+          onError={() => {
+            // Fallback to base sprite if a variant ever fails to load (Safari quirks).
+            setImageSrc(mouseNormal);
+          }}
+        />
       </div>
       {showStats && (
         <div className="piece-stat-row" aria-hidden>
