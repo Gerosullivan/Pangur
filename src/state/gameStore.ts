@@ -33,9 +33,9 @@ import { maybeActivateShadowBonus, updateShadowBonusOnMove } from '../lib/shadow
 import { buildMousePhaseFrames } from '../lib/mousePhase';
 import { buildIncomingPhaseFrames, replenishIncomingQueue } from '../lib/incomingWave';
 import { logEvent } from '../lib/logger';
+import { computeScore } from '../lib/scoring';
 import { useTutorialStore } from './tutorialStore';
 
-const MAX_GRAIN_LOSS = 32;
 const SCOREBOARD_STORAGE_KEY = 'pangur-scoreboard';
 const SETTINGS_STORAGE_KEY = 'pangur-settings';
 const DEFAULT_SETTINGS: SettingsState = { muted: false, musicVolume: 0.7 };
@@ -463,14 +463,8 @@ function applyFrame(state: GameStore, frame: StepFrame): GameStore {
           const mouse = draft.mice[mouseId];
           if (!mouse?.position || mouse.hearts <= 0 || mouse.stunned) return;
           draft.grainLoss += mouse.tier;
-          if (draft.grainLoss >= MAX_GRAIN_LOSS && draft.status.state === 'playing') {
-            draft.status = { state: 'lost', reason: 'Grain depleted' };
-          }
           if (isShadowBonus(mouse.position)) {
             upgradeMouse(mouse);
-            if (mouse.tier >= 7 && draft.status.state === 'playing') {
-              draft.status = { state: 'lost', reason: 'Mouse evolved beyond control' };
-            }
           }
         });
         applyDeterrence(draft);
@@ -617,12 +611,17 @@ useGameStore.subscribe((state, prev) => {
   if (!prev) return;
   if (prev.status.state === 'playing' && state.status.state !== 'playing' && !state.outcomeRecorded) {
     const catsLost = Object.values(state.cats).filter((cat) => cat.hearts <= 0).length;
+    const scoring = state.status.state === 'won' ? computeScore(state) : undefined;
     const entry: ScoreEntry = {
       modeId: state.modeId,
       result: state.status.state === 'won' ? 'win' : 'loss',
+      score: scoring?.score,
+      finishWave: scoring?.finishWave,
+      grainSaved: scoring?.grainSaved,
       grainLoss: state.grainLoss,
       wave: state.wave,
       catsLost,
+      catsFullHealth: scoring?.catsFullHealth,
       reason: state.status.reason,
       timestamp: Date.now(),
     };

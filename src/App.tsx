@@ -56,13 +56,13 @@ function App() {
     const text = scoreboard
       .map(
         (entry) =>
-          `${new Date(entry.timestamp).toLocaleString()} · ${
-            entry.modeId
-          } · ${entry.result.toUpperCase()} · wave ${entry.wave} · grain ${
-            entry.grainLoss
+          `${new Date(entry.timestamp).toLocaleString()} · ${entry.modeId} · ${entry.result.toUpperCase()} · score ${
+            entry.score ?? "-"
+          } · finish wave ${entry.finishWave ?? entry.wave} · grain ${entry.grainLoss}${
+            entry.grainSaved !== undefined ? ` (saved ${entry.grainSaved})` : ""
           } · cats lost ${entry.catsLost}${
-            entry.reason ? ` (${entry.reason})` : ""
-          }`
+            entry.catsFullHealth !== undefined ? ` (full health ${entry.catsFullHealth})` : ""
+          }${entry.reason ? ` (${entry.reason})` : ""}`
       )
       .join("\n");
     try {
@@ -225,25 +225,36 @@ function App() {
                         key={`${entry.timestamp}-${entry.modeId}-${entry.wave}-${entry.result}`}
                         className="scoreboard-row"
                       >
-                        <div className="scoreboard-top">
-                          <span
-                            className={`score-pill ${
-                              entry.result === "win" ? "win" : "loss"
-                            }`}
-                          >
-                            {entry.result}
-                          </span>
-                          <span className="score-mode">{entry.modeId}</span>
-                          <span className="score-wave">Wave {entry.wave}</span>
-                        </div>
-                        <div className="scoreboard-meta">
-                          <span>Grain {entry.grainLoss}</span>
-                          <span>Cats lost {entry.catsLost}</span>
-                          {entry.reason && <span>{entry.reason}</span>}
-                          <span>
-                            {new Date(entry.timestamp).toLocaleString()}
-                          </span>
-                        </div>
+                    <div className="scoreboard-top">
+                      <span
+                        className={`score-pill ${
+                          entry.result === "win" ? "win" : "loss"
+                        }`}
+                      >
+                        {entry.result}
+                      </span>
+                      <span className="score-mode">{entry.modeId}</span>
+                      <span className="score-score">
+                        Score {entry.score !== undefined ? entry.score : "—"}
+                      </span>
+                      <span className="score-wave">
+                        Finish Wave {entry.finishWave ?? entry.wave}
+                      </span>
+                    </div>
+                    <div className="scoreboard-meta">
+                      {entry.grainSaved !== undefined && (
+                        <span>Grain saved {entry.grainSaved}</span>
+                      )}
+                      <span>Grain {entry.grainLoss}</span>
+                      <span>Cats lost {entry.catsLost}</span>
+                      {entry.catsFullHealth !== undefined && (
+                        <span>Full health {entry.catsFullHealth}</span>
+                      )}
+                      {entry.reason && <span>{entry.reason}</span>}
+                      <span>
+                        {new Date(entry.timestamp).toLocaleString()}
+                      </span>
+                    </div>
                       </li>
                     ))}
                   </ul>

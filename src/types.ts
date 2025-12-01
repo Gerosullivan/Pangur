@@ -215,9 +215,13 @@ export type InitialMiceConfig = {
 export interface ScoreEntry {
   modeId: ModeId;
   result: 'win' | 'loss';
+  score?: number;
+  finishWave?: number;
+  grainSaved?: number;
   grainLoss: number;
   wave: number;
   catsLost: number;
+  catsFullHealth?: number;
   reason?: string;
   timestamp: number;
 }

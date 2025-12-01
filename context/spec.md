@@ -17,6 +17,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 - Game screen: Existing board + panels. Restart keeps the currently selected mode.
 - Scoreboard: Runs append to a local list (max 10) with fields `{ modeId, result (win/loss), wave, grainLoss, catsLost, reason, timestamp }`, shown on the start screen. Copy/Clear controls manage it client-side only.
 - Settings: Simple mute toggle and music volume slider persisted locally; apply to background music when added.
+- Scoring (prototype): Only awarded on a win. Score factors in finishing wave (fewer waves is better via an inverse weight), grain saved (32 - grain loss), and a small bonus per cat at full health. Cat death is an instant loss with no score. Scoreboard entries store score + finish wave as vanity metrics.
 
 ## 2. Starting State
 
@@ -24,7 +25,7 @@ This document captures the design for the new Pangur prototype. Keep this spec c
 - Modes share this board layout for the current release. Only the `initialMice` file changes between modes (`initialMice.json` for tutorial/classic, `initialMice.hard.json` for the hard perimeter start).
 - Cat pieces: Three residents off-board at the bottom center, displayed side-by-side (same cat component as will be on board - see UI spec). Base stats use `catch/meow`: Pangur (aka Cruibne) `3/1`, Guardian `1/3`, Baircne `2/2`. Each cat begins with five hearts (health).
 - Setup placement: Before the standard turn loop begins, the player performs a single setup phase, dragging each cat piece from the off board onto any free cell (entrance or otherwise). During this phase players may rearrange cats without limit—pick a placed cat back up, drop it somewhere else, swap positions, etc.—until they choose to press `Confirm Formation`. Only after confirmation does the normal turn loop begin.
-- Grain Loss Tracker: Start at `0` loss. Each grain eaten by mice increments the counter; reaching `32` loss triggers Game Over.
+- Grain Loss Tracker: Start at `0` loss. Each grain eaten by mice increments the counter; grain loss no longer ends the run and instead reduces the end-of-run grain bonus.
 - Incoming Wave: Six mouse pieces per wave, visualized as a `Next Wave` lane of six icons. As cats generate Meowge, the leftmost icons flip to 😱 to preview how many will be deterred; remaining icons stay 🐭.
 
 ## 3. Attributes & Terminology
@@ -146,7 +147,6 @@ After the one-time setup placement, each round repeats these phases in order:
 
 - **Win**: No resident mice on board and the incoming queue is empty when the wave would spawn.
 - **Loss**
-  - Grain loss counter reaches 32.
   - Any cat is killed (instant defeat, even if others survive).
   - Resident mice occupy every interior cell simultaneously.
   - A mouse successfully upgrades to `7/7` (future-proofed capstone threat that cats cannot remove).
