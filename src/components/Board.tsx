@@ -1,4 +1,4 @@
-import { useMemo, type DragEvent } from 'react';
+import { useMemo, useState, type DragEvent } from 'react';
 import { useGameStore } from '../state/gameStore';
 import CatPiece from './CatPiece';
 import MousePiece from './MousePiece';
@@ -6,6 +6,12 @@ import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter,
 import { getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch } from '../lib/mechanics';
 import { useTutorialStore } from '../state/tutorialStore';
 import type { CatId, CellId, CellState } from '../types';
+
+type TerrainTooltip = {
+  title: string;
+  cats: string;
+  mice: string;
+};
 
 function Board() {
   const cells = useGameStore((state) => state.cells);
@@ -73,6 +79,8 @@ function Board() {
   const tutorialLocked = useTutorialStore(
     (state) => state.active && Boolean(state.steps[state.index]?.lockBoard)
   );
+
+  const [hoveredCatCell, setHoveredCatCell] = useState<CellId | null>(null);
 
   const handleCellClick = (cell: CellState) => {
     const occupant = cell.occupant;
@@ -155,12 +163,17 @@ function Board() {
         const isSelected = occupant?.type === 'cat' && occupant.id === selectedCatId;
         const isValidMove = !occupant && validMoves.has(id);
         const isValidAttack = occupant?.type === 'mouse' && attackTargets.has(id);
+        const tooltip = getTerrainTooltip(cell.terrain);
+        const isTopRow = row === rows[rows.length - 1];
+        const catHovering = hoveredCatCell === id;
         const cellClasses = [
           'board-cell',
           cell.terrain,
           isSelected ? 'selected' : undefined,
           isValidMove ? 'valid-move' : undefined,
           isValidAttack ? 'valid-attack' : undefined,
+          isTopRow ? 'tooltip-below' : undefined,
+          catHovering ? 'cat-hover' : undefined,
         ]
           .filter(Boolean)
           .join(' ');
@@ -198,6 +211,9 @@ function Board() {
                   gateGlow={isGate(id)}
                   draggable={phase === 'setup' || (phase === 'cat' && status.state === 'playing' && !cats[occupant.id].turnEnded && cats[occupant.id].movesRemaining > 0)}
                   onDragStart={(event) => handleDragStart(event, occupant.id)}
+                  onDragEnd={() => setHoveredCatCell(null)}
+                  onMouseEnter={() => setHoveredCatCell(id)}
+                  onMouseLeave={() => setHoveredCatCell(null)}
                 />
               )}
               {occupant?.type === 'mouse' && mice[occupant.id] && (
@@ -207,6 +223,17 @@ function Board() {
                 />
               )}
               {!occupant && <span className="cell-id-debug">{id}</span>}
+            </div>
+            <div className="cell-tooltip" aria-hidden="true">
+              <div className="cell-tooltip-title">{tooltip.title}</div>
+              <div className="cell-tooltip-row">
+                <span className="cell-tooltip-label">Cats</span>
+                <span className="cell-tooltip-text">{tooltip.cats}</span>
+              </div>
+              <div className="cell-tooltip-row">
+                <span className="cell-tooltip-label">Mice</span>
+                <span className="cell-tooltip-text">{tooltip.mice}</span>
+              </div>
             </div>
           </div>
         );
@@ -221,6 +248,28 @@ function Board() {
       <div className="board-grid game-board">{boardCells}</div>
     </div>
   );
+}
+
+function getTerrainTooltip(terrain: CellState['terrain']): TerrainTooltip {
+  if (terrain === 'shadow') {
+    return {
+      title: 'Shadow',
+      cats: 'Start an attack here for +1 Shadow Strike catch; meow stays muted.',
+      mice: 'Eating grain on shadow upgrades them +1/+1 and they prioritize moving onto these tiles.',
+    };
+  }
+  if (terrain === 'gate') {
+    return {
+      title: 'Gate',
+      cats: 'Standing here activates their full meow to scare the incoming wave.',
+      mice: 'Incoming mice enter through gates; no shadow boost while they stand here.',
+    };
+  }
+  return {
+    title: 'Interior',
+    cats: 'No special bonuses; catch and meow stay at their base values.',
+    mice: 'No upgrade from feeding and no special movement bias here.',
+  };
 }
 
 function getQueenMoves(origin: CellId, cells: Record<CellId, CellState>): Set<CellId> {

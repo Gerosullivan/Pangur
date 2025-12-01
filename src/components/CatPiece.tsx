@@ -18,6 +18,8 @@ interface CatPieceProps {
   onDragStart?: (event: DragEvent<HTMLDivElement>) => void;
   onDragEnd?: (event: DragEvent<HTMLDivElement>) => void;
   gateGlow?: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 function CatPiece({
@@ -35,6 +37,8 @@ function CatPiece({
   onDragStart,
   onDragEnd,
   gateGlow,
+  onMouseEnter,
+  onMouseLeave,
 }: CatPieceProps) {
   const definition = catDefinitions[catId];
   const currentHearts = Math.max(cat.hearts, 0);
@@ -110,6 +114,8 @@ function CatPiece({
       draggable={draggable}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {hearts}
       <div className="piece-badge" aria-hidden>

@@ -134,6 +134,7 @@ After the one-time setup placement, each round repeats these phases in order:
   - Cats obtain the +1 Shadow Strike bonus only if they initiate their first attack of the turn while standing on any shadow tile. The bonus is not tied to the start of turn anymore; it depends on the cell where the attack begins.
   - UI: cat catch number glows red while Shadow Strike is primed.
   - UI: cat catch number bold with red glow while the bonus is active; render these shadow bonus cells darker so the player can plan formations.
+  - Hovering any cell now shows a tooltip that labels the terrain and lists its cat/mouse effects (e.g., shadow = +1 Shadow Strike on the first attack sequence for cats; mice upgrade after eating there; gates enable meow deterrence and spawn entrants).
 
 ## 9. Resource & State Tracking
 
