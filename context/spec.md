@@ -155,7 +155,7 @@ After the one-time setup placement, each round repeats these phases in order:
 ## 11. Audio
 
 - Six-track music playlist lives in `/assets/music`, plays in numeric filename order (`01_` → `06_`), auto-starts at 50% volume when the app loads, and loops back to the first track after the last finishes.
-- Global vertical control bar sits at the right middle of the shell on every screen with play/pause, mute/unmute, skip track, and a toggleable volume slider. Volume/mute preferences persist via settings.
+- Global vertical control bar sits at the right middle of the shell on every screen with play/pause, mute/unmute, skip track, and a toggleable volume slider. Volume/mute preferences persist via settings. When music first starts playing, the play/pause button briefly flashes to signal it can be paused immediately.
 
 ## 12. Open Questions
 

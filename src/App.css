@@ -1260,6 +1260,23 @@
   box-shadow: 0 0 10px rgba(3, 150, 166, 0.35);
 }
 
+.audio-button.flash-hint {
+  animation: flash-play 0.4s ease-in-out 4 alternate;
+}
+
+@keyframes flash-play {
+  from {
+    box-shadow: 0 0 0 rgba(217, 112, 20, 0.25);
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(217, 112, 20, 0.35);
+  }
+  to {
+    box-shadow: 0 0 12px rgba(217, 112, 20, 0.65);
+    background: rgba(217, 112, 20, 0.3);
+    border-color: rgba(217, 112, 20, 0.85);
+  }
+}
+
 .audio-volume {
   display: flex;
   flex-direction: column;

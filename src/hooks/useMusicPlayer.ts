@@ -27,9 +27,22 @@ export function useMusicPlayer() {
   const [trackIndex, setTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
+  const [flashPlayHint, setFlashPlayHint] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const initialVolume = useRef(settings.musicVolume ?? DEFAULT_MUSIC_VOLUME);
   const initialMuted = useRef(settings.muted);
+  const flashShown = useRef(false);
+  const flashTimer = useRef<number | null>(null);
+
+  const triggerFlashHint = () => {
+    if (flashShown.current) return;
+    flashShown.current = true;
+    setFlashPlayHint(true);
+    if (flashTimer.current) {
+      window.clearTimeout(flashTimer.current);
+    }
+    flashTimer.current = window.setTimeout(() => setFlashPlayHint(false), 2000);
+  };
 
   useEffect(() => {
     const audio = new Audio(TRACKS[0].src);
@@ -49,6 +62,7 @@ export function useMusicPlayer() {
         await audio.play();
         setIsPlaying(true);
         setAutoplayBlocked(false);
+        triggerFlashHint();
       } catch (err) {
         setIsPlaying(false);
         setAutoplayBlocked(true);
@@ -74,6 +88,7 @@ export function useMusicPlayer() {
         .then(() => {
           setIsPlaying(true);
           setAutoplayBlocked(false);
+          triggerFlashHint();
         })
         .catch(() => setAutoplayBlocked(true));
     };
@@ -94,10 +109,15 @@ export function useMusicPlayer() {
     audio.src = TRACKS[trackIndex].src;
     audio.currentTime = 0;
     if (isPlaying) {
-      audio.play().catch(() => {
-        setIsPlaying(false);
-        setAutoplayBlocked(true);
-      });
+      audio
+        .play()
+        .then(() => {
+          triggerFlashHint();
+        })
+        .catch(() => {
+          setIsPlaying(false);
+          setAutoplayBlocked(true);
+        });
     }
   }, [trackIndex, isPlaying]);
 
@@ -110,6 +130,7 @@ export function useMusicPlayer() {
         .then(() => {
           setIsPlaying(true);
           setAutoplayBlocked(false);
+          triggerFlashHint();
         })
         .catch(() => {
           setIsPlaying(false);
@@ -142,6 +163,14 @@ export function useMusicPlayer() {
     return TRACKS[trackIndex] ?? TRACKS[0];
   }, [trackIndex]);
 
+  useEffect(() => {
+    return () => {
+      if (flashTimer.current) {
+        window.clearTimeout(flashTimer.current);
+      }
+    };
+  }, []);
+
   return {
     currentTrack,
     isPlaying,
@@ -150,6 +179,7 @@ export function useMusicPlayer() {
     autoplayBlocked,
     trackIndex,
     totalTracks: TRACKS.length,
+    flashPlayHint,
     togglePlay,
     toggleMute,
     skipTrack,

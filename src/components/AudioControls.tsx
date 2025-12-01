@@ -14,6 +14,7 @@ function AudioControls() {
     totalTracks,
     trackIndex,
     volume,
+    flashPlayHint,
   } = useMusicPlayer();
   const [showVolume, setShowVolume] = useState(false);
 
@@ -28,7 +29,7 @@ function AudioControls() {
       <div className="audio-buttons">
         <button
           type="button"
-          className="audio-button"
+          className={`audio-button ${flashPlayHint ? "flash-hint" : ""}`}
           onClick={togglePlay}
           aria-label={isPlaying ? "Pause track" : "Play track"}
         >
