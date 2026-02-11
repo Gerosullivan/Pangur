@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTutorialStore } from '../state/tutorialStore';
 
 const tokenSelectorMap: Record<string, string[]> = {
@@ -53,12 +53,10 @@ function TutorialHighlights() {
   const highlights = step?.highlights ?? [];
   const prevElements = useRef<Element[]>([]);
 
-  const tokens = useMemo(() => highlights, [highlights]);
-
   useEffect(() => {
     const refreshHighlights = () => {
       const nextElements: Element[] = [];
-      tokens.forEach((token) => {
+      highlights.forEach((token) => {
         const elements = getElementsForToken(token);
         elements.forEach((el) => {
           nextElements.push(el);
@@ -97,7 +95,7 @@ function TutorialHighlights() {
       prevElements.current.forEach((el) => el.classList.remove('outline-pulse'));
       prevElements.current = [];
     };
-  }, [tokens, step]);
+  }, [highlights, step]);
 
   // Note: In an earlier iteration we drew absolute-positioned overlay divs for highlights.
   // If we ever need to revert to that approach (e.g., to ensure consistent sizing independent of target styles),

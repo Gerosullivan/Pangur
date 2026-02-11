@@ -28,7 +28,8 @@ import {
   resetMouseAfterTurn,
   upgradeMouse,
 } from '../lib/mechanics';
-import { getNeighborCells, isShadowBonus, pathCellsBetween, setBoardLayout } from '../lib/board';
+import { getNeighborCells, isShadowBonus, setBoardLayout } from '../lib/board';
+import { isValidQueenMove } from '../lib/movement';
 import { maybeActivateShadowBonus, updateShadowBonusOnMove } from '../lib/shadowBonus';
 import { buildMousePhaseFrames } from '../lib/mousePhase';
 import { buildIncomingPhaseFrames, replenishIncomingQueue } from '../lib/incomingWave';
@@ -261,7 +262,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (cat.movesRemaining <= 0) return;
     const destCell = state.cells[destination];
     if (!destCell || destCell.occupant) return;
-    if (!validateQueenMove(cat.position, destination, state)) return;
+    if (!isValidQueenMove(cat.position, destination, state)) return;
     const tutorial = useTutorialStore.getState();
     if (!tutorial.canPerformAction({ action: 'cat-move', actorId: catId, from: cat.position, to: destination })) return;
 
@@ -418,18 +419,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
     );
   },
 }));
-
-function validateQueenMove(origin: CellId, destination: CellId, state: GameState): boolean {
-  if (origin === destination) return false;
-  const path = pathCellsBetween(origin, destination);
-  const sameColumn = origin[0] === destination[0];
-  const sameRow = origin[1] === destination[1];
-  const diag = Math.abs(origin.charCodeAt(0) - destination.charCodeAt(0)) === Math.abs(Number(origin[1]) - Number(destination[1]));
-  if (!sameColumn && !sameRow && !diag) {
-    return false;
-  }
-  return path.every((cellId) => !state.cells[cellId].occupant);
-}
 
 function maybeFinalizeCatTurn(state: GameState, catId: CatId): void {
   const cat = state.cats[catId];

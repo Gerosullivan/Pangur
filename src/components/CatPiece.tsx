@@ -3,6 +3,20 @@ import type { CatId, CatState } from '../types';
 import { catDefinitions, CAT_STARTING_HEARTS } from '../lib/cats';
 import { isShadowBonus } from '../lib/board';
 
+// Cat portraits - imported for build-time path validation
+import pangurAwake from '../../assets/Cruibne.png';
+import baircneAwake from '../../assets/Baircne.png';
+import guardianAwake from '../../assets/Breonne.png';
+import pangurAsleep from '../../assets/cat_asleep/Pangur_asleep.png';
+import baircneAsleep from '../../assets/cat_asleep/Baircne_asleep.png';
+import guardianAsleep from '../../assets/cat_asleep/Breonne_asleep.png';
+
+const CAT_PORTRAITS: Record<CatId, { awake: string; asleep: string }> = {
+  pangur: { awake: pangurAwake, asleep: pangurAsleep },
+  baircne: { awake: baircneAwake, asleep: baircneAsleep },
+  guardian: { awake: guardianAwake, asleep: guardianAsleep },
+};
+
 interface CatPieceProps {
   cat: CatState;
   catId: CatId;
@@ -61,28 +75,8 @@ function CatPiece({
 
   const getPortrait = () => {
     const asleep = !cat.wokenByAttack && (cat.turnEnded || (cat.movesRemaining <= 0 && remainingCatch <= 0));
-    if (asleep) {
-      switch (catId) {
-        case 'pangur':
-          return './cat_asleep/Pangur_asleep.png';
-        case 'baircne':
-          return './cat_asleep/Baircne_asleep.png';
-        case 'guardian':
-          return './cat_asleep/Breonne_asleep.png';
-        default:
-          return './cat_asleep/Pangur_asleep.png';
-      }
-    }
-    switch (catId) {
-      case 'pangur':
-        return './Cruibne.png';
-      case 'baircne':
-        return './Baircne.png';
-      case 'guardian':
-        return './Breonne.png';
-      default:
-        return './Cruibne.png';
-    }
+    const portraits = CAT_PORTRAITS[catId] ?? CAT_PORTRAITS.pangur;
+    return asleep ? portraits.asleep : portraits.awake;
   };
 
   const className = [

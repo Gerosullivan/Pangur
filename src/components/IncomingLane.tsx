@@ -1,4 +1,5 @@
 import { useGameStore } from '../state/gameStore';
+import { getWaveSize } from '../lib/board';
 import MousePiece from './MousePiece';
 
 function IncomingLane() {
@@ -18,7 +19,7 @@ function IncomingLane() {
       ? (stepper.frames[stepper.index].payload as { deterred: number }).deterred
       : undefined;
 
-  const slots = Array.from({ length: 6 }, (_, idx) => {
+  const slots = Array.from({ length: getWaveSize() }, (_, idx) => {
     const mouse = incomingQueue[idx];
     // Show deterred styling only in preview (cat phase) and the incoming summary frame.
     const shouldShowDeterred =

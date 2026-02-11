@@ -2,7 +2,8 @@ import { useMemo, type DragEvent } from 'react';
 import { useGameStore } from '../state/gameStore';
 import CatPiece from './CatPiece';
 import MousePiece from './MousePiece';
-import { columns, rows, parseCell, isShadowBonus, getNeighborCells, isPerimeter, isGate } from '../lib/board';
+import { columns, rows, isShadowBonus, getNeighborCells, isGate } from '../lib/board';
+import { getQueenMoves } from '../lib/movement';
 import { getCatEffectiveCatch, getCatEffectiveMeow, getCatRemainingCatch } from '../lib/mechanics';
 import { useTutorialStore } from '../state/tutorialStore';
 import type { CatId, CellId, CellState } from '../types';
@@ -133,9 +134,9 @@ function Board() {
   };
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>, cell: CellState) => {
-    const draggedCatId = (event.dataTransfer.getData('text/plain') as CatId) || undefined;
-    const draggedOrSelectedId = draggedCatId || selectedCatId;
-    if (!canDropCat(cell, draggedOrSelectedId)) return;
+    // Note: getData() returns empty string during dragover in most browsers,
+    // so we rely on selectedCatId which is set during dragStart
+    if (!canDropCat(cell, selectedCatId)) return;
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
   };
@@ -258,36 +259,6 @@ function getTerrainTooltip(terrain: CellState['terrain']): TerrainTooltip {
     cats: 'No special bonuses; catch and meow stay at their base values.',
     mice: 'No upgrade from feeding and no special movement bias here.',
   };
-}
-
-function getQueenMoves(origin: CellId, cells: Record<CellId, CellState>): Set<CellId> {
-  const { column, row } = parseCell(origin);
-  const originColumnIndex = columns.indexOf(column);
-  const originRowIndex = rows.indexOf(row);
-  const deltas = [
-    [-1, -1],
-    [-1, 0],
-    [-1, 1],
-    [0, -1],
-    [0, 1],
-    [1, -1],
-    [1, 0],
-    [1, 1],
-  ];
-  const moves = new Set<CellId>();
-  deltas.forEach(([dc, dr]) => {
-    let step = 1;
-    while (true) {
-      const nextColumn = columns[originColumnIndex + dc * step];
-      const nextRow = rows[originRowIndex + dr * step];
-      if (!nextColumn || !nextRow) break;
-      const id = `${nextColumn}${nextRow}` as CellId;
-      if (cells[id].occupant) break;
-      moves.add(id);
-      step += 1;
-    }
-  });
-  return moves;
 }
 
 export default Board;

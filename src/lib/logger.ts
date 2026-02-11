@@ -14,6 +14,7 @@ export function logEvent(state: GameState, event: Omit<LogEvent, 'seq' | 'turn' 
     ...event,
   };
   state.log.push(full);
-  // Keep console logging lightweight for now; this is the only output surface requested.
-  console.log('[PANGUR]', full);
+  if (import.meta.env.DEV) {
+    console.log('[PANGUR]', full);
+  }
 }
